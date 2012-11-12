@@ -1,0 +1,16 @@
+<package>
+  <description brief="demo_UAV_controller">
+
+     demo_UAV_controller
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/demo_UAV_controller</url>
+  <depend package="collab_msgs"/>
+  <depend package="vicon_pose"/>
+
+</package>
+
+
