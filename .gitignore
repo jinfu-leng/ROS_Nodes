@@ -1,4 +1,4 @@
-# Python, C++, C
+# Python, C++, C and  .bag
 
 
 *.py[co]
@@ -65,3 +65,12 @@ pip-log.txt
 *.exe
 *.out
 *.app
+
+
+
+
+
+
+
+*.bag
+*~

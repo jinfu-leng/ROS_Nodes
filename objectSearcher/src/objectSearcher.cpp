@@ -126,7 +126,7 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 		Land();
 	}
 	if(searchStatus == ON_GROUND){
-		Launch();
+		ros::Duration(10).sleep();	
 		Launch();
 		searchStatus = SEARCHING;
 	}
