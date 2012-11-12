@@ -268,7 +268,14 @@ void ObjectSearcher::Hover(){
 	}
 	lastHoverX = x;
 	lastHoverY = y;
-	FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
+
+	if(lastHoverZ<LAND_HEIGHT){
+		searchStatus = FINISHED;
+		Land();		
+	}
+	else{
+		FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
+	}
 }
 
 // main
