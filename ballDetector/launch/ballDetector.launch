@@ -1,0 +1,24 @@
+<launch>
+  <node launch-prefix="nice" name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen">
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="320" />
+    <param name="image_height" value="240" />
+    <!--param name="image_width" value="640" />
+    <param name="image_height" value="480" /-->
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  
+  <rosparam param="thresh/">
+    high: {h: 185, s: 191, v: 253}
+    low: {h: 131, s: 44, v: 66}
+  </rosparam>
+  <node name="ballDetector" pkg="ballDetector" type="ballDetector" output="screen">
+    <remap from="image" to="/usb_cam/image_raw"/>
+  </node>
+  <!--node name="ballDetectorConfig" pkg="ballDetector" type="configGUI.py"></node-->
+  
+
+</launch>

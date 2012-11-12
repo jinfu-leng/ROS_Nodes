@@ -1,0 +1,21 @@
+<package>
+  <description brief="ballDetector">
+
+     ballDetector
+
+  </description>
+  <author>Carrick Detweiler</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ballDetector</url>
+  <depend package="usb_cam"/>
+  <depend package="cv_bridge"/>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+  <depend package="geometry_msgs"/>
+  <depend package="opencv2"/>
+
+</package>
+
+
