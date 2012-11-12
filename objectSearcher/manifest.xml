@@ -1,0 +1,17 @@
+<package>
+  <description brief="objectSearcher">
+
+     objectSearcher
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/objectSearcher</url>
+  <depend package="ballDetector"/>
+  <depend package="collab_msgs"/>
+  <depend package="vicon_pose"/>
+
+</package>
+
+
