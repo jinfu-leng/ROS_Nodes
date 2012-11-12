@@ -1,0 +1,77 @@
+
+
+
+// includes
+#include <task.h>
+
+void Task::flyToPoint(string str) {
+  size_t pos;
+  pos = str.find_first_of(",");
+  if ((pos != string::npos) && (pos > 1) && str.size() > (pos + 1)) {
+    double x = atof(str.substr(1, pos-1).c_str());
+    str = str.substr(pos+1);
+    pos = str.find_first_of(",");
+    if ((pos != string::npos) && (pos > 0) && str.size() > (pos + 1)) {
+      double y = atof(str.substr(0, pos).c_str());
+      str = str.substr(pos+1);
+      pos = str.find_first_of(",");
+      if ((pos != string::npos) && (pos > 0) && str.size() > (pos + 1)) {
+        double z = atof(str.substr(0, pos).c_str());
+        str = str.substr(pos+1);
+        double w = atof(str.c_str());
+
+        toPoint(x, y, z, w);
+      }
+    }
+    else {
+      ROS_INFO("Wrong point format!");
+    }
+  }
+  else {
+    ROS_INFO("Wrong point format!");
+  }
+
+}
+
+
+void Task::toPoint(double x, double y, double z, double w){
+  // mutex lock
+  mutex_.lock();
+
+  task_pose_.translation.x = x;
+  task_pose_.translation.y = y;
+  task_pose_.translation.z = z;
+  task_pose_.rotation.z = w;
+  get_way_pose_ = false;
+
+  mutex_.unlock();
+  ros::Duration(point_update_delay_).sleep();
+  mutex_.lock();
+  while (!get_way_pose_) {
+    mutex_.unlock();
+    ros::Duration(0.1).sleep();
+    mutex_.lock();
+  }
+
+  // mutex unlock
+  mutex_.unlock();
+}
+
+
+void Task::stay(string str){
+  if (str.size() > 1) {
+    int sec;
+    sec = atoi(str.substr(1).c_str());
+    if (sec < 0){
+      ROS_INFO("Wrong stay parameter!");
+    }
+    else {
+      stay_ = true;
+      ros::Duration((double)sec).sleep();
+      stay_= false;
+    }
+  }  
+  else{
+    ROS_INFO("Wrong stay parameter!");
+  }
+}

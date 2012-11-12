@@ -1,0 +1,202 @@
+
+
+
+// includes
+#include <task.h>
+
+
+
+void Task::changeState(string str) {
+  if (str.size() > 1) {
+    int s;
+    s = atoi(str.substr(1).c_str());
+	mutex_.lock();
+    switch (s) {
+      case 0:
+        ctrl_state_.state = 0;
+        get_state_ = false;
+        break;
+      case 1:
+        if (subject_ctrl_state_msg_.state == 0) {
+          ctrl_state_.state = 1;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong command control state!");
+        }
+        break;
+      case 2:
+        if (subject_ctrl_state_msg_.state == 1) {
+          ctrl_state_.state = 2;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      case 3:
+        if (subject_ctrl_state_msg_.state == 4) {
+          ctrl_state_.state = 3;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      case 4:
+	    if (subject_ctrl_state_msg_.state == 6) {
+          ctrl_state_.state = 4;
+          get_state_ = false;
+        }else{
+          ROS_INFO("Wrong control state!");
+	    }
+        break;
+      case 5:
+        if (subject_ctrl_state_msg_.state == 4) {
+          ctrl_state_.state = 5;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      case 6:
+        if (subject_ctrl_state_msg_.state == 7) {
+          ctrl_state_.state = 6;  
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      case 7:
+        if (subject_ctrl_state_msg_.state == 8) {
+          ctrl_state_.state = 7;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      case 8:
+        if (subject_ctrl_state_msg_.state == 7) {
+          ctrl_state_.state = 8;
+          get_state_ = false;
+        }
+        else {
+          ROS_INFO("Wrong control state!");
+        }
+        break;
+      default:
+        ROS_INFO("No such control state!");
+    }
+  }
+  else {
+    ROS_INFO("No state found!");
+  }
+
+  while(!get_state_){ 
+    mutex_.unlock();
+    ros::Duration(0.5).sleep();
+    mutex_.lock();
+  }
+
+  mutex_.unlock();
+}
+
+void Task::launch(void) {
+  mutex_.lock();
+  if (subject_ctrl_state_msg_.state == 0) {
+
+    ctrl_state_.state = 1;
+    get_state_ = false;
+    
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+    ctrl_state_.state = 2;
+    get_state_ = false;
+
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+    ctrl_state_.state = 5;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+    
+    ctrl_state_.state = 8;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+    mutex_.unlock();
+  }
+  else {
+    ROS_INFO("Error! Should start at ESTOP");
+  }
+}
+
+void Task::land(void) {
+  
+  mutex_.lock();
+  if (subject_ctrl_state_msg_.state == 8) {
+
+    ctrl_state_.state = 7;
+    get_state_ = false;    
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+    ctrl_state_.state = 6;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(land_delay_).sleep();
+      mutex_.lock();
+    }
+
+    ctrl_state_.state = 4;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+    
+    ctrl_state_.state = 3;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+	ctrl_state_.state = 0;
+    get_state_ = false;
+    while(!get_state_){
+      mutex_.unlock();
+      ros::Duration(0.5).sleep();
+      mutex_.lock();
+    }
+
+    mutex_.unlock();
+  }
+  else {
+    ROS_INFO("Error! Should start at task state!");
+  }
+}

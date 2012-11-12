@@ -1,0 +1,46 @@
+
+
+
+// includes
+#include <task.h>
+
+
+// init ros param
+void Task::initParams(void)
+{
+  // ros parameters
+  private_nh_.param("task_pub_rate", task_pub_rate_, 1.0);
+  private_nh_.param("point_update_delay", point_update_delay_, 0.0);
+  private_nh_.param("land_delay", land_delay_, 3.0);
+  private_nh_.param("pose_error", pose_error_, 0.0);
+  private_nh_.param("dir_error", dir_error_, 0.0);
+
+  // init
+  received_subject_ctrl_state_msg_ = false;
+  received_subject_pose_msg_ = false;
+  received_script_file_msg_ = false;
+  get_way_pose_ = true;
+  get_state_ = true;
+  stay_= false;
+
+
+}
+
+
+// create publishers
+void Task::initPublishers(void)
+{
+  task_pub_ = nh_.advertise<collab_msgs::SubjectPose>("task_waypose", 10, true);
+  state_pub_ = nh_.advertise<collab_msgs::SubjectCtrlState>("cmd_subject_ctrl_state", 10, true);
+
+}
+
+
+// create subscribers
+void Task::initSubscribers(void)
+{
+  subject_ctrl_state_sub_ = nh_.subscribe<collab_msgs::SubjectCtrlState>("subject_ctrl_state", 10, &Task::callbackSubjectCtrlStateMsg, this);
+  subject_pose_sub_ = nh_.subscribe<collab_msgs::SubjectPose>("subject_pose", 10, &Task::callbackSubjectPoseMsg, this);
+  script_file_sub_ = nh_.subscribe<std_msgs::String>("script_file", 10, &Task::callbackScriptFileMsg, this);
+
+}

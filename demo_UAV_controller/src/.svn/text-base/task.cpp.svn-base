@@ -1,0 +1,60 @@
+
+
+
+// includes
+#include <task.h>
+
+
+// defines
+#define ROS_PKG "script_input"
+#define ROS_NODE "task"
+
+
+// constructor
+Task::Task(void)
+  : nh_(),
+    private_nh_("~")
+{
+  // ros parameters
+  initParams();
+
+  // create publishers
+  initPublishers();
+
+  // create subscribers
+  initSubscribers();
+
+  // start machine thread
+  startTaskThread();
+}
+
+
+// destructor
+Task::~Task(void)
+{
+  // stop threads
+  stopTaskThread();
+}
+
+
+// main function
+int main(int32_t argc, char **argv)
+{
+  // initialize ros node handle
+  ros::init(argc, argv, ROS_NODE);
+
+  // print start to log file
+  ROS_INFO("Started node %s\n", ROS_NODE);
+
+  // create class instance
+  Task one_task;
+
+  // ros spin
+  ros::spin();
+
+  // print termination to log file
+  ROS_INFO("Stopped node %s\n", ROS_NODE);
+
+  // return success
+  return(0);           
+}

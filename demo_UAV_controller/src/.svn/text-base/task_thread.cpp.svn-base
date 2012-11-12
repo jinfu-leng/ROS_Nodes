@@ -1,0 +1,155 @@
+
+// includes
+#include <task.h>
+
+
+// start task thread
+void Task::startTaskThread(void) {
+  task_thread_ = boost::shared_ptr<boost::thread>
+    (new boost::thread(boost::bind(&Task::taskThread, this)));
+}
+
+
+// task thread
+void Task::taskThread(void) {
+
+
+  // start task pub thread
+  startTaskPubThread();
+  
+  // start state pub thread
+  startStatePubThread();
+
+  // wait for file to be received
+  while(ros::ok()) {
+    if(received_script_file_msg_) {
+      ifstream infile;
+      infile.exceptions ( ifstream::badbit ); 
+      try {
+        string file = script_file_msg_.data;
+        infile.open(file.c_str());
+        string str;
+        size_t pos;
+        while(!infile.eof()) { // To get you all the lines.
+          getline(infile, str); // Saves the line in str.
+          if(str[0]!='#'){
+            pos = str.find_first_of(":");
+            if((str.size() > 2) && (pos != string::npos)) {    
+              if(pos != 0) {
+                if (str.compare(0, pos, "state") == 0){
+                  changeState(str.substr(pos));
+                }
+                else if (str.compare(0, pos, "point") == 0){
+                  flyToPoint(str.substr(pos));
+                }
+                else if (str.compare(0, pos, "stay") == 0){
+                  stay(str.substr(pos));
+                }
+                else {
+                  ROS_INFO("Wrong command!");
+                }
+              }
+              else {
+                ROS_INFO("Wrong command!");
+              }
+            }
+            else if ((str.size() > 1) && (pos == string::npos)){
+              if (str.compare("launch") == 0) {
+                launch();
+              }
+              else if (str.compare("land") == 0) {
+                land();
+              }
+              else {
+                ROS_INFO("Wrong command!");
+              }
+            }
+          }
+        }
+      }
+      catch (ifstream::failure e) {
+        ROS_INFO("Exception opening/reading file!");
+      }
+      infile.close();
+      received_script_file_msg_ = false;
+    }
+    
+    ros::Duration(0.5).sleep();
+  }
+
+  // stop pub thread
+  stopTaskPubThread();
+  stopStatePubThread();
+}
+
+
+// stop task thread
+void Task::stopTaskThread(void)
+{
+  task_thread_->join();
+}
+
+
+// start task pub thread
+void Task::startTaskPubThread(void)
+{
+  task_pub_thread_ = boost::shared_ptr<boost::thread>
+    (new boost::thread(boost::bind(&Task::taskPubThread, this)));
+}
+
+
+// task pub thread
+void Task::taskPubThread(void)
+{
+  ros::Rate pub_rate(task_pub_rate_);
+  while(ros::ok())
+  { 
+    mutex_.lock();
+    if(!get_way_pose_){
+      task_pub_.publish(task_pose_);
+    }
+    mutex_.unlock();
+    pub_rate.sleep();
+  }
+}
+
+
+// stop task pub thread
+void Task::stopTaskPubThread(void)
+{
+  task_pub_thread_->join();
+}
+
+
+// start state pub thread
+void Task::startStatePubThread(void)
+{
+  state_pub_thread_ = boost::shared_ptr<boost::thread>
+    (new boost::thread(boost::bind(&Task::statePubThread, this)));
+}
+
+
+// state pub thread
+void Task::statePubThread(void)
+{
+  ros::Rate pub_rate(task_pub_rate_);
+  while(ros::ok())
+  {
+    if(!get_state_)
+    {  
+      mutex_.lock();
+      state_pub_.publish(ctrl_state_);
+      mutex_.unlock();
+      pub_rate.sleep();
+    }
+  }
+}
+
+
+// stop state pub thread
+void Task::stopStatePubThread(void)
+{
+  state_pub_thread_->join();
+}
+
+

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/UAV/!svn/ver/1100/ros-projects/mitAscTec/script_input/src
+END
+task.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/UAV/!svn/ver/1076/ros-projects/mitAscTec/script_input/src/task.cpp
+END
+task_init.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/UAV/!svn/ver/1100/ros-projects/mitAscTec/script_input/src/task_init.cpp
+END
+task_changeState.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/UAV/!svn/ver/1076/ros-projects/mitAscTec/script_input/src/task_changeState.cpp
+END
+task_flyToPoint.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/UAV/!svn/ver/1100/ros-projects/mitAscTec/script_input/src/task_flyToPoint.cpp
+END
+task_thread.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/UAV/!svn/ver/1076/ros-projects/mitAscTec/script_input/src/task_thread.cpp
+END
+task_callback.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/UAV/!svn/ver/1076/ros-projects/mitAscTec/script_input/src/task_callback.cpp
+END
