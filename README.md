@@ -1,4 +1,5 @@
 ROS_Nodes
 =========
+I worked for the NIMBUS lab, and the lab mainly fouce on UAV research.
 
-Collection of my ros nodes. My work mainly focus on UAV in NIMBUS lab.
+This is the collection of my ROS(Robtic Operating System) nodes.
