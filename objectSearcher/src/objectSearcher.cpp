@@ -6,18 +6,21 @@
 #include "collab_msgs/SubjectPose.h"
 #include "math.h"
 
-const int NO_OBJECT = -1, TRYING_HOVER = 0, HOVERING = 1;
+const int NO_OBJECT = -1, TRYING_HOVER = 0, TRYING_LAND = 1;
+const int ON_GROUND = -1, SEARCHING = 0, FINISHED = 1;
+
 const double UAV_HEIGHT = 1;
 const double startX = 0, startY = 0;
 const double UAV_ROTATION_X = 0;
-const int ON_GROUND = -1, SEARCHING = 0, FINISHED = 1;
 const double SEARCH_R = 2.5, SEARCH_STEP = 0.3;
 const double PI = 3.1415926;
-
+const double deadZoneX = 0.3, deadZoneY = 0.3;
 const int toleratedRange = 50;
 const double adjustHoverStep = 0.03;
 double lastHoverX, lastHoverY;
 
+const double objectDetectionWaitingTime = 10; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
+double lastObjectDetectionTime = -1;
 
 /* Debug */
 double SEARCH_STEP_X_DEBUG = 0.2;
@@ -26,8 +29,6 @@ const double xMin = -1.99, xMax = 1.99;
 const double yMin = -1.99, yMax = 1.99;
 const int SEARCH_TIMES = 40;
 int searchTimes = 0;
-const int HOVER_TIMES = 60; //if the UAV can not successfully hover during these times, then give up and move on
-int hoverTimes = 0; 
 
 using namespace std;
 
@@ -68,6 +69,7 @@ private:
 
 	// other functions
 	void Hover();
+	void LandOnObject();
 	void Launch();
 	void Land();
 	void FlytoPoint(double x, double y, double z=UAV_HEIGHT, double w=UAV_ROTATION_X);
@@ -117,6 +119,7 @@ ObjectSearcher::ObjectSearcher(){
 // callback functions
 void ObjectSearcher::callbackUAVSubjectCtrlStateMsg(const collab_msgs::SubjectCtrlState &subject_ctrl_state_msg){
 	UAV_subject_ctrl_state_ = subject_ctrl_state_msg;
+	if(UAV_subject_ctrl_state_.state == 8 && searchStatus == ON_GROUND) searchStatus = SEARCHING;
 }
 
 void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg){
@@ -125,14 +128,14 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 		searchStatus = FINISHED;
 		Land();
 	}
+
+
 	if(searchStatus == ON_GROUND){
-		ros::Duration(10).sleep();	
 		Launch();
-		searchStatus = SEARCHING;
 	}
 	else if(searchStatus == SEARCHING){
 		if(hoverStatus.status == NO_OBJECT){
-			if(ABS(UAV_subject_pose_.translation.x-lastX)<0.25&&ABS(UAV_subject_pose_.translation.y-lastY)<0.30){
+			if(ABS(UAV_subject_pose_.translation.x-lastX)<deadZoneX&&ABS(UAV_subject_pose_.translation.y-lastY)<deadZoneY){
 				if(searchTimes >= SEARCH_TIMES){
 					searchStatus = FINISHED;
 				}
@@ -144,7 +147,6 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 					lastX = x;
 					lastY = y;
 					FlytoPoint(x,y);
-					searchTimes++;	
 				}
 /*
 				if(r>SEARCH_R){
@@ -168,31 +170,34 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 			}
 		}
 		else if(hoverStatus.status==TRYING_HOVER){
-			hoverTimes++;
-			ROS_INFO("hoverTimes %d",hoverTimes);
-			if(hoverTimes>HOVER_TIMES){
+			double currentTime = ros::Time::now().toSec();
+			ROS_INFO("current time: %lf last ball detection %lf",currentTime,lastObjectDetectionTime);
+			if(currentTime-lastObjectDetectionTime>objectDetectionWaitingTime){
 				hoverStatus.status=NO_OBJECT;
 				ROS_INFO("No object");
 			}
 		}
 	}
-	else{
+	else if(searchStatus == Finished){
 		Land();
 	}
+	else{
+		ROS_INFO("Search Status Error!");
+	}
+	hoverStatus_pub_.publish(hoverStatus);
 }
 
 void ObjectSearcher::callbackReceiveLocation(const ballDetector::ballLocation& location){
 	if(location.radius<10) return;
+	ROS_INFO("Received object location");
+	lastObjectDetectionTime = ros::Time::now().toSec(); 
 	if(hoverStatus.status == NO_OBJECT){
 		hoverStatus.status = TRYING_HOVER;
 		lastHoverX = lastX;
 		lastHoverY = lastY;
 	}
-	hoverTimes = 0;
 	ballLocation = location;
 	Hover();
-	hoverStatus_pub_.publish(hoverStatus);
-	ROS_INFO("Trying to hover");
 }
 
 
@@ -220,7 +225,7 @@ void ObjectSearcher::Launch() {
 void ObjectSearcher::Land() {
 	if (UAV_subject_ctrl_state_.state==8) {
 		if(UAV_subject_ctrl_state_.state>7) ChangeState(7);
-		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,5);
+		if(UAV_subject_ctrl_state_.state>6) ChangeState(6);
 		if(UAV_subject_ctrl_state_.state>4) ChangeState(4);
 		if(UAV_subject_ctrl_state_.state>3) ChangeState(3);
 		if(UAV_subject_ctrl_state_.state>0) ChangeState(0,1);
