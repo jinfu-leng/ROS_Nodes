@@ -247,7 +247,7 @@ void ObjectSearcher::FlytoPoint(double x, double y, double z, double w){
 }
 
 void ObjectSearcher::Hover(){
-	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY){
+	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY||ABS(UAV_subject_pose_.translation.z-lastHoverZ)>0.1){
 		FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
 		return;
 	}
