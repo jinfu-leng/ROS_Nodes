@@ -18,7 +18,7 @@ const double deadZoneX = 0.3, deadZoneY = 0.3;
 const int toleratedRange = 60;
 const double adjustHoverStep = 0.03;
 const double adjustLandStep = 0.1;
-const double LAND_HEIGHT = 0.6; // the height that the UAV can turn off the motor and then land
+const double LAND_HEIGHT = 0.3; // the height that the UAV can turn off the motor and then land
 
 
 const double objectDetectionWaitingTime = 10; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
@@ -150,6 +150,7 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 					lastX = x;
 					lastY = y;
 					FlytoPoint(x,y);
+					searchTimes++;
 				}
 /*
 				if(r>SEARCH_R){
@@ -229,7 +230,7 @@ void ObjectSearcher::Launch() {
 void ObjectSearcher::Land() {
 	if (UAV_subject_ctrl_state_.state==8) {
 		if(UAV_subject_ctrl_state_.state>7) ChangeState(7);
-		if(UAV_subject_ctrl_state_.state>6) ChangeState(6);
+		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,5);
 		if(UAV_subject_ctrl_state_.state>4) ChangeState(4);
 		if(UAV_subject_ctrl_state_.state>3) ChangeState(3);
 		if(UAV_subject_ctrl_state_.state>0) ChangeState(0,1);
@@ -247,7 +248,7 @@ void ObjectSearcher::FlytoPoint(double x, double y, double z, double w){
 
 void ObjectSearcher::Hover(){
 	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY){
-		FlytoPoint(lastHoverX,lastHoverY);
+		FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
 		return;
 	}
 	bool inLandZone = true;
