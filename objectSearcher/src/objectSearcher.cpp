@@ -8,17 +8,17 @@
 
 const int NO_OBJECT = -1, TRYING_HOVER = 0, TRYING_LAND = 1;
 const int ON_GROUND = -1, SEARCHING = 0, FINISHED = 1;
-
+const int CAMERA_OFFSET_X = 0, CAMERA_OFFSET_Y = -60;
 const double UAV_HEIGHT = 1;
 const double startX = 0, startY = 0;
 const double UAV_ROTATION_X = 0;
 const double SEARCH_R = 2.5, SEARCH_STEP = 0.3;
 const double PI = 3.1415926;
 const double deadZoneX = 0.3, deadZoneY = 0.3;
-const int toleratedRange = 60;
+const int toleratedRange = 70;
 const double adjustHoverStep = 0.03;
 const double adjustLandStep = 0.1;
-const double LAND_HEIGHT = 0.3; // the height that the UAV can turn off the motor and then land
+const double LAND_HEIGHT = 0.4; // the height that the UAV can turn off the motor and then land
 
 
 const double objectDetectionWaitingTime = 10; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
@@ -194,6 +194,7 @@ void ObjectSearcher::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &s
 void ObjectSearcher::callbackReceiveLocation(const ballDetector::ballLocation& location){
 	if(location.radius<10) return;
 	ROS_INFO("Received object location");
+	if(searchStatus == FINISHED) return;
 	lastObjectDetectionTime = ros::Time::now().toSec(); 
 	if(hoverStatus.status == NO_OBJECT){
 		hoverStatus.status = TRYING_HOVER;
@@ -247,7 +248,7 @@ void ObjectSearcher::FlytoPoint(double x, double y, double z, double w){
 }
 
 void ObjectSearcher::Hover(){
-	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY||ABS(UAV_subject_pose_.translation.z-lastHoverZ)>0.1){
+	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY||UAV_subject_pose_.translation.z-lastHoverZ>0.2){
 		FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
 		return;
 	}
@@ -258,8 +259,8 @@ void ObjectSearcher::Hover(){
 		else x +=  adjustHoverStep;
 		inLandZone = false;
 	}
-	if(abs(ballLocation.y)>toleratedRange){
-		if(ballLocation.y>0) y -= adjustHoverStep;
+	if(abs(ballLocation.y-CAMERA_OFFSET_Y)>toleratedRange){
+		if(ballLocation.y-CAMERA_OFFSET_Y>0) y -= adjustHoverStep;
 		else y +=  adjustHoverStep;
 		inLandZone = false;
 	}
@@ -270,7 +271,7 @@ void ObjectSearcher::Hover(){
 	lastHoverX = x;
 	lastHoverY = y;
 
-	if(lastHoverZ<LAND_HEIGHT){
+	if(lastHoverZ<=LAND_HEIGHT){
 		searchStatus = FINISHED;
 		Land();		
 	}
