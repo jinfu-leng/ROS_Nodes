@@ -15,10 +15,10 @@ const double UAV_ROTATION_X = 0;
 const double SEARCH_R = 2.5, SEARCH_STEP = 0.3;
 const double PI = 3.1415926;
 const double deadZoneX = 0.3, deadZoneY = 0.3;
-const int toleratedRange = 70;
+const int toleratedRange = 50;
 const double adjustHoverStep = 0.03;
-const double adjustLandStep = 0.1;
-const double LAND_HEIGHT = 0.4; // the height that the UAV can turn off the motor and then land
+const double adjustLandStep = 0.2;
+const double LAND_HEIGHT = 0.3; // the height that the UAV can turn off the motor and then land
 
 
 const double objectDetectionWaitingTime = 10; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
@@ -221,7 +221,7 @@ void ObjectSearcher::ChangeState(int state, double sleepTime) {
 void ObjectSearcher::Launch() {
 	if(UAV_subject_ctrl_state_.state!=8){
 		if(UAV_subject_ctrl_state_.state<1) ChangeState(1);
-		if(UAV_subject_ctrl_state_.state<2) ChangeState(2,10);
+		if(UAV_subject_ctrl_state_.state<2) ChangeState(2,7);
 		if(UAV_subject_ctrl_state_.state<5) ChangeState(5);
 		if(UAV_subject_ctrl_state_.state<8) ChangeState(8,2);
 		FlytoPoint(startX,startY,UAV_HEIGHT,UAV_ROTATION_X);
@@ -230,8 +230,8 @@ void ObjectSearcher::Launch() {
 
 void ObjectSearcher::Land() {
 	if (UAV_subject_ctrl_state_.state==8) {
-		if(UAV_subject_ctrl_state_.state>7) ChangeState(7);
-		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,5);
+		if(UAV_subject_ctrl_state_.state>7) ChangeState(7,1);
+		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,1);
 		if(UAV_subject_ctrl_state_.state>4) ChangeState(4);
 		if(UAV_subject_ctrl_state_.state>3) ChangeState(3);
 		if(UAV_subject_ctrl_state_.state>0) ChangeState(0,1);
