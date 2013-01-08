@@ -8,28 +8,28 @@
 
 const int NO_OBJECT = -1, TRYING_HOVER = 0, TRYING_LAND = 1;
 const int ON_GROUND = -1, SEARCHING = 0, FINISHED = 1;
-const int CAMERA_OFFSET_X = 0, CAMERA_OFFSET_Y = -60;
+const int CAMERA_OFFSET_X = 0, CAMERA_OFFSET_Y = 60;
 const double UAV_HEIGHT = 1;
 const double startX = 0, startY = 0;
 const double UAV_ROTATION_X = 0;
 const double SEARCH_R = 2.5, SEARCH_STEP = 0.3;
 const double PI = 3.1415926;
 const double deadZoneX = 0.3, deadZoneY = 0.3;
-const int toleratedRange = 50;
-const double adjustHoverStep = 0.03;
+const int toleratedRange = 100;
+const double adjustHoverStep = 0.02;
 const double adjustLandStep = 0.2;
-const double LAND_HEIGHT = 0.3; // the height that the UAV can turn off the motor and then land
+const double LAND_HEIGHT = 0.7; // the height that the UAV can turn off the motor and then land
 
 
-const double objectDetectionWaitingTime = 10; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
+const double objectDetectionWaitingTime = 5; //if the UAV can not get the position of the ball during this period(second), then the UAV will give up
 double lastObjectDetectionTime = -1;
 
 /* Debug */
 double SEARCH_STEP_X_DEBUG = 0.2;
 double SEARCH_STEP_Y_DEBUG = 0.0;
-const double xMin = -1.99, xMax = 1.99;
-const double yMin = -1.99, yMax = 1.99;
-const int SEARCH_TIMES = 40;
+const double xMin = -2.2, xMax = 2.2;
+const double yMin = -2, yMax = 2;
+const int SEARCH_TIMES = 44;
 int searchTimes = 0;
 
 using namespace std;
@@ -221,7 +221,7 @@ void ObjectSearcher::ChangeState(int state, double sleepTime) {
 void ObjectSearcher::Launch() {
 	if(UAV_subject_ctrl_state_.state!=8){
 		if(UAV_subject_ctrl_state_.state<1) ChangeState(1);
-		if(UAV_subject_ctrl_state_.state<2) ChangeState(2,7);
+		if(UAV_subject_ctrl_state_.state<2) ChangeState(2,3);
 		if(UAV_subject_ctrl_state_.state<5) ChangeState(5);
 		if(UAV_subject_ctrl_state_.state<8) ChangeState(8,2);
 		FlytoPoint(startX,startY,UAV_HEIGHT,UAV_ROTATION_X);
@@ -230,10 +230,11 @@ void ObjectSearcher::Launch() {
 
 void ObjectSearcher::Land() {
 	if (UAV_subject_ctrl_state_.state==8) {
+		//FlytoPoint(UAV_subject_pose_.translation.x,UAV_subject_pose_.translation.y,0.2);
 		if(UAV_subject_ctrl_state_.state>7) ChangeState(7,1);
-		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,1);
-		if(UAV_subject_ctrl_state_.state>4) ChangeState(4);
-		if(UAV_subject_ctrl_state_.state>3) ChangeState(3);
+		if(UAV_subject_ctrl_state_.state>6) ChangeState(6,5);
+		if(UAV_subject_ctrl_state_.state>4) ChangeState(4,1);
+		if(UAV_subject_ctrl_state_.state>3) ChangeState(3,1);
 		if(UAV_subject_ctrl_state_.state>0) ChangeState(0,1);
 	}
 }
@@ -248,7 +249,12 @@ void ObjectSearcher::FlytoPoint(double x, double y, double z, double w){
 }
 
 void ObjectSearcher::Hover(){
-	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY||UAV_subject_pose_.translation.z-lastHoverZ>0.2){
+	if(UAV_subject_pose_.translation.z<0.25){
+		searchStatus = FINISHED;
+		Land();
+		return;
+	}
+	if(ABS(UAV_subject_pose_.translation.x-lastHoverX)>deadZoneX||ABS(UAV_subject_pose_.translation.y-lastHoverY)>deadZoneY||UAV_subject_pose_.translation.z-lastHoverZ>0.1){
 		FlytoPoint(lastHoverX,lastHoverY,lastHoverZ);
 		return;
 	}
@@ -271,7 +277,7 @@ void ObjectSearcher::Hover(){
 	lastHoverX = x;
 	lastHoverY = y;
 
-	if(lastHoverZ<=LAND_HEIGHT){
+	if((inLandZone==true && UAV_subject_pose_.translation.z<=LAND_HEIGHT)){
 		searchStatus = FINISHED;
 		Land();		
 	}

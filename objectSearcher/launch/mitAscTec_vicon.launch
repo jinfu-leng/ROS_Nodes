@@ -6,7 +6,7 @@
       <param name="serial_device" value="/dev/ttyUSB0"/>
     </node>
   
-    <node name="pid_ctrl" type="quad_pid1" pkg="pose_control">
+    <node name="pid_ctrl" type="quad_pid" pkg="pose_control">
       <param name="ctrl_rate" value="20.0"/>
       <param name="k_prop_pitch" value="-0.2"/>
       <param name="k_prop_roll" value="-0.2"/>
