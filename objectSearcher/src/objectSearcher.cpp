@@ -9,12 +9,12 @@
 const int NO_OBJECT = -1, TRYING_HOVER = 0, TRYING_LAND = 1;
 const int ON_GROUND = -1, SEARCHING = 0, FINISHED = 1;
 const int CAMERA_OFFSET_X = 0, CAMERA_OFFSET_Y = 60;
-const double UAV_HEIGHT = 1;
-const double startX = 0, startY = 0;
+const double UAV_HEIGHT = 1.5;
+const double startX = 0, startY = -0.4;
 const double UAV_ROTATION_X = 0;
 const double SEARCH_R = 2.5, SEARCH_STEP = 0.3;
 const double PI = 3.1415926;
-const double deadZoneX = 0.3, deadZoneY = 0.3;
+const double deadZoneX = 0.2, deadZoneY = 0.2;
 const int toleratedRange = 100;
 const double adjustHoverStep = 0.02;
 const double adjustLandStep = 0.2;
@@ -29,7 +29,7 @@ double SEARCH_STEP_X_DEBUG = 0.2;
 double SEARCH_STEP_Y_DEBUG = 0.0;
 const double xMin = -2.2, xMax = 2.2;
 const double yMin = -2, yMax = 2;
-const int SEARCH_TIMES = 44;
+const int SEARCH_TIMES = 88;
 int searchTimes = 0;
 
 using namespace std;
