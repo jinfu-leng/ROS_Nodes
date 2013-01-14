@@ -1,0 +1,14 @@
+<package>
+  <description brief="bluefox_cam">
+
+     bluefox_cam
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/bluefox_cam</url>
+  <depend package="image_transport"/>
+</package>
+
+
