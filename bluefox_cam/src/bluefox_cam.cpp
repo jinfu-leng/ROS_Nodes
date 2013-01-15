@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <ros/ros.h>
+#include <sensor_msgs/fill_image.h>
 #include <image_transport/image_transport.h>
 #include <exampleHelper.h>
 
-#define PRESS_A_KEY_AND_RETURN			\
-	cout << "Press a key..." << endl;	\
-	getchar(); \
-	return 0;
 using namespace std;
 
 #ifdef linux
@@ -149,10 +146,11 @@ private:
 	DeviceManager devMgr;
 	Device* pDev;
 
+	// ros
 	ros::NodeHandle nh;
-
-	// publish
 	image_transport::CameraPublisher image_pub_;	
+	sensor_msgs::Image img_;
+	sensor_msgs::CameraInfo info_;
 };
 
 BluefoxCam::BluefoxCam()
@@ -165,6 +163,7 @@ BluefoxCam::BluefoxCam()
 	nh.param("image_width", width, 640);
 	nh.param("image_height", height, 480);
 	nh.param("image_blackwhite", blackWhite, 0);
+	//nh.param("pixel_format", pixelFormat, std::string("ibpfYUV422Packed"));
 	//nh.param("pixel_format", pixelFormat, std::string("mjpeg")); // possible values: yuyv, uyvy, mjpeg
 	//nh.param("autofocus", autofocus_, false); // enable/disable autofocus
 
@@ -172,6 +171,9 @@ BluefoxCam::BluefoxCam()
 	boStoreFrames=true;
 	defaultRequestCount = -1;
 	pDev = 0;
+
+	info_.height = height;
+ 	info_.width = width;
 }
 BluefoxCam::~BluefoxCam()
 {
@@ -305,6 +307,8 @@ void BluefoxCam::LiveLoop(bool boStoreFrames, bool boSingleShotMode )
 
 	// If this is color sensor, we will NOT convert the Bayer data into a RGB image as this
 	// will cost a lot of time on an embedded system
+
+
 	ImageProcessing ip(pDev);
 	if( (bool)blackWhite && ip.colorProcessing.isValid() )
 	{
@@ -369,6 +373,9 @@ void BluefoxCam::LiveLoop(bool boStoreFrames, bool boSingleShotMode )
 			if( pRequest->isOK() )
 			{
 				++cnt;
+				fillImage(img_, "bgra8", pRequest->imageHeight.read(), pRequest->imageWidth.read(), 4 *pRequest->imageWidth.read(), pRequest->imageData.read());
+				image_pub_.publish(img_, info_);
+
 				// here we can display some statistical information every 100th image
 				if( cnt%100 == 0 )
 				{
