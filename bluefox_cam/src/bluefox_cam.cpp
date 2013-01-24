@@ -25,7 +25,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/fill_image.h>
 #include <image_transport/image_transport.h>
-#include <exampleHelper.h>
+#include <bluefox_cam.h>
 
 using namespace std;
 
