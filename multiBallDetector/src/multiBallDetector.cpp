@@ -43,8 +43,8 @@ struct Node{
   int index;
   int cnt;
 };
-bool operator<(const Node &a, const Node &b){
-	return a.cnt<b.cnt;
+bool operator>(const Node &a, const Node &b){
+	return a.cnt>b.cnt;
 }
 
 
@@ -67,7 +67,7 @@ private:
   image_transport::Subscriber image_sub_;
 
   int ball_num;
-  priority_queue<Node,vector<Node>,less<vector<Node>::value_type> > candidates;
+  priority_queue<Node,vector<Node>,greater<vector<Node>::value_type> > candidates;
 
   //Publishers for the min/max hsv values we see in the center of the window
   ros::Publisher lowh_pub_, lows_pub_, lowv_pub_;
@@ -135,7 +135,7 @@ MultiBallDetector::MultiBallDetector()
     highv_pub_ = nh.advertise<std_msgs::Float64>("hsv/center/high/v", 1);
 
     // Get the number of the balls required to be detected
-    nh.param("ball_num",ball_num,4);
+    nh.param("ball_num",ball_num,3);
 
     circle_pub_ = nh.advertise<multiBallDetector::ballLocation>("ballLocation", 1);
 
@@ -295,12 +295,14 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
           //If there are more points in it than our previous max, then record it
           //N.B. contours.at(idx).size() isn't all points, rather a
           //representation of them...but it seems to map fairly well.
+
           Node node;
           node.index = idx;
           node.cnt = contours.at(idx).size();
           candidates.push(node);
           if(candidates.size()>ball_num)
             candidates.pop();
+
           if(idxMaxValue < contours.at(idx).size()){
             idxMaxValue = contours.at(idx).size();
             idxMax = idx;
@@ -311,12 +313,13 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
   }
 
 
-
   //Make sure we found a good one
-  if(idxMax >= 0){
-
+  while(!candidates.empty()){
+    int index = candidates.top().index;
+    candidates.pop();
+    
     //Now publish and draw the best
-    cv::RotatedRect ellipse = cv::fitEllipse(cv::Mat(contours.at(idxMax)));
+    cv::RotatedRect ellipse = cv::fitEllipse(cv::Mat(contours.at(index)));
     cv::Rect rect = ellipse.boundingRect();
     //Publish the message for the best
     multiBallDetector::ballLocation circ;
