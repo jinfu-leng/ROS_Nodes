@@ -26,10 +26,9 @@
 #include <sensor_msgs/image_encodings.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Vector3.h>
-#include <multiBallDetector/ballLocation.h>
+#include <multiBallDetector/ballLocations.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
 #include <vector>
 #include <queue>
 using namespace std;
@@ -137,7 +136,7 @@ MultiBallDetector::MultiBallDetector()
     // Get the number of the balls required to be detected
     nh.param("ball_num",ball_num,3);
 
-    circle_pub_ = nh.advertise<multiBallDetector::ballLocation>("ballLocation", 1);
+    circle_pub_ = nh.advertise<multiBallDetector::ballLocations>("ballLocations", 1);
 
 #ifdef BALLDETECTOR_DEBUG
     //Advertise debug images
@@ -312,27 +311,23 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
     }  
   }
 
+  //Prepare the message
+  multiBallDetector::ballLocations ballLocations;
+  ballLocations.header.stamp = ros::Time::now();
+  ballLocations.imageWidth = colorImg.cols;
+  ballLocations.imageHeight = colorImg.rows;
+  ballLocations.num = candidates.size();
 
-  //Make sure we found a good one
   while(!candidates.empty()){
     int index = candidates.top().index;
     candidates.pop();
-    
-    //Now publish and draw the best
     cv::RotatedRect ellipse = cv::fitEllipse(cv::Mat(contours.at(index)));
     cv::Rect rect = ellipse.boundingRect();
-    //Publish the message for the best
-    multiBallDetector::ballLocation circ;
-    circ.header.stamp = ros::Time::now();
-    //Use the average of the height and width as the radius
     double radius = (rect.height/2.0 + rect.width/2.0)/2.0;
-    circ.imageWidth = colorImg.cols;
-    circ.imageHeight = colorImg.rows;
-    //Make it relative to the center of the image
-    circ.x = rect.x + radius - threshImg.cols/2;
-    circ.y = -1*(rect.y + radius - threshImg.rows/2);
-    circ.radius = radius;
-    circle_pub_.publish(circ);
+    ballLocations.x.push_back(rect.x + radius - threshImg.cols/2);
+    ballLocations.y.push_back(-1*(rect.y + radius - threshImg.rows/2));
+    ballLocations.radius.push_back(radius);
+
 #ifdef BALLDETECTOR_DEBUG
     //Draw the best one bold
     cv::ellipse(colorImg,ellipse,cv::Scalar(0,255,0,0),4);
@@ -398,6 +393,7 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
                   cv::Scalar(0,0,255,0),2);
 #endif /** BALLDETECTOR_DEBUG **/
   }
+  circle_pub_.publish(ballLocations);
 
 
 
