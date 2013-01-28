@@ -236,8 +236,6 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
 
   // iterate through all the top-level contours,
   // draw each connected component with its own random color
-  int idxMax = -1;
-  unsigned int idxMaxValue = 0;
   int idx = 0;
   if(hierarchy.size() > 0){
     for( ; idx >= 0; idx = hierarchy[idx][0] ){
@@ -301,11 +299,6 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
           candidates.push(node);
           if(candidates.size()>ball_num)
             candidates.pop();
-
-          if(idxMaxValue < contours.at(idx).size()){
-            idxMaxValue = contours.at(idx).size();
-            idxMax = idx;
-          }
         }
       }
     }  
@@ -317,7 +310,6 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
   ballLocations.imageWidth = colorImg.cols;
   ballLocations.imageHeight = colorImg.rows;
   ballLocations.num = candidates.size();
-
   while(!candidates.empty()){
     int index = candidates.top().index;
     candidates.pop();
@@ -344,8 +336,8 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
     //Just needs to be bigger than max image width/height
     int minX = 999999999, minY = 999999999;
     unsigned int minXidx = 0, minYidx = 0;
-    for(unsigned int i = 0; i < contours.at(idxMax).size(); i++){
-      cv::Point p = contours.at(idxMax).at(i);
+    for(unsigned int i = 0; i < contours.at(index).size(); i++){
+      cv::Point p = contours.at(index).at(i);
       //printf("%d: [%d,%d] ",i,p.x,p.y);
       if(p.x > maxX){
         maxXidx = i;
@@ -368,28 +360,28 @@ void MultiBallDetector::imageCb(const sensor_msgs::ImageConstPtr& msg){
 
     //draw max/min points
     cv::rectangle(colorImg,
-                  cv::Point(contours.at(idxMax).at(maxXidx).x - 1, 
-                            contours.at(idxMax).at(maxXidx).y - 1),
-                  cv::Point(contours.at(idxMax).at(maxXidx).x + 1, 
-                            contours.at(idxMax).at(maxXidx).y + 1),
+                  cv::Point(contours.at(index).at(maxXidx).x - 1, 
+                            contours.at(index).at(maxXidx).y - 1),
+                  cv::Point(contours.at(index).at(maxXidx).x + 1, 
+                            contours.at(index).at(maxXidx).y + 1),
                   cv::Scalar(0,0,255,0),2);
     cv::rectangle(colorImg,
-                  cv::Point(contours.at(idxMax).at(maxYidx).x - 1, 
-                            contours.at(idxMax).at(maxYidx).y - 1),
-                  cv::Point(contours.at(idxMax).at(maxYidx).x + 1, 
-                            contours.at(idxMax).at(maxYidx).y + 1),
+                  cv::Point(contours.at(index).at(maxYidx).x - 1, 
+                            contours.at(index).at(maxYidx).y - 1),
+                  cv::Point(contours.at(index).at(maxYidx).x + 1, 
+                            contours.at(index).at(maxYidx).y + 1),
                   cv::Scalar(0,0,255,0),2);
     cv::rectangle(colorImg,
-                  cv::Point(contours.at(idxMax).at(minXidx).x - 1, 
-                            contours.at(idxMax).at(minXidx).y - 1),
-                  cv::Point(contours.at(idxMax).at(minXidx).x + 1, 
-                            contours.at(idxMax).at(minXidx).y + 1),
+                  cv::Point(contours.at(index).at(minXidx).x - 1, 
+                            contours.at(index).at(minXidx).y - 1),
+                  cv::Point(contours.at(index).at(minXidx).x + 1, 
+                            contours.at(index).at(minXidx).y + 1),
                   cv::Scalar(0,0,255,0),2);
     cv::rectangle(colorImg,
-                  cv::Point(contours.at(idxMax).at(minYidx).x - 1, 
-                            contours.at(idxMax).at(minYidx).y - 1),
-                  cv::Point(contours.at(idxMax).at(minYidx).x + 1, 
-                            contours.at(idxMax).at(minYidx).y + 1),
+                  cv::Point(contours.at(index).at(minYidx).x - 1, 
+                            contours.at(index).at(minYidx).y - 1),
+                  cv::Point(contours.at(index).at(minYidx).x + 1, 
+                            contours.at(index).at(minYidx).y + 1),
                   cv::Scalar(0,0,255,0),2);
 #endif /** BALLDETECTOR_DEBUG **/
   }
