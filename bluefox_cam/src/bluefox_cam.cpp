@@ -74,10 +74,51 @@ BluefoxCam::BluefoxCam() : nh("~")
 	// other values
 	defaultRequestCount = -1;
 	pDev = 0;
-
+	
+	XmlRpc::XmlRpcValue double_list;
 	info_.header.frame_id = img_.header.frame_id;
 	info_.height = height;
  	info_.width = width;
+
+	nh.getParam("K", double_list);
+
+	if ((double_list.getType() == XmlRpc::XmlRpcValue::TypeArray) &&
+		(double_list.size() == 9)) {
+		for (int i=0; i<9; i++) {
+			ROS_ASSERT(double_list[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+			info_.K[i] = double_list[i];
+		}
+	}
+
+	nh.getParam("D", double_list);
+
+	if ((double_list.getType() == XmlRpc::XmlRpcValue::TypeArray)) {
+		info_.D.resize(double_list.size());
+		for (int i=0; i<double_list.size(); i++) {
+ 			ROS_ASSERT(double_list[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+			info_.D[i] = double_list[i];
+		}
+	}
+
+	nh.getParam("R", double_list);
+
+	if ((double_list.getType() == XmlRpc::XmlRpcValue::TypeArray) &&
+		(double_list.size() == 9)) {
+		for (int i=0; i<9; i++) {
+          		ROS_ASSERT(double_list[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+          		info_.R[i] = double_list[i];
+		}
+	}
+
+	nh.getParam("P", double_list);
+
+	if ((double_list.getType() == XmlRpc::XmlRpcValue::TypeArray) &&
+		(double_list.size() == 12)) {
+		for (int i=0; i<12; i++) {
+			ROS_ASSERT(double_list[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+			info_.P[i] = double_list[i];
+		}
+	}
 
 	// publisher
 	image_transport::ImageTransport it(nh);
@@ -297,9 +338,9 @@ void BluefoxCam::LiveLoop(bool boSingleShotMode )
 }
 void BluefoxCam::Spin()
 {
-	ROS_INFO("Spin() is going well\n");
+	ROS_INFO("Bluefox_Cam is going well\n");
 	if(Initialize()==false){
-		ROS_INFO("Initialize() is not going well");
+		ROS_INFO("Bluefox_Cam is not going well");
 		return;
 	}
 
