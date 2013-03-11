@@ -1,0 +1,13 @@
+<package>
+  <description brief="topic_switcher">
+
+     topic_switcher
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/topic_switcher</url>
+  <depend package="sensor_msgs"/>
+  <depend package="topic_arbitration"/>
+</package>
