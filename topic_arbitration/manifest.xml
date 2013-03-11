@@ -1,0 +1,16 @@
+<package>
+  <description brief="Topic Arbitration">
+
+     Topic Arbitration
+
+  </description>
+  <author>Jinfu Leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/topic_arbitration</url>
+  <depend package="roscpp"/>
+  <depend package="topic_tools"/>
+
+</package>
+
+
