@@ -1,0 +1,12 @@
+<launch>
+
+	<node pkg="serial_convert_ball" name="send" type="serial_convert_send">  	
+	</node>	
+
+	<node name="RxTx" pkg="rxtx" type="RxTx">	
+	  <param name="SerialPort" value="/dev/ttyUSB0" />
+	  <param name="BaudRate" value="38400" />
+	</node>	
+	
+</launch>
+

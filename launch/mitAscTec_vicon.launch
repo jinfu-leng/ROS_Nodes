@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="robot_comm" type="serial_comm" pkg="communication">
+      <remap from="serial_rx_data" to="robot_rx_data"/>
+      <remap from="serial_tx_data" to="robot_tx_data"/>
+      <param name="serial_device" value="/dev/ttyUSB0"/>
+    </node>
+  
+    <!--node name="pid_ctrl" type="quad_pid" pkg="pose_control">
+      <param name="ctrl_rate" value="20.0"/>
+      <param name="k_prop_pitch" value="-0.2"/>
+      <param name="k_prop_roll" value="-0.2"/>
+      <param name="k_prop_yaw" value="-0.5"/>
+      <param name="k_prop_thrust" value="0.6"/>
+      <param name="k_derv_pitch" value="-0.2"/>
+      <param name="k_derv_roll" value="-0.2"/>
+    </node-->
+    <include  file="$(find collab_launch)/new_pid_ctrl.launch" />
+    <include  file="$(find collab_launch)/common.launch" />
+
+</launch>
+
