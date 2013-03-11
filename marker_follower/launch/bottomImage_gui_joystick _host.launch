@@ -1,28 +1,6 @@
 <?xml version="1.0"?>
 <launch>
 	<!--Generate relative subject_pose and task_waypose-->
-	<node launch-prefix="nice" name="bluefox_cam" pkg="bluefox_cam" type="bluefox_cam" output="screen">
-		<param name="device_num" value="0" />
-		<param name="image_width" value="640" />
-		<param name="image_height" value="480" />
-		<param name="camera_frame_id" value="usb_cam" />
-		<param name="output_stat" value="0" />
-		<rosparam param="D">[-0.47997953377832675, 0.20619995235491065, 0.002756129175344139, -0.007868117199553038, 0.0]</rosparam>
-		<rosparam param="K">[685.4979158732804, 0.0, 388.93553472754706, 0.0, 686.4491804058712, 231.7167868108757, 0.0, 0.0, 1.0]</rosparam>
-		<rosparam param="R">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]</rosparam>
-		<rosparam param="P">[595.1914672851562, 0.0, 401.9697652817995, 0.0, 0.0, 641.6710205078125, 230.94900664707166, 0.0, 0.0, 0.0, 1.0, 0.0]</rosparam>
-		<remap from="/bluefox_cam/camera_info" to="/usb_cam/camera_info"/>
-		<remap from="/bluefox_cam/image_raw" to="/usb_cam/image_raw"/>
-	</node>
-	<node name="ar_pose" pkg="ar_pose" type="ar_single" respawn="false" output="screen">
-		<param name="marker_pattern" type="string" value="$(find ar_pose)/data/patt.hiro"/>
-		<param name="marker_width" type="double" value="213.0"/>
-		<param name="marker_center_x" type="double" value="0.0"/>
-		<param name="marker_center_y" type="double" value="0.0"/>
-		<param name="threshold" type="int" value="100"/>
-		<param name="use_history" type="bool" value="true"/>
-		
-	</node>
 	<node pkg="pose_bottom_image" type="pose_bottom_image" name="pose_bottom_image" output="screen">
 		<remap from= "camera_subject_pose" to="relative_subject_pose" />
 	</node>
