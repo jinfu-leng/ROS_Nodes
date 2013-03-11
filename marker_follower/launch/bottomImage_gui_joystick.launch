@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+	<!--Generate relative subject_pose and task_waypose-->
+	<node pkg="pose_bottom_image" type="pose_bottom_image" name="pose_bottom_image" output="screen">
+		<remap from= "camera_subject_pose" to="relative_subject_pose" />
+	</node>
+
+	<!--Generate global subject_pose and task_waypose-->
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_global">
+		<param name="object_name" value="CRASH" type="str" />
+		<remap from= "subject_pose" to="global_subject_pose" />
+	</node>
+	<node name="gui_fly" type="gui_fly" pkg="gui_fly">
+		<remap from= "task_waypose" to="global_task_waypose" />
+	</node>
+	<node name="hover_current_position" type="hover_current_position" pkg="hover_current_position" output="screen">
+		<remap from= "task_waypose" to="global_task_waypose" />
+		<remap from= "subject_pose" to="global_subject_pose" />
+	</node>
+
+	<!--Use xbox Joystick to switch topic source-->
+	<node name="joy" pkg="joy" type="joy_node" output="screen">
+		<param name="autorepeat_rate" value="5" />
+	</node>
+	
+	<node name="topic_switcher" pkg="topic_switcher" type="topic_switcher" respawn="false" output="screen">
+		<remap from="topic_source" to="pose_source" />
+	</node>
+	
+	<!--Select the subject_pose and task_waypose based on the parameter pose_source (1 for global, 2 for relative)-->
+	<node name="subject_pose_arb" type="topic_arbitration" pkg="topic_arbitration" respawn="false" output="screen">
+		<remap from="shape_shifter" to="subject_pose" />
+		<remap from="topic_source" to="pose_source" />
+		<rosparam param="state_mappings">
+                [
+                [ "global_subject_pose", [ 0 ] ],
+                [ "relative_subject_pose", [ 1 ] ],
+                ]
+                </rosparam>
+	</node>
+	<node name="task_waypose_arb" type="topic_arbitration" pkg="topic_arbitration" respawn="false" output="screen">
+		<remap from="shape_shifter" to="task_waypose" />
+		<remap from="topic_source" to="pose_source" />
+		<rosparam param="state_mappings">
+                [
+                [ "global_task_waypose", [ 0 ] ],
+                [ "relative_task_waypose", [ 1 ] ],
+                ]
+                </rosparam>
+	</node>
+
+	<!--Set communication method-->
+	<node name="robot_comm" type="serial_comm" pkg="communication">
+		<remap from="serial_rx_data" to="robot_rx_data"/>
+		<remap from="serial_tx_data" to="robot_tx_data"/>
+		<param name="serial_device" value="/dev/ttyUSB0"/>
+    	</node>
+  
+	<!--Launch mitAscTec-->
+	<include  file="$(find collab_launch)/new_pid_ctrl.launch" />
+	<include  file="$(find collab_launch)/common.launch" />
+</launch>
