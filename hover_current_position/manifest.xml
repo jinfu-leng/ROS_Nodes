@@ -1,0 +1,15 @@
+<package>
+  <description brief="hover_current_position">
+
+     hover_current_position
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/hover_current_position</url>
+  <depend package="collab_msgs"/>
+  <depend package="topic_arbitration"/>
+</package>
+
+
