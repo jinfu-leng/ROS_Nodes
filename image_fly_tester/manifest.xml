@@ -1,0 +1,14 @@
+<package>
+  <description brief="image_fly_tester">
+
+     image_fly_tester
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/image_fly_tester</url>
+  <depend package="collab_msgs"/>
+</package>
+
+
