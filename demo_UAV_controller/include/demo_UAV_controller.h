@@ -22,6 +22,7 @@ private:
   void callbackUAVSubjectCtrlStateMsg(const collab_msgs::SubjectCtrlState &subject_ctrl_state_msg);
   void callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg);
   void callbackControllerSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg);
+  collab_msgs::SubjectPose ComputeRelativePose(const collab_msgs::SubjectPose &center, const collab_msgs::SubjectPose &subject);
   
   // init functions
   void InitParams();
@@ -30,7 +31,7 @@ private:
 
   // other functions
   void FlytoPoint(double x, double y, double z, double w);
-  void ChangeState(int state, double sleepTime=3);
+  void ChangeState(int state, double sleepTime=5);
   void Launch();
   void Land();
 
@@ -40,7 +41,8 @@ private:
 
   // ros publishers
   ros::Publisher UAV_state_pub_;
-  ros::Publisher UAV_pose_pub_; 
+  ros::Publisher UAV_pose_pub_;
+  ros::Publisher UAV_subject_pose_pub_; 
 
   // ros subscribers
   ros::Subscriber UAV_subject_ctrl_state_sub_;

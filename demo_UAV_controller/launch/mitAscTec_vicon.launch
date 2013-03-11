@@ -6,7 +6,7 @@
       <param name="serial_device" value="/dev/ttyUSB0"/>
     </node>
   
-    <node name="pid_ctrl" type="quad_pid" pkg="pose_control">
+    <!--node name="pid_ctrl" type="quad_pid" pkg="pose_control">
       <param name="ctrl_rate" value="20.0"/>
       <param name="k_prop_pitch" value="-0.2"/>
       <param name="k_prop_roll" value="-0.2"/>
@@ -14,8 +14,8 @@
       <param name="k_prop_thrust" value="0.6"/>
       <param name="k_derv_pitch" value="-0.2"/>
       <param name="k_derv_roll" value="-0.2"/>
-    </node>
-
+    </node-->
+    <include  file="$(find collab_launch)/new_pid_ctrl.launch" />
     <include  file="$(find collab_launch)/common.launch" />
 
 </launch>

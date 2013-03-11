@@ -27,7 +27,8 @@ void demo_UAV_controller::InitParams()
 void demo_UAV_controller::InitPublishers()
 {
   UAV_state_pub_ = nh_.advertise<collab_msgs::SubjectCtrlState>("cmd_subject_ctrl_state", 10, true);
-  UAV_pose_pub_ = nh_.advertise<collab_msgs::SubjectPose>("task_waypose", 1, true);
+  UAV_pose_pub_ = nh_.advertise<collab_msgs::SubjectPose>("task_waypose", 1, true); // tell the UAV where to fly to
+  UAV_subject_pose_pub_ = nh_.advertise<collab_msgs::SubjectPose>("subject_pose", 1, true); // tell the UAV where it is (relative to wand)
 }
 
 // create subscribers

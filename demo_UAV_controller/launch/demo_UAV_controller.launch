@@ -5,12 +5,12 @@
 		<remap from= "subject_pose" to="controller_pose" />
 	</node>
 	
-	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_subject">
+	<!--node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_subject">
 		<param name="object_name" value="GREEN_BEE" type="str" />
-	</node>
+	</node-->
 
 	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_UAV">
-		<param name="object_name" value="GREEN_BEE" type="str" />
+		<param name="object_name" value="CRASH" type="str" />
 		<remap from= "subject_pose" to="UAV_pose" />
 	</node>
 

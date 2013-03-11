@@ -2,6 +2,17 @@
 #include <demo_UAV_controller.h>
 #include <math.h>
 
+collab_msgs::SubjectPose demo_UAV_controller::ComputeRelativePose(const collab_msgs::SubjectPose &center, const collab_msgs::SubjectPose &subject){
+  collab_msgs::SubjectPose res = subject;
+  res.translation.x = subject.translation.x - center.translation.x;
+  res.translation.y = subject.translation.y - center.translation.y;
+  res.translation.z = subject.translation.z - center.translation.z;
+  //res.rotation.x = 0;
+  //res.rotation.y = 0;
+  res.rotation.z = subject.rotation.z - center.rotation.z;
+  return res;
+}
+
 void demo_UAV_controller::callbackUAVSubjectCtrlStateMsg(const collab_msgs::SubjectCtrlState &subject_ctrl_state_msg)
 {
   UAV_subject_ctrl_state_ = subject_ctrl_state_msg;
@@ -11,13 +22,15 @@ void demo_UAV_controller::callbackUAVSubjectCtrlStateMsg(const collab_msgs::Subj
 void demo_UAV_controller::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg)
 {
   UAV_subject_pose_ = subject_pose_msg;
+  collab_msgs::SubjectPose UAV_relative_pose = ComputeRelativePose(controller_subject_pose_,UAV_subject_pose_);
+  UAV_subject_pose_pub_.publish(UAV_relative_pose);
 }
 
 void demo_UAV_controller::callbackControllerSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg)
 {
   controller_subject_pose_ = subject_pose_msg;
 
-  if(controller_subject_pose_.translation.z>1.5){
+  if(controller_subject_pose_.translation.z>2.0){
     if(received_new_UAV_state==true){
       if(UAV_subject_ctrl_state_.state!=8){
         Launch();
@@ -35,6 +48,10 @@ void demo_UAV_controller::callbackControllerSubjectPoseMsg(const collab_msgs::Su
   }
   else
   {
+    if(UAV_subject_ctrl_state_.state!=8) return;
+    FlytoPoint(1,0,0.2,0);
+
+/*
      double dx= UAV_subject_pose_.translation.x-controller_subject_pose_.translation.x;
      double dy= UAV_subject_pose_.translation.y-controller_subject_pose_.translation.y;
      double dist = sqrt(dx*dx+dy*dy);
@@ -68,104 +85,6 @@ void demo_UAV_controller::callbackControllerSubjectPoseMsg(const collab_msgs::Su
      angle= angle - PI;
      if(angle<0) angle=angle+2*PI;
 
-     if(dist<min_dist||abs(angle-UAV_subject_pose_.rotation.z)>0.5)FlytoPoint(controller_subject_pose_.translation.x+dx,controller_subject_pose_.translation.y+dy,UAV_height,angle);
+     if(dist<min_dist||abs(angle-UAV_subject_pose_.rotation.z)>0.5)FlytoPoint(controller_subject_pose_.translation.x+dx,controller_subject_pose_.translation.y+dy,UAV_height,angle);*/
   }
 }
-
-/*
-// handle subject control state msg
-void Task::callbackSubjectCtrlStateMsg(const boost::shared_ptr<collab_msgs::SubjectCtrlState const> &subject_ctrl_state_msg)
-{
-  subject_ctrl_state_msg_ = *subject_ctrl_state_msg;
-  received_subject_ctrl_state_msg_ = true;
-  if (!get_state_ && received_subject_pose_msg_)
-  {
-    //mutex lock
-    mutex_.lock();
-
-    switch(ctrl_state_.state)
-    {
-      case(0):
-        if(ctrl_state_.state == 0) get_state_ = true;
-        break;
-      case(1):
-        if(subject_ctrl_state_msg_.state == 1) get_state_ = true;
-        break;
-      case(2):
-        if(subject_ctrl_state_msg_.state == 4) 	get_state_ = true;
-		break;
-      case(3):
-        if(subject_ctrl_state_msg_.state == 1) get_state_ = true;
-        break;
-      case(4):
-        if(subject_ctrl_state_msg_.state == 4) get_state_ = true;
-        break;
-      case(5):
-        if(subject_ctrl_state_msg_.state == 7) get_state_ = true;
-        break;
-      case(6):
-        if(subject_ctrl_state_msg_.state == 6) get_state_ = true;
-        break;
-      case(7):
-        if(subject_ctrl_state_msg_.state == 7) get_state_ = true;
-        break;
-      case(8):
-        if(subject_ctrl_state_msg_.state == 8) get_state_ = true;
-        break;
-      default:
-        break;
-    }
-    
-    // mutex unlock
-    mutex_.unlock();
-  }
-}
-
-
-// handle subject pose msg
-void Task::callbackSubjectPoseMsg(const boost::shared_ptr<collab_msgs::SubjectPose const> &subject_pose_msg)
-{
-
-  subject_pose_msg_ = *subject_pose_msg;
-  received_subject_pose_msg_ = true;
-
-  if (!get_way_pose_)
-  {
-    //mutex lock
-    mutex_.lock();
-
-    double distX = task_pose_.translation.x - subject_pose_msg_.translation.x;
-    double distY = task_pose_.translation.y - subject_pose_msg_.translation.y;
-    double distZ = task_pose_.translation.z - subject_pose_msg_.translation.z;
-    double dist = sqrt(distX*distX + distY*distY + distZ*distZ);
-
-    double pi = 3.1416;
-	double dir_diff = abs(task_pose_.rotation.z - subject_pose_msg_.rotation.z);
-    if(dir_diff > pi){
-      dir_diff = 2*pi - dir_diff;
-    }
-
-    if (dist<pose_error_ && dir_diff<dir_error_){
-      get_way_pose_ = true;
-    }
-
-    // mutex unlock
-    mutex_.unlock();
-  }
-}
-
-
-// handle script file msg
-void Task::callbackScriptFileMsg(const boost::shared_ptr<std_msgs::String const> &script_file_msg)
-{
-  mutex_.lock();
-  if(!received_script_file_msg_)
-  {
-    script_file_msg_=*script_file_msg;
-    received_script_file_msg_ = true;
-  }
-  mutex_.unlock();
-}
-*/
-
-

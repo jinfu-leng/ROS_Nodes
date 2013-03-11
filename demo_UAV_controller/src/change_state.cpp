@@ -13,7 +13,7 @@ void demo_UAV_controller::ChangeState(int state, double sleepTime) {
 void demo_UAV_controller::Launch() {
   if(UAV_subject_ctrl_state_.state!=8){
     if(UAV_subject_ctrl_state_.state<1) ChangeState(1);
-    if(UAV_subject_ctrl_state_.state<2) ChangeState(2,7);
+    if(UAV_subject_ctrl_state_.state<2) ChangeState(2,10);
     if(UAV_subject_ctrl_state_.state<5) ChangeState(5);
     if(UAV_subject_ctrl_state_.state<8) ChangeState(8,2);
     FlytoPoint(UAV_subject_pose_.translation.x,UAV_subject_pose_.translation.y,UAV_height,UAV_subject_pose_.rotation.x);
