@@ -1,0 +1,16 @@
+<package>
+  <description brief="pose_bottom_image">
+
+     pose_bottom_image
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pose_bottom_image</url>
+  <depend package="collab_msgs"/>
+  <depend package="tf"/>
+  <depend package="ar_pose"/>
+</package>
+
+
