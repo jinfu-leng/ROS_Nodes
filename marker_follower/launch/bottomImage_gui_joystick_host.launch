@@ -8,6 +8,10 @@
 		<remap from= "task_waypose" to="relative_task_waypose" />
 		<remap from= "subject_pose" to="relative_subject_pose" />
 	</node>
+	<node pkg="image_fly_safety" type="image_fly_safety" name="image_fly_safety" output="screen">
+		<remap from= "task_waypose" to="relative_task_waypose" />
+		<remap from= "subject_pose" to="relative_subject_pose" />
+	</node>
 
 	<!--Generate global subject_pose and task_waypose-->
 	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_global">
