@@ -39,7 +39,7 @@ ImageFlySafety::ImageFlySafety(){
 	// parameters
 	last_task_waypose.translation.x = 0;
 	last_task_waypose.translation.y = 0;
-	last_task_waypose.translation.z = 2; // set 2 as the initial value to let UAV fly down
+	last_task_waypose.translation.z = 2;
 	get_subject_pose = false;
 	
 	// subscribe	
@@ -63,15 +63,17 @@ void ImageFlySafety::callbackUAVTaskWayposeMsg(const collab_msgs::SubjectPose &t
 }
 
 void ImageFlySafety::callbackTimer(const ros::TimerEvent& event){
-	printf("Timer call back!!!!\n");
+	//ROS_INFO("Timer call back!!!!\n");
 	
 	if(get_subject_pose == false){
+		//ROS_INFO("I sent a fake subject_pose!!!!\n");
 		GiveFakeSubjectPose(last_task_waypose.translation.x,last_task_waypose.translation.y,last_task_waypose.translation.z,last_task_waypose.rotation.z);
 	}
 	get_subject_pose = false;
 }
 // other functions
 void ImageFlySafety::GiveFakeSubjectPose(double x, double y, double z, double w){
+	//ROS_INFO("%lf %lf %lf\n",x,y,z);
 	collab_msgs::SubjectPose subject_pose;
 	subject_pose.translation.x = x;
 	subject_pose.translation.y = y;
