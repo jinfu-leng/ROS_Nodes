@@ -1,0 +1,15 @@
+<package>
+  <description brief="ballPositioner">
+
+     ballPositioner
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ballPositioner</url>
+  <depend package="ballDetector"/>
+  <depend package="gazebo"/>
+</package>
+
+
