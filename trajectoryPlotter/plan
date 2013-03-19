@@ -1,0 +1,15 @@
+side view
+
+gazebo:
+-real (real picture? published states or theoretical positions)
+-detected
+-fitted function
+real life:
+-real (real picture from another camera?)
+-detected
+-fitted function
+
+camera view:
+- real picture
+- detected
+- fitted function

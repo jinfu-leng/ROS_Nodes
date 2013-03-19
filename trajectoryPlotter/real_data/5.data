@@ -1,0 +1,35 @@
+# focalDist = 180
+
+# The theoretical term a,b,c of the quadratic function
+0, 0, 0
+# The detected positions
+7
+0.118182, 0.554545, 3.272727
+0.148000, 0.556000, 2.880000
+0.151613, 0.454839, 2.322581
+0.214286, 0.368571, 2.057143
+0.327027, 0.267568, 1.945946
+0.325455, -0.005455, 1.309091
+0.620000, -0.280000, 1.800000
+
+# The Real Positions
+7
+0.118182, 0.554545, 3.272727
+0.148000, 0.556000, 2.880000
+0.151613, 0.454839, 2.322581
+0.214286, 0.368571, 2.057143
+0.327027, 0.267568, 1.945946
+0.325455, -0.005455, 1.309091
+0.620000, -0.280000, 1.800000
+
+# Display the detected positions or not? Yes(Y) No(N)
+Y
+# Display the real positions or not? Yes(Y) No(N)
+N
+# Display the theoretical trajectory or not? Yes(Y) No(N)
+N
+# The type of the display of the trendlines: Rrecursive(R) Only One(O) No(N)
+N
+# Display the predicated trajectory or not? Yes(Y) No(N)
+N
+
