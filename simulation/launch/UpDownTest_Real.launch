@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="ballDetector_real.launch"/>
+	<include file="ballPositioner.launch"/>
+</launch>

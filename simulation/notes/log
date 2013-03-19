@@ -1,0 +1,17 @@
+predicting path is promissing
+
+aware that the equation in last report is incorrect
+
+the pose of the ball pusblised by gazebo matched with the pose calculated by equation. The only doubt is that the gazebo may considered the influence of the air.
+
+Can not get the correct plot in excel. Tried to work on the .csv file and solved the problem. Doubt that the format the column should be changed to "number" firstly.
+
+Tried the "least square regression for quadratic curve", and the result matched the excel. 
+http://www.codeproject.com/Articles/63170/Least-Squares-Regression-for-Quadratic-Curve-Fitti
+
+adjusted the initial height of the uav to 1.2 -- back to 1.0 again
+
+When the ball is going to pass above the uav, the fitted quadratic function, based on the detected positions, may face to the wrong direction.
+The origin frame rate is 10, and now is updated 30. But the number of the detected positions is not as many as 3 times of the before. 
+
+sometimes one throwing will get two lists of points

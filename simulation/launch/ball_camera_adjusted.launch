@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="ball_room_uav_adjusted.launch" />
+    <include file="ballDetector_sim.launch" />
+    <include file="displayDebugImages_sim.launch" />
+</launch>

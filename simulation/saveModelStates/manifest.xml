@@ -1,0 +1,15 @@
+<package>
+  <description brief="saveModelStates">
+
+     saveModelStates
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/saveModelStates</url>
+  <depend package="gazebo"/>
+
+</package>
+
+

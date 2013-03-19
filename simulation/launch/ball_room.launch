@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <param name="/use_sim_time" value="true" />
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="/home/leng/ros/projects/simulation/worlds/ball_room.world" respawn="false" output="screen" required="true" />
+</launch>

@@ -1,0 +1,10 @@
+create new repository on github
+
+go to local project folder:
+git init
+git remote add origin git@github.com:jinfu-leng/simulation.git
+git add -A
+git commit -m "initial commit"
+git push origin master
+
+If there are files (like "readme.txt") already in your remote repository, you need to sync (pull) these files to your local project folder firstly.

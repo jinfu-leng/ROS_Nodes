@@ -1,0 +1,24 @@
+\title{Ball Positioning}
+\author{Jinfu Leng}
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\begin{document}
+\maketitle
+\section{Firures}
+\includegraphics{figure2_updated.jpeg}
+\section{Variables}
+\begin{itemize}
+\item Angles $\alpha$, $\beta$, $\gamma$: as illustrated (the value of $\alpha$ is known)
+\item H: the height of the screen
+\item h: the height of the ball in the screen
+\item $\Delta h$: the offset of the ball in vertical direction in the screen (from the middle of the ball to the middle of the screen)
+\item R: the real radius of the ball
+\item d: the real horizontal distance from the ball to the camera
+\end{itemize}
+\section{Equations}
+\begin{enumerate}
+\item $\frac{tan (\gamma + \beta)}{tan \alpha} = \frac{\Delta h}{\frac{1}{2} H}$
+\item $\frac{tan (\gamma + 2\beta)}{tan \alpha} = \frac{\Delta h + \frac{1}{2}h}{\frac{1}{2} H}$ 
+\item $\frac{R}{sin \beta} = \frac{d}{cos(\gamma + \beta)}$
+\end{enumerate}
+\end{document}

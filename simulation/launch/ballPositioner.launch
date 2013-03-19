@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>  
+  <rosparam param="ballRadius"> 0.1 </rosparam>
+  <rosparam param="normalFocalDist"> 162.75 </rosparam>
+  <rosparam param="minFocalDist"> 162.75 </rosparam>
+  <rosparam param="maxFocalDist"> 162.75 </rosparam>
+  <rosparam param="minRange"> 2.0 </rosparam>
+  <rosparam param="maxRange"> 4.5 </rosparam>
+  <rosparam param="modelName"> small_ball_purple </rosparam>
+  <rosparam param="cameraHeight"> 1.19 </rosparam>
+  <node name="ballPositioner" pkg="ballPositioner" type="ballPositioner" output="screen"> 
+  </node>
+
+</launch>

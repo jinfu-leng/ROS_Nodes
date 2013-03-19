@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <rosparam param="thresh/">
+    high: {h: 255, s: 255, v: 255}
+    low: {h: 105, s: 244, v: 111}
+  </rosparam>
+  <node name="ballDetector" pkg="ballDetector" type="ballDetector" output="screen">
+    <!--remap from="image" to="/usb_cam/image_raw"/-->
+    <remap from="image" to="/camera/image"/>
+  </node>
+  <!--<node name="ballDetectorConfig" pkg="ballDetector" type="configGUI.py"></node>-->
+  
+
+</launch>
