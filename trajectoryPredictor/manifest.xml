@@ -1,0 +1,15 @@
+<package>
+  <description brief="trajectoryPredictor">
+
+     trajectoryPredictor
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/trajectoryPredictor</url>
+
+  <depend package="ballPositioner"/>
+</package>
+
+
