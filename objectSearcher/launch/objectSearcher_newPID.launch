@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_subject">
+		<param name="object_name" value="Moby" type="str" />
+	</node>
+
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_UAV">
+		<param name="object_name" value="Moby" type="str" />
+		<remap from= "subject_pose" to="UAV_pose" />
+	</node>
+
+	<node pkg="objectSearcher" type="objectSearcher" name="objectSearcher" output="screen">
+	</node>
+
+	<include  file="$(find objectSearcher)/launch/mitAscTec_vicon_newPID.launch" />
+	<node name="gui_fly" type="gui_fly" pkg="gui_fly" />
+</launch>

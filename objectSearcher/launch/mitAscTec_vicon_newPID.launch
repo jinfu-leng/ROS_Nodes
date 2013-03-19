@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="robot_comm" type="serial_comm" pkg="communication">
+      <remap from="serial_rx_data" to="robot_rx_data"/>
+      <remap from="serial_tx_data" to="robot_tx_data"/>
+      <param name="serial_device" value="/dev/ttyUSB0"/>
+    </node>
+  
+    <node name="pid_ctrl" type="quad_pid" pkg="pose_control">
+      <param name="ctrl_rate" value="30.0"/>
+      <param name="altitude_ctrl" value="0"/><!-- VICON - 0=PID ALTITUDE, 1=PRESSURE SENSOR -->
+      <param name="k_prop_pitch" value="-0.2"/>
+      <param name="k_intg_pitch" value="-0.06"/>
+      <param name="k_derv_pitch" value="-0.3"/>
+      <param name="pitch_intg_min_sat" value="-1"/> 
+      <param name="pitch_intg_max_sat" value="1"/> 
+
+      <param name="k_prop_roll" value="-0.2"/>
+      <param name="k_intg_roll" value="-0.06"/>
+      <param name="k_derv_roll" value="-0.3"/>
+      <param name="roll_intg_min_sat" value="-1"/> 
+      <param name="roll_intg_max_sat" value="1"/> 
+
+      <param name="k_prop_yaw" value="-0.5"/>
+      <param name="k_prop_thrust" value="0.8"/> 
+      <param name="k_intg_thrust" value="0.875"/><!-- GRAVITY OFFSET.  INCREASE FOR HEAVIER UAVs --> 
+	<!-- k_intg_thrust = .7 for unloaded hummingbird -->
+	<!-- k_intg_thrust ~ .85 for loaded hummingbird -->
+	<!-- k_intg_thrust ~ .875 for camera firefly no mastermind -->
+
+      <param name="k_derv_thrust" value="0.3"/> 
+      <param name="thrust_intg_min_sat" value="0.9"/> 
+      <param name="thrust_intg_max_sat" value="1.1"/> 
+    </node>
+
+    <include  file="$(find collab_launch)/common.launch" />
+
+</launch>
+
