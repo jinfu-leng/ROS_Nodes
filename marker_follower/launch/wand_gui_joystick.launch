@@ -21,18 +21,12 @@
 		<param name="object_name" value="CRASH" type="str" />
 		<remap from= "subject_pose" to="global_subject_pose" />
 	</node>
-	<!--node name="script_input" type="script_input" pkg="script_input">
-		<param name="task_pub_rate" value="20.0" />
- 		<param name="pose_error" value="0.5" />
-		<param name="dir_error" value="0.3" />
-		<param name="land_delay" value="10.0" />
-	</node-->
 	<node name="gui_fly" type="gui_fly" pkg="gui_fly">
 		<remap from= "task_waypose" to="global_task_waypose" />
 	</node>
 	<node name="hover_current_position" type="hover_current_position" pkg="hover_current_position" output="screen">
 		<remap from= "task_waypose" to="global_task_waypose" />
-		<remap from= "subject_pose" to="global_subject_pose" />
+		<remap from= "UAV_pose" to="global_subject_pose" />
 	</node>
 
 	<!--Use xbox Joystick to switch topic source-->

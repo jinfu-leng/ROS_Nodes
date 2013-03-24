@@ -15,7 +15,7 @@
 
 	<!--Generate global subject_pose and task_waypose-->
 	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_global">
-		<param name="object_name" value="CRASH" type="str" />
+		<param name="object_name" value="asctec_atom" type="str" />
 		<remap from= "subject_pose" to="global_subject_pose" />
 	</node>
 	<node name="gui_fly" type="gui_fly" pkg="gui_fly">
@@ -23,7 +23,7 @@
 	</node>
 	<node name="hover_current_position" type="hover_current_position" pkg="hover_current_position" output="screen">
 		<remap from= "task_waypose" to="global_task_waypose" />
-		<remap from= "subject_pose" to="global_subject_pose" />
+		<!--remap from= "UAV_pose" to="global_subject_pose" /-->
 	</node>
 
 	<!--Use xbox Joystick to switch topic source-->
