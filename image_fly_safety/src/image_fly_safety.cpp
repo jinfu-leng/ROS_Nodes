@@ -66,7 +66,7 @@ void ImageFlySafety::callbackTimer(const ros::TimerEvent& event){
 	//ROS_INFO("Timer call back!!!!\n");
 	
 	if(get_subject_pose == false){
-		//ROS_INFO("I sent a fake subject_pose!!!!\n");
+		ROS_INFO("I sent a fake subject_pose!!!!\n");
 		GiveFakeSubjectPose(last_task_waypose.translation.x,last_task_waypose.translation.y,last_task_waypose.translation.z,last_task_waypose.rotation.z);
 	}
 	get_subject_pose = false;
@@ -79,6 +79,7 @@ void ImageFlySafety::GiveFakeSubjectPose(double x, double y, double z, double w)
 	subject_pose.translation.y = y;
 	subject_pose.translation.z = z;
 	subject_pose.rotation.z = w;
+	subject_pose.header.stamp = ros::Time::now();
 	UAV_subject_pose_pub_.publish(subject_pose);
 }
 
