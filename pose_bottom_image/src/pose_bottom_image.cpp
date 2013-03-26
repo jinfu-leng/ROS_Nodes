@@ -64,7 +64,7 @@ void PoseBottomImage::callbackARPoseMarkerMsg(const ar_pose::ARMarker &ar_pose_m
 	subjectPose.rotation.y = UAV_subject_pose_.rotation.y;
 	subjectPose.rotation.z = -yaw;
 	if(subjectPose.rotation.z<0) subjectPose.rotation.z = 2*PI + subjectPose.rotation.z;
-	subjcetPose.header.stamp = ros::Time::now();
+	subjectPose.header.stamp = ros::Time::now();
 	camera_subject_pose_pub_.publish(subjectPose);
 	//printf("new position:\n %lf\n %lf\n %lf\n",subjectPose.translation.x,subjectPose.translation.y,subjectPose.translation.z);
 	//printf("new orientation:\n %lf\n %lf\n %lf\n",subjectPose.rotation.x,subjectPose.rotation.y,subjectPose.rotation.z);
