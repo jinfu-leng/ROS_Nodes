@@ -85,6 +85,7 @@ void HoverCurrentPosition::FlytoPoint(double x, double y, double z, double w){
 	subject_pose.translation.y = y;
 	subject_pose.translation.z = z;
 	subject_pose.rotation.z = w;
+	subject_pose.header.stamp = ros::Time::now();
 	UAV_subject_pose_pub_.publish(subject_pose);
 }
 
