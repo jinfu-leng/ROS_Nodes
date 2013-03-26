@@ -30,7 +30,7 @@ private:
 // construction
 ImageFlyTester::ImageFlyTester(){	
 	// subscribe	
-	UAV_subject_pose_sub_ = nh.subscribe("UAV_pose", 1, &ImageFlyTester::callbackUAVSubjectPoseMsg, this);
+	UAV_subject_pose_sub_ = nh.subscribe("subject_pose", 1, &ImageFlyTester::callbackUAVSubjectPoseMsg, this);
 	
 	// publish
   	UAV_subject_pose_pub_ = nh.advertise<collab_msgs::SubjectPose>("task_waypose", 1, true);
@@ -38,7 +38,7 @@ ImageFlyTester::ImageFlyTester(){
 
 // callback functions
 void ImageFlyTester::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg){
-	FlytoPoint(0,0,1,0);	
+	FlytoPoint(0,0,1,0);
 }
 
 // other functions
@@ -49,6 +49,7 @@ void ImageFlyTester::FlytoPoint(double x, double y, double z, double w){
 	subject_pose.translation.y = y;
 	subject_pose.translation.z = z;
 	subject_pose.rotation.z = w;
+	subject_pose.header.stamp = ros::Time::now();
 	UAV_subject_pose_pub_.publish(subject_pose);
 }
 
