@@ -46,6 +46,9 @@ void PoseBottomImage::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &
 }
 
 void PoseBottomImage::callbackARPoseMarkerMsg(const ar_pose::ARMarker &ar_pose_marker_msg){
+	collab_msgs::SubjectPose subjectPose;
+	subjectPose.header.stamp = ros::Time::now();
+	
 	geometry_msgs::Point  position= ar_pose_marker_msg.pose.pose.position;
 	geometry_msgs::Quaternion quaternion = ar_pose_marker_msg.pose.pose.orientation;
 	
@@ -54,17 +57,18 @@ void PoseBottomImage::callbackARPoseMarkerMsg(const ar_pose::ARMarker &ar_pose_m
 	tf::quaternionMsgToTF(quaternion, q);
 	tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
 
-	collab_msgs::SubjectPose subjectPose;
-	subjectPose.translation.x = -position.x;
-	subjectPose.translation.y = position.y;
+	//subjectPose.translation.x = -position.x;
+	//subjectPose.translation.y = position.y;
+	subjectPose.translation.x = UAV_subject_pose_.translation.x;
+	subjectPose.translation.y = UAV_subject_pose_.translation.y;
 	subjectPose.translation.z = position.z;
 	//subjectPose.rotation.x = pitch;
 	//subjectPose.rotation.y = roll;
 	subjectPose.rotation.x = UAV_subject_pose_.rotation.x;
 	subjectPose.rotation.y = UAV_subject_pose_.rotation.y;
-	subjectPose.rotation.z = -yaw;
-	if(subjectPose.rotation.z<0) subjectPose.rotation.z = 2*PI + subjectPose.rotation.z;
-	subjectPose.header.stamp = ros::Time::now();
+	//subjectPose.rotation.z = -yaw;
+	//if(subjectPose.rotation.z<0) subjectPose.rotation.z = 2*PI + subjectPose.rotation.z;
+	subjectPose.rotation.z = UAV_subject_pose_.rotation.z;	
 	camera_subject_pose_pub_.publish(subjectPose);
 	//printf("new position:\n %lf\n %lf\n %lf\n",subjectPose.translation.x,subjectPose.translation.y,subjectPose.translation.z);
 	//printf("new orientation:\n %lf\n %lf\n %lf\n",subjectPose.rotation.x,subjectPose.rotation.y,subjectPose.rotation.z);
