@@ -43,25 +43,26 @@ class configGUIFrame(wx.Frame):
         # Make us visible
         self.Show(True)
         
+        # Start publishing
         timer = Timer(1.0/self.rate,self.callbackPublish)
         timer.start()
         
     def callbackPublish(self):        
-        # Set a timer
+        # Set a timer for next publishing
         timer = Timer(1.0/self.rate,self.callbackPublish)
         timer.start()
+        # Publish one message
         self.Pub.publish(self.transformStamped)
 
     def callbackTransformStamped(self, data):
+        # Update the message
         self.transformStamped = data
         
     def callbackSliderMoved(self,event):
         # Get the slider values
         self.rate = self.rateSlider.GetValue()       
-        #rospy.loginfo('New setting: rate: %d', self.rate)
         
-        
-        
+               
 def startGUI():
     rospy.init_node('rate_configGUI')
     app = wx.App(False)
