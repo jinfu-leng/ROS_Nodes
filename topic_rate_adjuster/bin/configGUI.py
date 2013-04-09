@@ -36,9 +36,13 @@ class configGUIFrame(wx.Frame):
         self.Bind(wx.EVT_SLIDER,self.callbackSliderMoved)
 
         # Create the ROS subscriber
-        rospy.Subscriber("vicon/FISHTANK/FISHTANK", TransformStamped, self.callbackTransformStamped)
+        self.input_topic = rospy.get_param('/topic_rate_adjuster/input_topic')
+        self.output_topic = rospy.get_param('/topic_rate_adjuster/output_topic')
+        if self.output_topic[0] == '/':
+            self.output_topic = self.output_topic[1:]
+        rospy.Subscriber(self.input_topic, TransformStamped, self.callbackTransformStamped)
         # Create the ROS publisher
-        self.Pub = rospy.Publisher('vicon/FISHTANK_A/FISHTANK_A', TransformStamped)
+        self.Pub = rospy.Publisher(self.output_topic, TransformStamped)
         
         # Make us visible
         self.Show(True)
@@ -57,6 +61,7 @@ class configGUIFrame(wx.Frame):
     def callbackTransformStamped(self, data):
         # Update the message
         self.transformStamped = data
+        self.transformStamped.child_frame_id = self.output_topic
         
     def callbackSliderMoved(self,event):
         # Get the slider values

@@ -1,0 +1,6 @@
+<launch>
+  <node name="topic_rate_adjuster" pkg="topic_rate_adjuster" type="configGUI.py" output="screen">
+    <param name="input_topic" value="/vicon/FISHTANK/FISHTANK" type="str"/>
+    <param name="output_topic" value="/vicon/FISHTANK_A/FISHTANK_A" type="str"/>
+  </node>
+</launch>
