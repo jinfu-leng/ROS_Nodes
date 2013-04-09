@@ -5,7 +5,7 @@ import wx
 from geometry_msgs.msg import TransformStamped
 from threading import Timer
 
-defaultRate = 200
+defaultRate = 150
 
 class configGUIFrame(wx.Frame):
     
@@ -13,6 +13,7 @@ class configGUIFrame(wx.Frame):
         # Initialize variables
         self.rate = defaultRate;
         self.transformStamped = TransformStamped()
+        self.updated = False;
         
         # Initialize frame and panel
         wx.Frame.__init__(self, parent, title=title, size=(300,100))
@@ -56,12 +57,15 @@ class configGUIFrame(wx.Frame):
         timer = Timer(1.0/self.rate,self.callbackPublish)
         timer.start()
         # Publish one message
-        self.Pub.publish(self.transformStamped)
+        if self.updated:
+            self.updated = False;
+            self.Pub.publish(self.transformStamped)
 
     def callbackTransformStamped(self, data):
         # Update the message
         self.transformStamped = data
         self.transformStamped.child_frame_id = self.output_topic
+        self.updated = True
         
     def callbackSliderMoved(self,event):
         # Get the slider values
