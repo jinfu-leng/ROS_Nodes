@@ -1,0 +1,15 @@
+<package>
+  <description brief="topic_rate_adjuster">
+
+     topic_rate_adjuster
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/topic_rate_adjuster</url>
+  <depend package="collab_msgs"/>
+
+</package>
+
+
