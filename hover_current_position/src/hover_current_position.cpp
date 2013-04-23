@@ -44,7 +44,8 @@ private:
 HoverCurrentPosition::HoverCurrentPosition(){
 	
 	// initial
-	UAV_subject_pose_.translation.x = UAV_subject_pose_.translation.y = 0;
+	UAV_subject_pose_.translation.x = 0.92;
+	UAV_subject_pose_.translation.y = 0;
 	UAV_subject_pose_.translation.z = 1;
 	lastState = 0;
 	
@@ -52,7 +53,7 @@ HoverCurrentPosition::HoverCurrentPosition(){
 	// the state and pose of UAV
 	//UAV_subject_ctrl_state_sub_ = nh.subscribe("subject_ctrl_state", 1, &ObjectSearcher::callbackUAVSubjectCtrlStateMsg, this);
 	UAV_subject_pose_sub_ = nh.subscribe("UAV_pose", 1, &HoverCurrentPosition::callbackUAVSubjectPoseMsg, this);
-	pose_source_sub_ = nh.subscribe("pose_source", 10, &HoverCurrentPosition::callbackPoseTopicSourceMsg, this);
+	pose_source_sub_ = nh.subscribe("pose_source", 2, &HoverCurrentPosition::callbackPoseTopicSourceMsg, this);
 	
 	// publish
 	// the state and pose of UAV
