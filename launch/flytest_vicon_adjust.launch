@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>	
+	<!--Launch topic_rate_adjuster-->
+	<node name="topic_rate_adjuster" pkg="topic_rate_adjuster" type="configGUI.py" output="screen">
+		<param name="input_topic" value="/vicon/CRASH/CRASH" type="str"/>
+		<param name="output_topic" value="/vicon/CRASH_A/CRASH_A" type="str"/>
+	</node>
+
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_UAV" output="screen">
+		<param name="object_name" value="CRASH_A" type="str" />
+		<remap from= "subject_pose" to="subject_pose" />
+	</node>
+
+	<!--Launch GUI fly-->
+	<node name="gui_fly" type="gui_fly" pkg="gui_fly" output="screen">
+	</node>
+
+	<!--Launch communication method-->
+	<node name="robot_comm" type="serial_comm" pkg="communication" output="screen">
+		<remap from="serial_rx_data" to="robot_rx_data"/>
+		<remap from="serial_tx_data" to="robot_tx_data"/>
+		<param name="serial_device" value="/dev/ttyUSB0"/>
+    	</node>
+  
+	<!--Launch mitAscTec-->
+	<include  file="$(find collab_launch)/new_pid_ctrl_low_rate.launch" />
+	<include  file="$(find collab_launch)/common.launch" />
+</launch>

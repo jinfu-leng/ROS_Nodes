@@ -59,15 +59,17 @@ void PoseBottomImage::callbackARPoseMarkerMsg(const ar_pose::ARMarker &ar_pose_m
 
 	//subjectPose.translation.x = -position.x;
 	//subjectPose.translation.y = position.y;
-	subjectPose.translation.x = UAV_subject_pose_.translation.x;
-	subjectPose.translation.y = UAV_subject_pose_.translation.y;
-	subjectPose.translation.z = position.z;
-	//subjectPose.rotation.x = pitch;
-	//subjectPose.rotation.y = roll;
-	subjectPose.rotation.x = UAV_subject_pose_.rotation.x;
-	subjectPose.rotation.y = UAV_subject_pose_.rotation.y;
+	subjectPose.translation.z = position.z + 0.2;
+	//subjectPose.rotation.x = pitch;// need adjustement
+	//subjectPose.rotation.y = roll;// need adjustment
 	//subjectPose.rotation.z = -yaw;
 	//if(subjectPose.rotation.z<0) subjectPose.rotation.z = 2*PI + subjectPose.rotation.z;
+	
+	subjectPose.translation.x = UAV_subject_pose_.translation.x;
+	subjectPose.translation.y = UAV_subject_pose_.translation.y;
+	//subjectPose.translation.z = UAV_subject_pose_.translation.z;
+	subjectPose.rotation.x = UAV_subject_pose_.rotation.x;
+	subjectPose.rotation.y = UAV_subject_pose_.rotation.y;
 	subjectPose.rotation.z = UAV_subject_pose_.rotation.z;	
 	camera_subject_pose_pub_.publish(subjectPose);
 	//printf("new position:\n %lf\n %lf\n %lf\n",subjectPose.translation.x,subjectPose.translation.y,subjectPose.translation.z);

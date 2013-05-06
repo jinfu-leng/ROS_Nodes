@@ -1,0 +1,27 @@
+asctec-atom
+IP: 10.210.68.48
+IP: 10.210.100.58
+IP: 10.210.100.60
+IP: 10.210.100.74
+IP: 10.210.100.4
+IP: 10.210.100.9
+IP: 10.210.100.16
+IP: 10.210.100.45
+IP: 10.210.100.232
+IP: 10.210.100.22
+IP: 10.210.100.31
+ssh asctec@[UAV IP]
+user: asctec
+password: asctec
+edit /etc/hosts and add "[host IP]    leng-laptop"
+export ROS_MASTER_URI=http://[host IP]:11311
+
+
+leng-laptop
+IP: 10.210.68.81
+IP: 10.210.100.229
+IP: 10.210.100.142
+IP: 10.210.100.168
+IP: 10.210.100.102
+IP: 10.210.100.226
+edit /etc/hosts and add "[UAV IP]    leng-laptop"

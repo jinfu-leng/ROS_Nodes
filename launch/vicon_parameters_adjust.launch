@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+	<node pkg="vicon_bridge" type="tf_distort" name="vicon_bridge_distort" output="screen">
+	</node>
+	
+	<node pkg="dynamic_reconfigure" type="reconfigure_gui" name="dynamic_reconfigure_gui" output="screen">
+	</node>
+</launch>
