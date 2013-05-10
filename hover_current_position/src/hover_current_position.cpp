@@ -44,7 +44,7 @@ private:
 HoverCurrentPosition::HoverCurrentPosition(){
 	
 	// initial
-	UAV_subject_pose_.translation.x = 0.92;
+	UAV_subject_pose_.translation.x = 0;
 	UAV_subject_pose_.translation.y = 0;
 	UAV_subject_pose_.translation.z = 1;
 	lastState = 0;
