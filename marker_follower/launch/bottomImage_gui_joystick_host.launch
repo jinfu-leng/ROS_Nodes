@@ -11,6 +11,7 @@
 	<node pkg="image_fly_safety" type="image_fly_safety" name="image_fly_safety" output="screen">
 		<remap from= "task_waypose" to="relative_task_waypose" />
 		<remap from= "subject_pose" to="relative_subject_pose" />
+		<remap from= "topic_source" to="pose_source"/>
 	</node>
 
 	<!--Generate global subject_pose and task_waypose-->
@@ -20,6 +21,7 @@
 	</node>
 	<node name="gui_fly" type="gui_fly" pkg="gui_fly">
 		<remap from= "task_waypose" to="global_task_waypose" />
+		<remap from= "pid_params" to="relative_pid_params" />
 	</node>
 	<node name="hover_current_position" type="hover_current_position" pkg="hover_current_position" output="screen">
 		<remap from= "task_waypose" to="global_task_waypose" />
@@ -35,7 +37,7 @@
 		<remap from="topic_source" to="pose_source" />
 	</node>
 	
-	<!--Select the subject_pose and task_waypose based on the parameter pose_source (1 for global, 2 for relative)-->
+	<!--Select the subject_pose and task_waypose based on the parameter pose_source (0 for global, 1 for relative)-->
 	<node name="subject_pose_arb" type="topic_arbitration" pkg="topic_arbitration" respawn="false" output="screen">
 		<remap from="shape_shifter" to="subject_pose" />
 		<remap from="topic_source" to="pose_source" />
@@ -65,6 +67,6 @@
     	</node>
   
 	<!--Launch mitAscTec-->
-	<include  file="$(find collab_launch)/new_pid_ctrl_low_rate.launch" />
+	<include  file="$(find collab_launch)/new_pid_ctrl_low_rate_pressure.launch" />
 	<include  file="$(find collab_launch)/common.launch" />
 </launch>
