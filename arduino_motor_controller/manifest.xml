@@ -1,0 +1,15 @@
+<package>
+  <description brief="arduino_motor_controller">
+
+     arduino_motor_controller
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/arduino_motor_controller</url>
+
+  <depend package="rxtx"/>
+</package>
+
+

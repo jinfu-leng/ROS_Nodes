@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+	<node launch-prefix="nice" name="bluefox_cam" pkg="bluefox_cam" type="bluefox_cam" output="screen">
+		<param name="device_num" value="0" />
+		<param name="image_width" value="640" />
+		<param name="image_height" value="480" />
+		<param name="camera_frame_id" value="usb_cam" />
+		<param name="output_stat" value="1" />		
+		<remap from="/bluefox_cam/camera_info" to="/camera/camera_info"/>
+		<remap from="/bluefox_cam/image_raw" to="/camera/image_raw"/>
+	</node>
+</launch>

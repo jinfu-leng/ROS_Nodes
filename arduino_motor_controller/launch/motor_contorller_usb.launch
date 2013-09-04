@@ -1,0 +1,10 @@
+<launch>
+	<node pkg="arduino_motor_controller" name="arduino_motor_controller" type="arduino_motor_controller" output="screen">  	
+	</node>	
+	<node name="RxTx" pkg="rxtx" type="RxTx">	
+	  <param name="SerialPort" value="/dev/ttyUSB0" />
+	  <param name="BaudRate" value="19200" />
+	</node>	
+	
+</launch>
+

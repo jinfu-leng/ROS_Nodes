@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+	<rosparam param="pss_hostName">localhost</rosparam>
+	<rosparam param="pss_port">51111</rosparam>
+	<rosparam param="pss_UAVID">1</rosparam>
+
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_subject">
+		<param name="object_name" value="Moby" type="str" />
+	</node>
+
+	<node pkg="vicon_pose" type="vicon_pose" name="conv_q_p_UAV">
+		<param name="object_name" value="Moby" type="str" />
+		<remap from= "subject_pose" to="UAV_pose" />
+	</node>
+
+	<node pkg="poseSocketSender" type="poseSocketSender" name="poseSocketSender" output="screen">
+	</node>
+
+</launch>

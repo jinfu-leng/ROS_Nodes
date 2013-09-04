@@ -1,0 +1,15 @@
+<package>
+  <description brief="locationPlotter">
+
+     locationPlotter
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/locationPlotter</url>
+  <depend package="ballDetector"/>
+
+</package>
+
+
