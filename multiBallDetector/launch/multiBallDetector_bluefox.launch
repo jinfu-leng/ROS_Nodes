@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <node launch-prefix="nice" name="bluefox_cam" pkg="bluefox_cam" type="bluefox_cam" output="screen">
+    <param name="device_num" value="0" />
+    <param name="image_width" value="320" />
+    <param name="image_height" value="240" />
+    <param name="camera_frame_id" value="bluefox_cam" />
+    <param name="output_stat" value="1" />
+  </node>
+
+  
+  <rosparam param="thresh/">
+    high: {h: 120, s: 157, v: 83}
+    low: {h: 106, s: 119, v: 14}
+  </rosparam>
+  <rosparam param="ball_num">3</rosparam>
+  
+  <node name="multiBallDetector" pkg="multiBallDetector" type="multiBallDetector" output="screen">
+    <remap from="image" to="/bluefox_cam/image_raw"/>
+  </node>
+
+  <node name="ballDetectorConfig" pkg="multiBallDetector" type="configGUI.py"></node>
+</launch>
