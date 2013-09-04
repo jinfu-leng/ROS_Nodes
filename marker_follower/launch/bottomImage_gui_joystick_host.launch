@@ -67,6 +67,6 @@
     	</node>
   
 	<!--Launch mitAscTec-->
-	<include  file="$(find collab_launch)/new_pid_ctrl_low_rate_pressure.launch" />
+	<include  file="$(find collab_launch)/new_pid_ctrl_low_rate.launch" />
 	<include  file="$(find collab_launch)/common.launch" />
 </launch>
