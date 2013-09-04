@@ -97,7 +97,7 @@ def UAV_next_second(UAV, nodes):
 # visualization
 # set up figure and animation
 fig = plt.figure()
-ax = fig.add_subplot(111, xlim=(-5, 15), ylim=(-5, 15))
+ax = fig.add_subplot(111, xlim=(-3, param_ground_width+3), ylim=(-3, param_ground_height+3))
 ax.grid()
 visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
