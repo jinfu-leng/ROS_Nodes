@@ -1,7 +1,10 @@
 import random
 import math
 import copy
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
+# system parameters
 param_number_nodes = 7
 param_ground_width = 10.0
 param_ground_height = 10.0
@@ -12,12 +15,15 @@ param_node_initial_power = 100.0
 
 param_UAV_initial_x = 0.0
 param_UAV_initial_y = 0.0
-param_UAV_power_capacity = 1000000.0
+param_UAV_power_capacity = 10000.0
 param_UAV_flight_power_consumption_rate = 100.0
-param_UAV_initial_power = 1000000.0
+param_UAV_initial_power = 10000.0
 param_UAV_charging_power_consumption_rate = 100.0
 param_UAV_charging_power_transfer_rate = 0.2
 param_UAV_moving_speed = 2.0
+
+# This variable is used to record the sequence of the states
+UAV_nodes_state_log = []
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
@@ -85,19 +91,52 @@ def UAV_next_second(UAV, nodes):
 		moving_ratio = min(1, UAV['speed'] / dist_diff)
 	UAV['current_x'] += moving_ratio * x_diff
 	UAV['current_y'] += moving_ratio * y_diff
-	print UAV['current_x'], UAV['current_y']
 	UAV['power'] -= UAV['flght_power_rate']
 	return
 
-def visualize(ground_width, ground_height, nodes, UAV):
+# visualization
+# set up figure and animation
+fig = plt.figure()
+ax = fig.add_subplot(111, xlim=(-5, 15), ylim=(-5, 15))
+ax.grid()
+visualization_UAV, = ax.plot([], [], 'bo', ms=10)
+visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
+ax.add_patch(visualization_ground)
+
+def visualize_init():
+	return visualization_UAV, visualization_ground
+def visualize_animate(i):
+	print i
+	print UAV_nodes_state_log[i]['UAV']['current_x'], UAV_nodes_state_log[i]['UAV']['current_y']
+	visualization_UAV.set_data([UAV_nodes_state_log[i]['UAV']['current_x']], [UAV_nodes_state_log[i]['UAV']['current_y']])
+	return visualization_UAV, visualization_ground
+def visualize():
+	ani = animation.FuncAnimation(fig, visualize_animate, frames=len(UAV_nodes_state_log), interval=100, blit=True, init_func=visualize_init)
+	plt.show()
 	return
+
+
 
 nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
 round_num = 1
 UAV = create_UAV(param_ground_width, param_ground_height)
+
+# record initial states
+state = {}
+state['UAV'] = copy.deepcopy(UAV)
+state['nodes'] = copy.deepcopy(nodes)
+UAV_nodes_state_log.append(state)
+
 while is_valid_node_network(nodes):
-	print round_num
+	print 'round: ' + str(round_num)
 	round_num += 1
 	nodes_next_second(nodes)
 	UAV_next_second(UAV, nodes)
-	visualize(param_ground_width, param_ground_height, nodes, UAV)
+	print UAV['current_x'], UAV['current_y']
+	# record next states
+	state = {}
+	state['UAV'] = copy.deepcopy(UAV)
+	state['nodes'] = copy.deepcopy(nodes)
+	UAV_nodes_state_log.append(state)
+
+visualize()
