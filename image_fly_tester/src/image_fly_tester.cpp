@@ -5,6 +5,8 @@
 
 using namespace std;
 
+const double durationTime = 6;
+const double movingOffset = 0.0;
 
 class ImageFlyTester{
 public:
@@ -14,31 +16,45 @@ public:
 private:
 	ros::NodeHandle nh;
 
-	// subscribe	
-	ros::Subscriber UAV_subject_pose_sub_;
-
 	// publish
 	ros::Publisher UAV_subject_pose_pub_;
 
 	// callback functions
-	void callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg);
+	void callbackFlyNextPoint(const ros::TimerEvent& event);
 	
 	// other function
 	void FlytoPoint(double x, double y, double z, double w);
+
+	// timer
+	ros::Timer timer;
+	vector<double> x, y;
+	int current;
 };
 
 // construction
 ImageFlyTester::ImageFlyTester(){	
-	// subscribe	
-	UAV_subject_pose_sub_ = nh.subscribe("subject_pose", 1, &ImageFlyTester::callbackUAVSubjectPoseMsg, this);
-	
 	// publish
   	UAV_subject_pose_pub_ = nh.advertise<collab_msgs::SubjectPose>("task_waypose", 1, true);
+	// timer
+	timer = nh.createTimer(ros::Duration(durationTime), &ImageFlyTester::callbackFlyNextPoint,this);
+	current = 0;
+	x.push_back(movingOffset);
+	y.push_back(movingOffset);
+
+	x.push_back(-1 * movingOffset);
+	y.push_back(movingOffset);
+
+	x.push_back(-1 * movingOffset);
+	y.push_back(-1 * movingOffset);
+
+	x.push_back(movingOffset);
+	y.push_back(-1 * movingOffset);
 }
 
 // callback functions
-void ImageFlyTester::callbackUAVSubjectPoseMsg(const collab_msgs::SubjectPose &subject_pose_msg){
-	FlytoPoint(0,0,1,0);
+void ImageFlyTester::callbackFlyNextPoint(const ros::TimerEvent& event){
+	FlytoPoint(x[current],y[current],1,0);
+	current = (current + 1) % x.size();
 }
 
 // other functions
