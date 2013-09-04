@@ -57,17 +57,17 @@ void PoseBottomImage::callbackARPoseMarkerMsg(const ar_pose::ARMarker &ar_pose_m
 	tf::quaternionMsgToTF(quaternion, q);
 	tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
 
-	//subjectPose.translation.x = -position.x;
-	//subjectPose.translation.y = position.y;
-	subjectPose.translation.z = position.z + 0.2;
+	subjectPose.translation.x = -position.x;
+	subjectPose.translation.y = position.y;
+	//subjectPose.translation.z = position.z + 0.2;
 	//subjectPose.rotation.x = pitch;// need adjustement
 	//subjectPose.rotation.y = roll;// need adjustment
 	//subjectPose.rotation.z = -yaw;
 	//if(subjectPose.rotation.z<0) subjectPose.rotation.z = 2*PI + subjectPose.rotation.z;
 	
-	subjectPose.translation.x = UAV_subject_pose_.translation.x;
-	subjectPose.translation.y = UAV_subject_pose_.translation.y;
-	//subjectPose.translation.z = UAV_subject_pose_.translation.z;
+	//subjectPose.translation.x = UAV_subject_pose_.translation.x;
+	//subjectPose.translation.y = UAV_subject_pose_.translation.y;
+	subjectPose.translation.z = UAV_subject_pose_.translation.z;
 	subjectPose.rotation.x = UAV_subject_pose_.rotation.x;
 	subjectPose.rotation.y = UAV_subject_pose_.rotation.y;
 	subjectPose.rotation.z = UAV_subject_pose_.rotation.z;	
