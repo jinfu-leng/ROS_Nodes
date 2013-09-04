@@ -66,11 +66,7 @@ pip-log.txt
 *.out
 *.app
 
-
-
-
-
-
-
 *.bag
 *~
+
+.svn
