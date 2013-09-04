@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/src/ballDetector/msg
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/src/ballDetector/msg/__init__.py
+END
+_ballLocation.py
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/src/ballDetector/msg/_ballLocation.py
+END

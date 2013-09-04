@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/msg_gen/lisp
+END
+ballDetector-msg.asd
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/msg_gen/lisp/ballDetector-msg.asd
+END
+_package.lisp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/msg_gen/lisp/_package.lisp
+END
+_package_ballLocation.lisp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/msg_gen/lisp/_package_ballLocation.lisp
+END
+ballLocation.lisp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/UAV/!svn/ver/1295/ros-projects/ballUNL/ballDetector2/msg_gen/lisp/ballLocation.lisp
+END
