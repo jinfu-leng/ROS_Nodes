@@ -96,21 +96,26 @@ def UAV_next_second(UAV, nodes):
 
 # visualization
 # set up figure and animation
+print 'OK'
 fig = plt.figure()
 ax = fig.add_subplot(111, xlim=(-3, param_ground_width+3), ylim=(-3, param_ground_height+3))
 ax.grid()
 visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
+visualization_node_text = None
 ax.add_patch(visualization_ground)
 
 def visualize_init():
-	return visualization_UAV, visualization_ground
+	global visualization_UAV, visualization_ground, visualization_node_text
+	return visualization_UAV, visualization_ground, visualization_node_text
 def visualize_animate(i):
-	print i
 	print UAV_nodes_state_log[i]['UAV']['current_x'], UAV_nodes_state_log[i]['UAV']['current_y']
 	visualization_UAV.set_data([UAV_nodes_state_log[i]['UAV']['current_x']], [UAV_nodes_state_log[i]['UAV']['current_y']])
-	return visualization_UAV, visualization_ground
+	visualization_node_text.set_text('%.2lf' % UAV_nodes_state_log[i]['nodes'][0]['power'])
+	return visualization_UAV, visualization_ground, visualization_node_text
 def visualize():
+	global visualization_node_text
+	visualization_node_text = ax.text(0.5, 0.5, '')
 	ani = animation.FuncAnimation(fig, visualize_animate, frames=len(UAV_nodes_state_log), interval=100, blit=True, init_func=visualize_init)
 	plt.show()
 	return
@@ -132,7 +137,6 @@ while is_valid_node_network(nodes):
 	round_num += 1
 	nodes_next_second(nodes)
 	UAV_next_second(UAV, nodes)
-	print UAV['current_x'], UAV['current_y']
 	# record next states
 	state = {}
 	state['UAV'] = copy.deepcopy(UAV)
