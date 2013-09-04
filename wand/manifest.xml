@@ -1,0 +1,15 @@
+<package>
+  <description brief="wand">
+
+     wand
+
+  </description>
+  <author>hengle</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/wand</url>
+  <depend package="collab_msgs"/>
+  <depend package="roscpp"/>
+</package>
+
+
