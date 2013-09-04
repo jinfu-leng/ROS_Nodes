@@ -1,0 +1,15 @@
+<package>
+  <description brief="hector_control_l">
+
+     hector_control_l
+
+  </description>
+  <author>leng</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/hector_control_l</url>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+
