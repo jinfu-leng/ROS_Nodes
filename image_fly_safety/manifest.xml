@@ -9,6 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/image_fly_safety</url>
   <depend package="collab_msgs"/>
+  <depend package="topic_arbitration"/>
 </package>
 
 

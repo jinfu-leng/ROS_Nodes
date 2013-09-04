@@ -69,8 +69,8 @@ ImageFlySafety::ImageFlySafety(){
 	global_pid_params.yaw.max_sat = relative_pid_params.yaw.max_sat = 0;
 	
 	global_pid_params.thrust.prop = relative_pid_params.thrust.prop = 0.8;
-	global_pid_params.thrust.intg = relative_pid_params.thrust.intg = 0.0;
-	global_pid_params.thrust.derv = relative_pid_params.thrust.derv = 0.2;
+	global_pid_params.thrust.intg = relative_pid_params.thrust.intg = 0.875;
+	global_pid_params.thrust.derv = relative_pid_params.thrust.derv = 0.3;
 	global_pid_params.thrust.min_sat = relative_pid_params.thrust.min_sat = 0.0;
 	global_pid_params.thrust.max_sat = relative_pid_params.thrust.max_sat = 0.0;
 	
