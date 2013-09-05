@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # system parameters
-param_number_nodes = 7
+param_number_nodes = 6
 param_ground_width = 100.0
 param_ground_height = 100.0
 
@@ -16,13 +16,14 @@ param_node_initial_power = param_node_power_capacity * 0.75
 param_UAV_initial_x = 0.0
 param_UAV_initial_y = 0.0
 param_UAV_power_capacity = 25 * 3600 * 1.0 
-param_UAV_flight_power_consumption_rate = 75
+param_UAV_flight_power_consumption_rate = 75.0
 param_UAV_initial_power = 25 * 3600 * 1.0
 param_UAV_charging_power_consumption_rate = 15.0
 param_UAV_charging_power_transfer_rate = 1.0 
 param_UAV_moving_speed = 5.0
 
 param_animation_frame_interval = 10
+param_show_visualization = True
 
 # This variable is used to record the sequence of the states
 UAV_nodes_state_log = []
@@ -167,4 +168,5 @@ while is_valid_node_network(nodes):
 	state['nodes'] = copy.deepcopy(nodes)
 	UAV_nodes_state_log.append(state)
 
-visualize()
+if param_show_visualization == True:
+	visualize()
