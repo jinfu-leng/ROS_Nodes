@@ -102,20 +102,25 @@ ax = fig.add_subplot(111, xlim=(-3, param_ground_width+3), ylim=(-3, param_groun
 ax.grid()
 visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
-visualization_node_text = None
+visualization_nodes_text = None
 ax.add_patch(visualization_ground)
 
 def visualize_init():
-	global visualization_UAV, visualization_ground, visualization_node_text
-	return visualization_UAV, visualization_ground, visualization_node_text
+	global visualization_UAV, visualization_ground, visualization_nodes_text
+	return visualization_UAV, visualization_ground, visualization_nodes_text[0]
 def visualize_animate(i):
+	global visualization_UAV, visualization_ground, visualization_nodes_text
 	print UAV_nodes_state_log[i]['UAV']['current_x'], UAV_nodes_state_log[i]['UAV']['current_y']
 	visualization_UAV.set_data([UAV_nodes_state_log[i]['UAV']['current_x']], [UAV_nodes_state_log[i]['UAV']['current_y']])
-	visualization_node_text.set_text('%.2lf' % UAV_nodes_state_log[i]['nodes'][0]['power'])
-	return visualization_UAV, visualization_ground, visualization_node_text
+	for node_index in range(len(visualization_nodes_text)):
+		visualization_nodes_text[node_index].set_text('%.2lf' % UAV_nodes_state_log[i]['nodes'][node_index]['power'])
+	return visualization_UAV, visualization_ground, visualization_nodes_text[0]
 def visualize():
-	global visualization_node_text
-	visualization_node_text = ax.text(0.5, 0.5, '')
+	global visualization_nodes_text
+	visualization_nodes_text = []
+	for node in UAV_nodes_state_log[0]['nodes']:
+		visualization_node_text = ax.text(node['x'], node['y'], '')
+		visualization_nodes_text.append(visualization_node_text)
 	ani = animation.FuncAnimation(fig, visualize_animate, frames=len(UAV_nodes_state_log), interval=100, blit=True, init_func=visualize_init)
 	plt.show()
 	return
