@@ -6,12 +6,12 @@ import matplotlib.animation as animation
 
 # system parameters
 param_number_nodes = 7
-param_ground_width = 1000.0
-param_ground_height = 1000.0
+param_ground_width = 100.0
+param_ground_height = 100.0
 
-param_node_power_capacity = 3 * 3600
-param_node_power_consumption_rate = 0.1855 
-param_node_initial_power = 3 * 3600
+param_node_power_capacity = 2.34 * 3600 * 1.0
+param_node_power_consumption_rate = 0.1855
+param_node_initial_power = param_node_power_capacity * 0.75
 
 param_UAV_initial_x = 0.0
 param_UAV_initial_y = 0.0
@@ -20,9 +20,9 @@ param_UAV_flight_power_consumption_rate = 75
 param_UAV_initial_power = 25 * 3600 * 1.0
 param_UAV_charging_power_consumption_rate = 15.0
 param_UAV_charging_power_transfer_rate = 1.0 
-param_UAV_moving_speed = 3.0
+param_UAV_moving_speed = 5.0
 
-param_animation_frame_interval = 100
+param_animation_frame_interval = 10
 
 # This variable is used to record the sequence of the states
 UAV_nodes_state_log = []
@@ -65,6 +65,8 @@ def create_UAV(ground_width, ground_height):
 	UAV['transfer_rate'] = param_UAV_charging_power_transfer_rate
 	UAV['flght_power_rate'] = param_UAV_flight_power_consumption_rate
 	UAV['charging_power_rate'] = param_UAV_charging_power_consumption_rate
+	UAV['status'] = 'idle'
+	UAV['dest_node_id'] = 0
 	return UAV
 
 def is_UAV_able_back_home(UAV):
@@ -79,26 +81,43 @@ def which_node_is_next(UAV, nodes):
 
 def UAV_next_second(UAV, nodes):
 	if UAV['power'] <=0:
+		UAV['status'] = 'idle'
 		return
-	next_node_id = which_node_is_next(UAV, nodes)
-	if euclidean_distance(nodes[next_node_id]['x'], nodes[next_node_id]['y'], UAV['current_x'], UAV['current_y']) < 0.1:
-		UAV['power'] -= UAV['charging_power_rate']
-		nodes[next_node_id]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-		nodes[next_node_id]['power'] = min(nodes[next_node_id]['power'], nodes[next_node_id]['capacity'])
-	x_diff = nodes[next_node_id]['x'] - UAV['current_x']
-	y_diff = nodes[next_node_id]['y'] - UAV['current_y']
-	dist_diff = math.sqrt(x_diff * x_diff + y_diff * y_diff)
-	moving_ratio = 0
-	if dist_diff > 0:
-		moving_ratio = min(1, UAV['speed'] / dist_diff)
-	UAV['current_x'] += moving_ratio * x_diff
-	UAV['current_y'] += moving_ratio * y_diff
+
 	UAV['power'] -= UAV['flght_power_rate']
-	return
+
+	if UAV['status'] == 'idle':
+		sorted_nodes = sorted(nodes, key=lambda node: node['power'])
+		UAV['dest_node_id'] = sorted_nodes[0]['id']
+		UAV['status'] = 'flying'
+
+	if UAV['status'] == 'flying':
+		if euclidean_distance(nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['current_x'], UAV['current_y']) < 0.1:
+			UAV['status'] = 'charging'
+		else:
+			x_diff = nodes[UAV['dest_node_id']]['x'] - UAV['current_x']
+			y_diff = nodes[UAV['dest_node_id']]['y'] - UAV['current_y']
+			dist_diff = math.sqrt(x_diff * x_diff + y_diff * y_diff)
+			moving_ratio = 0
+			if dist_diff > 0:
+				moving_ratio = min(1, UAV['speed'] / dist_diff)
+				UAV['current_x'] += moving_ratio * x_diff
+				UAV['current_y'] += moving_ratio * y_diff
+		
+	if UAV['status'] == 'charging':
+		UAV['power'] -= UAV['charging_power_rate']
+		nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+		nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
+		if nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
+			UAV['status'] = 'idle'
+			UAV['dest_node_id'] = None	
+
+	if UAV['status'] == 'back':
+		print 'Error!!!!!!!!!!!!!!!!'
+
 
 # visualization
 # set up figure and animation
-print 'OK'
 fig = plt.figure()
 ax = fig.add_subplot(111, xlim=(-3, param_ground_width+3), ylim=(-3, param_ground_height+3))
 ax.grid()
@@ -112,7 +131,7 @@ def visualize_init():
 	return visualization_UAV, visualization_ground 
 def visualize_animate(i):
 	global visualization_UAV, visualization_ground, visualization_nodes_text
-	print UAV_nodes_state_log[i]['UAV']['current_x'], UAV_nodes_state_log[i]['UAV']['current_y']
+	print 'round_num: ' + str((i+1))
 	visualization_UAV.set_data([UAV_nodes_state_log[i]['UAV']['current_x']], [UAV_nodes_state_log[i]['UAV']['current_y']])
 	for node_index in range(len(visualization_nodes_text)):
 		visualization_nodes_text[node_index].set_text('%.2lf' % UAV_nodes_state_log[i]['nodes'][node_index]['power'])
@@ -138,7 +157,7 @@ state['nodes'] = copy.deepcopy(nodes)
 UAV_nodes_state_log.append(state)
 
 while is_valid_node_network(nodes):
-	print 'round: ' + str(round_num)
+	print 'round_num: ' + str(round_num)
 	round_num += 1
 	nodes_next_second(nodes)
 	UAV_next_second(UAV, nodes)
