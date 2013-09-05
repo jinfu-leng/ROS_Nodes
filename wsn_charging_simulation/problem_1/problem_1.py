@@ -6,23 +6,23 @@ import matplotlib.animation as animation
 
 # system parameters
 param_number_nodes = 7
-param_ground_width = 10.0
-param_ground_height = 10.0
+param_ground_width = 1000.0
+param_ground_height = 1000.0
 
-param_node_power_capacity = 100.0
-param_node_power_consumption_rate = 1.0
-param_node_initial_power = 100.0
+param_node_power_capacity = 3 * 3600
+param_node_power_consumption_rate = 0.1855 
+param_node_initial_power = 3 * 3600
 
 param_UAV_initial_x = 0.0
 param_UAV_initial_y = 0.0
-param_UAV_power_capacity = 10000.0
-param_UAV_flight_power_consumption_rate = 100.0
-param_UAV_initial_power = 10000.0
-param_UAV_charging_power_consumption_rate = 100.0
-param_UAV_charging_power_transfer_rate = 0.2
-param_UAV_moving_speed = 2.0
+param_UAV_power_capacity = 25 * 3600 * 1.0 
+param_UAV_flight_power_consumption_rate = 75
+param_UAV_initial_power = 25 * 3600 * 1.0
+param_UAV_charging_power_consumption_rate = 15.0
+param_UAV_charging_power_transfer_rate = 1.0 
+param_UAV_moving_speed = 3.0
 
-param_animation_frame_interval = 300
+param_animation_frame_interval = 100
 
 # This variable is used to record the sequence of the states
 UAV_nodes_state_log = []
