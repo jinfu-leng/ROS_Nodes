@@ -25,7 +25,8 @@ param_UAV_initial_x = -1.0 * param_UAV_moving_speed * 2.5 * 60 # make the distan
 param_UAV_initial_y = 0.0
 
 param_start_visualization = True
-param_animation_frame_interval = 1
+param_animation_frame_interval = 1 # wait how long between each frame
+param_animation_frame_skip_num = 60 # skip how many frame between each animation
 
 
 def euclidean_distance(x, y, x2, y2):
@@ -131,12 +132,16 @@ def UAV_next_second(UAV, nodes):
 			UAV['dest_node_id'] = None
 
 def visualize_animate(i):
-	print 'Round: ' + str(i)
+	round_num = i * (param_animation_frame_skip_num + 1) + 1
+	print 'Round: ' + str(round_num)
 	global visualization_UAV, visualization_nodes_text
 	global UAV, nodes
 	if is_valid_node_network(nodes):
-		nodes_next_second(nodes)
-		UAV_next_second(UAV, nodes)
+		left = param_animation_frame_skip_num + 1
+		while left > 0 and is_valid_node_network(nodes):
+			nodes_next_second(nodes)
+			UAV_next_second(UAV, nodes)
+			left -= 1
 	else:
 		UAV = create_UAV(param_ground_width, param_ground_height)
 		nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
