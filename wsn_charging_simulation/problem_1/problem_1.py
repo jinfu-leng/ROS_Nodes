@@ -24,12 +24,8 @@ param_UAV_charged_power_accumulation_rate = 25
 param_UAV_initial_x = -1.0 * param_UAV_moving_speed * 5 * 60 # make the distance between UAV base and wsn field a 5 minutes' flying
 param_UAV_initial_y = 0.0
 
-param_animation_frame_interval = 5
-param_show_visualization = True
-param_max_frame_num = 100000
+param_animation_frame_interval = 1
 
-# This variable is used to record the sequence of the states
-UAV_nodes_state_log = []
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
@@ -133,6 +129,34 @@ def UAV_next_second(UAV, nodes):
 			UAV['status'] = 'idle'
 			UAV['dest_node_id'] = None
 
+def visualize_animate(i):
+	print 'Round: ' + str(i)
+	global visualization_UAV, visualization_nodes_text
+	global UAV, nodes
+	if is_valid_node_network(nodes):
+		nodes_next_second(nodes)
+		UAV_next_second(UAV, nodes)
+	else:
+		UAV = create_UAV(param_ground_width, param_ground_height)
+		nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+	visualization_UAV.set_data(UAV['current_x'], UAV['current_y'])
+	for node_index in range(len(visualization_nodes_text)):
+		visualization_nodes_text[node_index].set_text('%.2lf' % nodes[node_index]['power'])
+
+def start():
+	global UAV, nodes
+	UAV = create_UAV(param_ground_width, param_ground_height)
+	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+
+	global visualization_nodes_text
+	visualization_nodes_text = []
+	for node in nodes:
+		visualization_node_text = ax.text(node['x'], node['y'], '')
+		visualization_nodes_text.append(visualization_node_text)
+
+	ani = animation.FuncAnimation(fig, visualize_animate, interval=param_animation_frame_interval, blit=False)
+	plt.show()
+
 
 # visualization
 # set up figure and animation
@@ -143,51 +167,7 @@ visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
 visualization_nodes_text = None
 ax.add_patch(visualization_ground)
+UAV = None
+nodes = None
 
-def visualize_init():
-	global visualization_UAV, visualization_ground, visualization_nodes_text
-	return visualization_UAV, visualization_ground 
-def visualize_animate(i):
-	global visualization_UAV, visualization_ground, visualization_nodes_text
-	print 'round_num: ' + str((i+1))
-	visualization_UAV.set_data([UAV_nodes_state_log[i]['UAV']['current_x']], [UAV_nodes_state_log[i]['UAV']['current_y']])
-	for node_index in range(len(visualization_nodes_text)):
-		visualization_nodes_text[node_index].set_text('%.2lf' % UAV_nodes_state_log[i]['nodes'][node_index]['power'])
-	return visualization_UAV, visualization_ground
-def visualize():
-	global visualization_nodes_text
-	visualization_nodes_text = []
-	for node in UAV_nodes_state_log[0]['nodes']:
-		visualization_node_text = ax.text(node['x'], node['y'], '')
-		visualization_nodes_text.append(visualization_node_text)
-	ani = animation.FuncAnimation(fig, visualize_animate, frames=len(UAV_nodes_state_log), interval=param_animation_frame_interval, blit=False, init_func=visualize_init)
-	plt.show()
-
-
-nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
-round_num = 1
-UAV = create_UAV(param_ground_width, param_ground_height)
-
-# record initial states
-state = {}
-state['UAV'] = copy.deepcopy(UAV)
-state['nodes'] = copy.deepcopy(nodes)
-UAV_nodes_state_log.append(state)
-
-while is_valid_node_network(nodes):
-	print 'round_num: ' + str(round_num)
-	round_num += 1
-	nodes_next_second(nodes)
-	UAV_next_second(UAV, nodes)
-	# record next states
-	if param_show_visualization == True:
-		state = {}
-		state['UAV'] = copy.deepcopy(UAV)
-		state['nodes'] = copy.deepcopy(nodes)
-		UAV_nodes_state_log.append(state)
-		if round_num > param_max_frame_num:
-			print 'maximal frame number achieved'
-			break
-
-if param_show_visualization == True:
-	visualize()
+start()
