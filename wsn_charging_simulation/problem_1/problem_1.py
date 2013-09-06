@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # system parameters
-param_number_nodes = 10
+param_number_nodes = 5
 param_ground_width = 100.0
 param_ground_height = 100.0
 
@@ -16,14 +16,15 @@ param_node_initial_power = param_node_power_capacity * 0.6
 param_UAV_power_capacity = 25 * 3600 * 1.0 
 param_UAV_flight_power_consumption_rate = 75.0
 param_UAV_initial_power = param_UAV_power_capacity
-param_UAV_charging_power_consumption_rate = 15.0
-param_UAV_charging_power_transfer_rate = 1.0 
+param_UAV_charging_power_consumption_rate = 45.0
+param_UAV_charging_power_transfer_rate = 0.3333
 param_UAV_moving_speed = 5.0
-param_UAV_charged_power_accumulation_rate = 25
+param_UAV_charged_power_accumulation_rate = 0.0
 
-param_UAV_initial_x = -1.0 * param_UAV_moving_speed * 5 * 60 # make the distance between UAV base and wsn field a 5 minutes' flying
+param_UAV_initial_x = -1.0 * param_UAV_moving_speed * 2.5 * 60 # make the distance between UAV base and wsn field a 2.5 minutes' flying
 param_UAV_initial_y = 0.0
 
+param_start_visualization = True
 param_animation_frame_interval = 1
 
 
@@ -143,7 +144,7 @@ def visualize_animate(i):
 	for node_index in range(len(visualization_nodes_text)):
 		visualization_nodes_text[node_index].set_text('%.2lf' % nodes[node_index]['power'])
 
-def start():
+def start_visualization():
 	global UAV, nodes
 	UAV = create_UAV(param_ground_width, param_ground_height)
 	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
@@ -157,6 +158,17 @@ def start():
 	ani = animation.FuncAnimation(fig, visualize_animate, interval=param_animation_frame_interval, blit=False)
 	plt.show()
 
+def start_simulation():
+	global UAV, nodes
+	UAV = create_UAV(param_ground_width, param_ground_height)
+	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+	round_num = 1
+	while is_valid_node_network(nodes):
+		print 'Round: ' + str(round_num)
+		round_num += 1
+		nodes_next_second(nodes)
+		UAV_next_second(UAV, nodes)
+	
 
 # visualization
 # set up figure and animation
@@ -167,7 +179,11 @@ visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_height, lw=2, fc='none')
 visualization_nodes_text = None
 ax.add_patch(visualization_ground)
+
 UAV = None
 nodes = None
 
-start()
+if param_start_visualization == True:
+	start_visualization()
+else:
+	start_simulation()
