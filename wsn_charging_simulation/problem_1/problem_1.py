@@ -4,29 +4,28 @@ import copy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+# read into the config file
+import independent_indoor_config as config
+
 # system parameters
-param_number_nodes = 5
-param_ground_width = 100.0
-param_ground_height = 100.0
-
-param_node_power_capacity = 2.34 * 3600 * 1.0
-param_node_power_consumption_rate = 0.1855
-param_node_initial_power = param_node_power_capacity * 0.6
-
-param_UAV_power_capacity = 25 * 3600 * 1.0 
-param_UAV_flight_power_consumption_rate = 75.0
-param_UAV_initial_power = param_UAV_power_capacity
-param_UAV_charging_power_consumption_rate = 45.0
-param_UAV_charging_power_transfer_rate = 0.3333
-param_UAV_moving_speed = 5.0
-param_UAV_charged_power_accumulation_rate = 0.0
-
-param_UAV_initial_x = -1.0 * param_UAV_moving_speed * 2.5 * 60 # make the distance between UAV base and wsn field a 2.5 minutes' flying
-param_UAV_initial_y = 0.0
-
-param_start_visualization = True
-param_animation_frame_interval = 1 # wait how long between each frame
-param_animation_frame_skip_num = 60 # skip how many frame between each animation
+param_number_nodes = config.param_number_nodes
+param_ground_width = config.param_ground_width
+param_ground_height = config.param_ground_height
+param_node_power_capacity = config.param_node_power_capacity
+param_node_power_consumption_rate = config.param_node_power_consumption_rate
+param_node_initial_power = config.param_node_initial_power
+param_UAV_power_capacity = config.param_UAV_power_capacity
+param_UAV_flight_power_consumption_rate = config.param_UAV_flight_power_consumption_rate
+param_UAV_initial_power = config.param_UAV_initial_power
+param_UAV_charging_power_consumption_rate = config.param_UAV_charging_power_consumption_rate
+param_UAV_charging_power_transfer_rate = config.param_UAV_charging_power_transfer_rate
+param_UAV_moving_speed = config.param_UAV_moving_speed
+param_UAV_charged_power_accumulation_rate = config.param_UAV_charged_power_accumulation_rate
+param_UAV_initial_x = config.param_UAV_initial_x
+param_UAV_initial_y = config.param_UAV_initial_y
+param_start_visualization = config.param_start_visualization
+param_animation_frame_interval = config.param_animation_frame_interval
+param_animation_frame_skip_num = config.param_animation_frame_skip_num
 
 
 def euclidean_distance(x, y, x2, y2):
@@ -132,19 +131,18 @@ def UAV_next_second(UAV, nodes):
 			UAV['dest_node_id'] = None
 
 def visualize_animate(i):
-	round_num = i * (param_animation_frame_skip_num + 1) + 1
-	print 'Round: ' + str(round_num)
 	global visualization_UAV, visualization_nodes_text
-	global UAV, nodes
+	global UAV, nodes, round_num
+
 	if is_valid_node_network(nodes):
 		left = param_animation_frame_skip_num + 1
 		while left > 0 and is_valid_node_network(nodes):
 			nodes_next_second(nodes)
 			UAV_next_second(UAV, nodes)
+			print 'Round: ' + str(round_num)
+			round_num += 1
 			left -= 1
-	else:
-		UAV = create_UAV(param_ground_width, param_ground_height)
-		nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+
 	visualization_UAV.set_data(UAV['current_x'], UAV['current_y'])
 	for node_index in range(len(visualization_nodes_text)):
 		visualization_nodes_text[node_index].set_text('%.2lf' % nodes[node_index]['power'])
@@ -164,10 +162,9 @@ def start_visualization():
 	plt.show()
 
 def start_simulation():
-	global UAV, nodes
+	global UAV, nodes, round_num
 	UAV = create_UAV(param_ground_width, param_ground_height)
 	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
-	round_num = 1
 	while is_valid_node_network(nodes):
 		print 'Round: ' + str(round_num)
 		round_num += 1
@@ -187,6 +184,7 @@ ax.add_patch(visualization_ground)
 
 UAV = None
 nodes = None
+round_num = 1
 
 if param_start_visualization == True:
 	start_visualization()
