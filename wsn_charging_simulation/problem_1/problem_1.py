@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # read into the config file
-import independent_indoor_config as config
+import independent_outdoor_config as config
 
 # system parameters
 param_number_nodes = config.param_number_nodes
 param_ground_width = config.param_ground_width
 param_ground_height = config.param_ground_height
+param_network_type = config.param_network_type
 param_node_power_capacity = config.param_node_power_capacity
 param_node_power_consumption_rate = config.param_node_power_consumption_rate
 param_node_initial_power = config.param_node_initial_power
@@ -23,15 +24,17 @@ param_UAV_moving_speed = config.param_UAV_moving_speed
 param_UAV_charged_power_accumulation_rate = config.param_UAV_charged_power_accumulation_rate
 param_UAV_initial_x = config.param_UAV_initial_x
 param_UAV_initial_y = config.param_UAV_initial_y
-param_start_visualization = config.param_start_visualization
-param_animation_frame_interval = config.param_animation_frame_interval
-param_animation_frame_skip_num = config.param_animation_frame_skip_num
+
+param_start_visualization = True
+param_animation_frame_interval = 1 # wait how long between each frame
+param_animation_frame_skip_num = 100 # skip how many frame between each animation
 
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
 
-def create_node_network(number_nodes, ground_width, ground_height):
+# nodes are homogeneous
+def create_homogeneous_node_network(number_nodes, ground_width, ground_height):
 	nodes = []
 	for i in range(0, number_nodes):
 		node = {}
@@ -43,6 +46,29 @@ def create_node_network(number_nodes, ground_width, ground_height):
 		node['power'] = param_node_initial_power
 		nodes.append(node)
 	return nodes
+
+# nodes are homogeneous except initial power
+def create_homogeneous2_node_network(number_nodes, ground_width, ground_height):
+	nodes = []
+	for i in range(0, number_nodes):
+		node = {}
+		node['id'] = i
+		node['x'] = random.random() * ground_width
+		node['y'] = random.random() * ground_height
+		node['capacity'] = param_node_power_capacity
+		node['rate'] = param_node_power_consumption_rate
+		node['power'] = max(random.random(), 0.5) * param_node_initial_power
+		nodes.append(node)
+	return nodes
+
+def create_node_network(number_nodes, ground_width, ground_height, network_type = 'homogeneous'):
+	if network_type == 'homogeneous':
+		return create_homogeneous_node_network(number_nodes, ground_width, ground_height)
+	elif network_type == 'homogeneous2':
+		return create_homogeneous2_node_network(number_nodes, ground_width, ground_height)
+	else:
+		return None
+
 
 def nodes_next_second(nodes):
 	for node in nodes:
@@ -150,7 +176,7 @@ def visualize_animate(i):
 def start_visualization():
 	global UAV, nodes
 	UAV = create_UAV(param_ground_width, param_ground_height)
-	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
 
 	global visualization_nodes_text
 	visualization_nodes_text = []
@@ -164,7 +190,7 @@ def start_visualization():
 def start_simulation():
 	global UAV, nodes, round_num
 	UAV = create_UAV(param_ground_width, param_ground_height)
-	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height)
+	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
 	while is_valid_node_network(nodes):
 		print 'Round: ' + str(round_num)
 		round_num += 1

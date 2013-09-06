@@ -2,6 +2,7 @@
 param_number_nodes = 6
 param_ground_width = 10.0
 param_ground_height = 10.0
+param_network_type = 'homogeneous2'
 
 param_node_power_capacity = 60
 param_node_power_consumption_rate = 1
@@ -17,7 +18,3 @@ param_UAV_charged_power_accumulation_rate = 0.0
 
 param_UAV_initial_x = 0.0
 param_UAV_initial_y = 0.0
-
-param_start_visualization = True
-param_animation_frame_interval = 1 # wait how long between each frame
-param_animation_frame_skip_num = 0 # skip how many frame between each animation
