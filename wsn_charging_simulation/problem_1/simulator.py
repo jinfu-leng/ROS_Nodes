@@ -1,11 +1,10 @@
 import random
-import math
-import copy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # read into the config file
 import independent_outdoor_config as config
+import UAV_AI
 
 # system parameters
 param_number_nodes = config.param_number_nodes
@@ -31,9 +30,6 @@ param_animation_frame_skip_num = 100 # skip how many frame between each animatio
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
-
-def euclidean_distance(x, y, x2, y2):
-	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
 
 # nodes are homogeneous
 def create_homogeneous_node_network(number_nodes, ground_width, ground_height):
@@ -93,73 +89,12 @@ def create_UAV(ground_width, ground_height):
 	UAV['speed'] = param_UAV_moving_speed
 	UAV['transfer_rate'] = param_UAV_charging_power_transfer_rate
 	UAV['flght_power_rate'] = param_UAV_flight_power_consumption_rate
-	UAV['charging_power_rate'] = param_UAV_charging_power_consumption_rate
+	UAV['charging_power_rate'] = param_UAV_charging_power_consumption_rate # charging nodes
+	UAV['charged_power_rate'] = param_UAV_charged_power_accumulation_rate # being charged
 	UAV['status'] = 'idle'
 	UAV['dest_node_id'] = 0
 	UAV['task_num'] = 0
 	return UAV
-
-def next_position(current_x, current_y, dest_x, dest_y, speed):
-	x_diff = dest_x - current_x
-	y_diff = dest_y - current_y
-	dist_diff = math.sqrt(x_diff * x_diff + y_diff * y_diff)
-	moving_ratio = 0
-	if dist_diff > 0:
-		moving_ratio = min(1, UAV['speed'] / dist_diff)
-	return current_x + moving_ratio * x_diff, current_y + moving_ratio * y_diff
-
-def is_UAV_able_back_home_after_next_second(UAV):
-	next_power = UAV['power'] - UAV['flght_power_rate']
-	if UAV['status'] == 'charging':
-		next_power -= UAV['charging_power_rate']
-	consume_rate = UAV['flght_power_rate']	
-	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
-	speed = UAV['speed']
-	return next_power/consume_rate > distance_home/speed
-
-def UAV_next_second(UAV, nodes):
-	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
-		UAV['status'] = 'back'
-		UAV['task_num'] += 1
-		
-	if UAV['status'] == 'back':
-		if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_y']:
-			UAV['status'] = 'chargingself'
-		else:
-			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'], UAV['speed'])
-			UAV['current_x'] = next_x
-			UAV['current_y'] = next_y
-			UAV['power'] -= UAV['flght_power_rate']
-
-	if UAV['status'] == 'chargingself':
-		UAV['power'] += param_UAV_charged_power_accumulation_rate
-		if UAV['power'] >= UAV['capacity']:
-			UAV['power'] = UAV['capacity']
-			UAV['status'] = 'idle'
-			return
-	
-	if UAV['status'] == 'idle':
-		sorted_nodes = sorted(nodes, key=lambda node: node['power'])
-		UAV['dest_node_id'] = sorted_nodes[0]['id']
-		UAV['status'] = 'flying'
-
-	if UAV['status'] == 'flying':
-		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
-			UAV['power'] -= UAV['flght_power_rate']
-			UAV['status'] = 'charging'
-		else:
-			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
-			UAV['current_x'] = next_x
-			UAV['current_y'] = next_y
-			UAV['power'] -= UAV['flght_power_rate']
-		
-	if UAV['status'] == 'charging':
-		UAV['power'] -= UAV['charging_power_rate']
-		nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-		nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-		if nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
-			UAV['status'] = 'idle'
-			UAV['dest_node_id'] = None
 
 def visualize_animate(i):
 	global visualization_UAV, visualization_nodes_text
@@ -204,7 +139,7 @@ def start_simulation():
 			break
 		round_num += 1
 		nodes_next_second(nodes)
-		UAV_next_second(UAV, nodes)
+		UAV_AI.next_second(UAV, nodes)
 	
 
 # visualization
