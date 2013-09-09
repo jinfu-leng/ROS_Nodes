@@ -98,12 +98,6 @@ def create_UAV(ground_width, ground_height):
 	UAV['dest_node_id'] = 0
 	return UAV
 
-def is_UAV_able_back_home(UAV):
-	dist_to_home = euclidean_distance(UAV['home_x'], UAV['home_y'], UAV['current_x'], UAV['current_y'])
-	time_required = math.ceil(dist_to_home / UAV['flght_power_rate'])
-	power_required = time_required * UAV['flght_power_rate']
-	return UAV['power'] > power_required
-
 def next_position(current_x, current_y, dest_x, dest_y, speed):
 	x_diff = dest_x - current_x
 	y_diff = dest_y - current_y
