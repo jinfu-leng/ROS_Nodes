@@ -96,6 +96,7 @@ def create_UAV(ground_width, ground_height):
 	UAV['charging_power_rate'] = param_UAV_charging_power_consumption_rate
 	UAV['status'] = 'idle'
 	UAV['dest_node_id'] = 0
+	UAV['task_num'] = 0
 	return UAV
 
 def next_position(current_x, current_y, dest_x, dest_y, speed):
@@ -107,23 +108,22 @@ def next_position(current_x, current_y, dest_x, dest_y, speed):
 		moving_ratio = min(1, UAV['speed'] / dist_diff)
 	return current_x + moving_ratio * x_diff, current_y + moving_ratio * y_diff
 
-def is_UAV_able_back_home(UAV):
-	current_power = UAV['power']
-	consume_rate = UAV['flght_power_rate']
+def is_UAV_able_back_home_after_next_second(UAV):
+	next_power = UAV['power'] - UAV['flght_power_rate']
 	if UAV['status'] == 'charging':
-		consume_rate += UAV['charging_power_rate']
+		next_power -= UAV['charging_power_rate']
+	consume_rate = UAV['flght_power_rate']	
 	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
 	speed = UAV['speed']
-	return (current_power/consume_rate - 1) >  distance_home/speed
+	return next_power/consume_rate > distance_home/speed
 
 def UAV_next_second(UAV, nodes):
-	global task_num
-	if is_UAV_able_back_home(UAV) == False:
+	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
+		UAV['task_num'] += 1
 		
 	if UAV['status'] == 'back':
 		if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_y']:
-			task_num += 1
 			UAV['status'] = 'chargingself'
 		else:
 			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'], UAV['speed'])
@@ -136,6 +136,7 @@ def UAV_next_second(UAV, nodes):
 		if UAV['power'] >= UAV['capacity']:
 			UAV['power'] = UAV['capacity']
 			UAV['status'] = 'idle'
+			return
 	
 	if UAV['status'] == 'idle':
 		sorted_nodes = sorted(nodes, key=lambda node: node['power'])
@@ -143,7 +144,7 @@ def UAV_next_second(UAV, nodes):
 		UAV['status'] = 'flying'
 
 	if UAV['status'] == 'flying':
-		if euclidean_distance(nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['current_x'], UAV['current_y']) < 0.1:
+		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
 			UAV['power'] -= UAV['flght_power_rate']
 			UAV['status'] = 'charging'
 		else:
@@ -192,14 +193,14 @@ def start_visualization():
 	plt.show()
 
 def start_simulation():
-	global UAV, nodes, round_num, task_num
+	global UAV, nodes, round_num
 	UAV = create_UAV(param_ground_width, param_ground_height)
 	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
 	while is_valid_node_network(nodes):
 		print 'Round: ' + str(round_num)
 		if round_num == constant_second_of_7days:
 			print 'The system was valid during the past 7 days'
-			print 'The charging task was conducted ' + str(task_num) + ' times'
+			print 'The charging task was conducted ' + str(UAV['task_num']) + ' times'
 			break
 		round_num += 1
 		nodes_next_second(nodes)
@@ -219,7 +220,6 @@ ax.add_patch(visualization_ground)
 UAV = None
 nodes = None
 round_num = 1
-task_num = 1
 
 if param_start_visualization == True:
 	start_visualization()
