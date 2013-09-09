@@ -19,7 +19,7 @@ def is_UAV_able_back_home_after_next_second(UAV):
 	consume_rate = UAV['flght_power_rate']	
 	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
 	speed = UAV['speed']
-	return next_power/consume_rate > distance_home/speed
+	return int(next_power/consume_rate) > (int(distance_home/speed) + 3)
 
 def next_second_least_power(UAV, nodes):
 	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:

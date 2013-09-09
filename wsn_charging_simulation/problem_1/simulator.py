@@ -26,7 +26,9 @@ param_UAV_initial_y = config.param_UAV_initial_y
 
 param_start_visualization = False
 param_animation_frame_interval = 1 # wait how long between each frame
-param_animation_frame_skip_num = 100 # skip how many frame between each animation
+param_animation_frame_skip_num = 1000 # skip how many frame between each animation
+
+param_UAV_mode = 'least_power'
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
@@ -78,6 +80,12 @@ def is_valid_node_network(nodes):
 			return False
 	return True
 
+def is_valid_UAV(UAV):
+	if UAV['power'] <= 0:
+		return False
+	else:
+		return True
+
 def create_UAV(ground_width, ground_height):
 	UAV = {}
 	UAV['home_x'] = param_UAV_initial_x
@@ -92,7 +100,7 @@ def create_UAV(ground_width, ground_height):
 	UAV['charging_power_rate'] = param_UAV_charging_power_consumption_rate # charging nodes
 	UAV['charged_power_rate'] = param_UAV_charged_power_accumulation_rate # being charged
 	UAV['status'] = 'idle'
-	UAV['dest_node_id'] = 0
+	UAV['dest_node_id'] = None
 	UAV['task_num'] = 0
 	return UAV
 
@@ -100,14 +108,13 @@ def visualize_animate(i):
 	global visualization_UAV, visualization_nodes_text
 	global UAV, nodes, round_num
 
-	if is_valid_node_network(nodes):
-		left = param_animation_frame_skip_num + 1
-		while left > 0 and is_valid_node_network(nodes):
-			nodes_next_second(nodes)
-			UAV_next_second(UAV, nodes)
-			print 'Round: ' + str(round_num)
-			round_num += 1
-			left -= 1
+	left = param_animation_frame_skip_num + 1
+	while left > 0 and is_valid_node_network(nodes) and is_valid_UAV(UAV):
+		nodes_next_second(nodes)
+		UAV_AI.next_second(UAV, nodes, param_UAV_mode)
+		print 'Round: ' + str(round_num)
+		round_num += 1
+		left -= 1
 
 	visualization_UAV.set_data(UAV['current_x'], UAV['current_y'])
 	for node_index in range(len(visualization_nodes_text)):
@@ -131,7 +138,7 @@ def start_simulation():
 	global UAV, nodes, round_num
 	UAV = create_UAV(param_ground_width, param_ground_height)
 	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
-	while is_valid_node_network(nodes):
+	while is_valid_node_network(nodes) and is_valid_UAV(UAV):
 		print 'Round: ' + str(round_num)
 		if round_num == constant_second_of_7days:
 			print 'The system was valid during the past 7 days'
@@ -139,7 +146,7 @@ def start_simulation():
 			break
 		round_num += 1
 		nodes_next_second(nodes)
-		UAV_AI.next_second(UAV, nodes, 'least_power')
+		UAV_AI.next_second(UAV, nodes, param_UAV_mode)
 	
 
 # visualization
