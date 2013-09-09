@@ -25,10 +25,12 @@ param_UAV_charged_power_accumulation_rate = config.param_UAV_charged_power_accum
 param_UAV_initial_x = config.param_UAV_initial_x
 param_UAV_initial_y = config.param_UAV_initial_y
 
-param_start_visualization = True
+param_start_visualization = False
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 100 # skip how many frame between each animation
 
+constant_second_of_7days = 604800
+constant_second_of_30days = 2592000
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
@@ -112,14 +114,22 @@ def next_position(current_x, current_y, dest_x, dest_y, speed):
 	return current_x + moving_ratio * x_diff, current_y + moving_ratio * y_diff
 
 def is_UAV_able_back_home(UAV):
-	return (UAV['power'] / UAV['flght_power_rate'] - 1) > euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y']) / UAV['speed']
+	current_power = UAV['power']
+	consume_rate = UAV['flght_power_rate']
+	if UAV['status'] == 'charging':
+		consume_rate += UAV['charging_power_rate']
+	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
+	speed = UAV['speed']
+	return (current_power/consume_rate - 1) >  distance_home/speed
 
 def UAV_next_second(UAV, nodes):
+	global task_num
 	if is_UAV_able_back_home(UAV) == False:
 		UAV['status'] = 'back'
 		
 	if UAV['status'] == 'back':
 		if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_y']:
+			task_num += 1
 			UAV['status'] = 'chargingself'
 		else:
 			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'], UAV['speed'])
@@ -188,11 +198,15 @@ def start_visualization():
 	plt.show()
 
 def start_simulation():
-	global UAV, nodes, round_num
+	global UAV, nodes, round_num, task_num
 	UAV = create_UAV(param_ground_width, param_ground_height)
 	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
 	while is_valid_node_network(nodes):
 		print 'Round: ' + str(round_num)
+		if round_num == constant_second_of_7days:
+			print 'The system was valid during the past 7 days'
+			print 'The charging task was conducted ' + str(task_num) + ' times'
+			break
 		round_num += 1
 		nodes_next_second(nodes)
 		UAV_next_second(UAV, nodes)
@@ -211,6 +225,7 @@ ax.add_patch(visualization_ground)
 UAV = None
 nodes = None
 round_num = 1
+task_num = 1
 
 if param_start_visualization == True:
 	start_visualization()
