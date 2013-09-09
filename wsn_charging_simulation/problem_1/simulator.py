@@ -139,7 +139,7 @@ def start_simulation():
 			break
 		round_num += 1
 		nodes_next_second(nodes)
-		UAV_AI.next_second(UAV, nodes)
+		UAV_AI.next_second(UAV, nodes, 'least_power')
 	
 
 # visualization

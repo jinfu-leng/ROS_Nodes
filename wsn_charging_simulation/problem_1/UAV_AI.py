@@ -21,7 +21,7 @@ def is_UAV_able_back_home_after_next_second(UAV):
 	speed = UAV['speed']
 	return next_power/consume_rate > distance_home/speed
 
-def next_second(UAV, nodes):
+def next_second_least_power(UAV, nodes):
 	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
 		UAV['task_num'] += 1
@@ -64,3 +64,9 @@ def next_second(UAV, nodes):
 		if nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
 			UAV['status'] = 'idle'
 			UAV['dest_node_id'] = None
+
+def next_second(UAV, nodes, mode = 'least_power'):
+	if mode == 'least_power':
+		next_second_least_power(UAV, nodes)
+	else:
+		print 'error'
