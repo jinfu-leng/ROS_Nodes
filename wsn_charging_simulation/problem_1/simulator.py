@@ -28,7 +28,7 @@ param_start_visualization = False
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 1000 # skip how many frame between each animation
 
-param_UAV_mode = 'least_power'
+param_UAV_mode = 'least_power_k'
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
@@ -163,6 +163,8 @@ ax.add_patch(visualization_ground)
 UAV = None
 nodes = None
 round_num = 1
+
+random.seed()
 
 if param_start_visualization == True:
 	start_visualization()
