@@ -67,6 +67,7 @@ def create_node_network(number_nodes, ground_width, ground_height, network_type 
 	elif network_type == 'homogeneous2':
 		return create_homogeneous2_node_network(number_nodes, ground_width, ground_height)
 	else:
+		print 'error'
 		return None
 
 
