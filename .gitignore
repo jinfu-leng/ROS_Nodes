@@ -69,5 +69,12 @@ pip-log.txt
 *.bag
 *~
 
+# Svn
 .svn
 msg_gen
+
+# Latex
+.aux
+.log
+.pdf
+.gz
