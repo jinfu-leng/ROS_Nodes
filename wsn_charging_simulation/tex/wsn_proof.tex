@@ -1,0 +1,26 @@
+\documentstyle[11pt]{article}
+\begin{document}
+\title{NP-Complete Proof - UAV Wireless Power Transfer for Wireless Sensor Network}
+\author{Jinfu Leng}
+\maketitle
+\section{Background}
+It is expensive to replace battery of nodes in wireless sensor network.
+It is flexible and affordable to use UAV to charge nodes in wirelss sensor network.
+\section{Description}
+We consider a set of sensor nodes $N$ distributed over a graph $G$. Each sensor node has a battery capacity of $E_{max}$, an initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. Each node consumes energy of $E_{c}$ per second.
+
+There is an UAV in the system to charge these nodes. The UAV has a battery capacity of $e_{max}$. UAV consumes energy of $e_{cf}$ per second for flight, and consumes energy of $e_{ct}$ per second for transferring power to the nodes. The transfer rate from UAV to nodes is $r$.
+
+There is an UAV base station in the system to charge the UAV. UAV can receive energy of $e_r$ per second. UAV has to come back to station before its power falls below $0$.
+
+For UAV, there are two types of valid commands:
+1, fly from node A to node B
+2, charge node A for $t$ second
+
+The problem is, suppose we want to keep the network to work as long as time of $T$, what is the minimal number of charging tasks the UAV has to execute. Every time UAV going out of the base station counts as one charging task.
+
+The decision version of the problem is, given time of $T$, is the UAV able to keep the system working as long as $T$ with less than $k$ tasks.
+\section{Proof}
+Given an instance $I$ or $Travelling Salesman Problem$, we can transform it into an instance $I'$ of $UAV Charging Problem$.
+
+\end{document}
