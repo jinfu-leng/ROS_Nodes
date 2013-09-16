@@ -7,13 +7,13 @@
 It is expensive to replace battery of nodes in wireless sensor network.
 It is flexible and affordable to use UAV to charge nodes in wirelss sensor network.
 \section{Description}
-We consider $N$ sensor nodes and a UAV base station are distributed over a graph $G_s$. Each sensor node has a battery capacity of $E_{max}$, an initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. Each node consumes energy of $E_{c}$ per second.
+We consider $N$ sensor nodes and a UAV base station are distributed over a graph $G_s$. Each sensor node has the battery capacity of $E_{max}$, the initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. Each node consumes energy of $E_{c}$ per second.
 
-There is an UAV in the system to charge these nodes. The UAV has a battery capacity of $e_{max}$. UAV consumes energy of $e_{cf}$ per second for flight, and consumes energy of $e_{ct}$ per second for transferring power to the nodes. The transfer rate from UAV to nodes is $r$. UAV can receive energy of $e_r$ per second from UAV vase station. Initially, UAV is at the base station, and UAV has to come back to the base station before its power falls below $0$. The moving speed of UAV is $v$.
+There is an UAV in the system to charge these nodes. The UAV has the battery capacity of $e_{max}$. UAV consumes energy of $e_{cf}$ per second for flight, and consumes energy of $e_{ct}$ per second for transferring power to the wireless sensor nodes. The transfer rate from UAV to nodes is $r$. UAV can receive energy of $e_r$ per second from UAV base station. Initially, UAV is at the base station, and UAV has to come back to the base station before its power falls below $0$. The moving speed of UAV is $v$.
 
 For UAV, there are two types of valid commands:
 1, fly from node $A$ to node $B$;
-2, charge node $A$ for $t$ second;
+2, charge node $A$ for $t$ seconds;
 
 The problem is, suppose we want to keep the network to work as long as time of $T$, what is the minimal number of charging tasks the UAV has to execute. Every time UAV going out of the base station counts as one charging task.
 
@@ -26,7 +26,7 @@ Given a sequence of UAV actions $S$, we can simulate the actions and verify it. 
 
 Second, given an instance of the decision version of $Travelling Salesman Problem$, $G = (V, E)$ and $L$, we can transform it into an instance of $UAV Charging Problem$ in polynomial time.
 
-$G_s = G$, we can randomly choose a vertex as the UAV base station, and then all the other $|V|-1$ vertices are wireless sensor network nodes.
+We can construct $G_s = G$, and then randomly choose a vertex as the UAV base station. All the other $|V|-1$ vertices are wireless sensor network nodes.
 
 We set the parameters of nodes as: $E_{max} = |V| + |L| - 1$, $E_{init} = |V| + |L| - 2$, $E_{min} = 0$, and $E_{c} = 1$.
 
