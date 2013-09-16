@@ -82,11 +82,16 @@ def preprocess_partion(nodes):
 		else:
 			node['district'] = 3
 
-def next_node_partion(nodes, threshhold, k):
+def next_node_least_power_partion(nodes, threshold, k):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
-	district = sorted_nodes[0]['district']
-	district_nodes = [for node in sorted_nodes if node['district'] == district]
-	return next_node_least_power_k(district_nodes, threshold, k)
+	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
+		district = sorted_nodes[0]['district']
+		district_nodes = [node['id'] for node in sorted_nodes if node['district'] == district]
+		while len(district_nodes) > k:
+			district_nodes.pop()
+		return district_nodes
+	else:
+		return None
 
 # charge the list of nodes
 # when start to charge a node, charge it until it is full
@@ -118,6 +123,8 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 				UAV['dest_list'] = next_node_least_power(nodes, threshold)
 			elif algorithmName == 'least_power_k':
 				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
+			elif algorithmName == 'least_power_partion':
+				UAV['dest_list'] = next_node_least_power_partion(nodes, threshold, k)
 			else:
 				UAV['dest_list'] = None
 
@@ -152,10 +159,15 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 
 def next_second(UAV, nodes, mode = 'least_power'):
 	if mode == 'least_power':
-		next_second_charge_until_full('least_power', UAV, nodes, 0.3) 
+		next_second_charge_until_full(mode, UAV, nodes, 0.5) 
 	elif mode == 'least_power_k':
 		k = 5
 		k = min(k, len(nodes))
-		next_second_charge_until_full('least_power_k', UAV, nodes, 0.3, k) 
+		next_second_charge_until_full(mode, UAV, nodes, 0.5, k) 
+	elif mode == 'least_power_partion':
+		preprocess_partion(nodes)
+		k = 5
+		k = min(k, len(nodes))
+		next_second_charge_until_full(mode, UAV, nodes, 0.5)
 	else:
 		print 'error'
