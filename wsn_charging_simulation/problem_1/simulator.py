@@ -27,6 +27,7 @@ param_UAV_initial_y = config.param_UAV_initial_y
 param_start_visualization = False
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 1000 # skip how many frame between each animation
+param_print_round_number = True
 
 param_UAV_mode = 'least_power_k'
 
@@ -70,6 +71,38 @@ def create_node_network(number_nodes, ground_width, ground_height, network_type 
 		print 'error'
 		return None
 
+def save_node_network(nodes, outputPath):
+	try:
+		outputFile = open(outputPath, 'w')
+		for node in nodes:
+			outputLine = ''
+			for key in node.keys():
+				outputLine += str(key) + ',' + str(node[key]) + ','
+			outputLine = outputLine[0:-1] + '\n'
+			outputFile.write(outputLine)
+		outputFile.close()
+		return True
+	except Exception, e:
+		print e
+		return False
+
+def read_node_network(inputPath):
+	try:
+		inputFile = open(inputPath, 'r')
+		nodes = []
+		for line in inputFile.readlines():
+			lineSplit = line.split(',')
+			fieldNum = len(lineSplit)/2
+			node = {}
+			for i in range(fieldNum):
+				node[lineSplit[2*i]] = float(lineSplit[2*i+1])
+			node['id'] = int(node['id'])
+			nodes.append(node)
+		inputFile.close()
+		return nodes
+	except:
+		print 'error'
+		return None
 
 def nodes_next_second(nodes):
 	for node in nodes:
@@ -113,7 +146,8 @@ def visualize_animate(i):
 	while left > 0 and is_valid_node_network(nodes) and is_valid_UAV(UAV):
 		nodes_next_second(nodes)
 		UAV_AI.next_second(UAV, nodes, param_UAV_mode)
-		print 'Round: ' + str(round_num)
+		if param_print_round_number:
+			print 'Round: ' + str(round_num)
 		round_num += 1
 		left -= 1
 
@@ -122,11 +156,7 @@ def visualize_animate(i):
 		visualization_nodes_text[node_index].set_text('%.2lf' % nodes[node_index]['power'])
 
 def start_visualization():
-	global UAV, nodes
-	UAV = create_UAV(param_ground_width, param_ground_height)
-	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
-
-	global visualization_nodes_text
+	global nodes, visualization_nodes_text
 	visualization_nodes_text = []
 	for node in nodes:
 		visualization_node_text = ax.text(node['x'], node['y'], '')
@@ -137,10 +167,9 @@ def start_visualization():
 
 def start_simulation():
 	global UAV, nodes, round_num
-	UAV = create_UAV(param_ground_width, param_ground_height)
-	nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
 	while is_valid_node_network(nodes) and is_valid_UAV(UAV):
-		print 'Round: ' + str(round_num)
+		if param_print_round_number:
+			print 'Round: ' + str(round_num)
 		if round_num == constant_second_of_7days:
 			print 'The system was valid during the past 7 days'
 			print 'The charging task was conducted ' + str(UAV['task_num']) + ' times'
@@ -148,6 +177,8 @@ def start_simulation():
 		round_num += 1
 		nodes_next_second(nodes)
 		UAV_AI.next_second(UAV, nodes, param_UAV_mode)
+	else:
+		print 'The system is not valid at round ' + str(round_num)
 	
 
 # visualization
@@ -160,12 +191,14 @@ visualization_ground = plt.Rectangle((0, 0), param_ground_width, param_ground_he
 visualization_nodes_text = None
 ax.add_patch(visualization_ground)
 
-UAV = None
-nodes = None
 round_num = 1
 
-random.seed()
 
+UAV = create_UAV(param_ground_width, param_ground_height)
+#random.seed()
+#nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
+#save_node_network(nodes, 'outdoor_node_network_small.csv')
+nodes = read_node_network('outdoor_node_network_small.csv')
 if param_start_visualization == True:
 	start_visualization()
 else:
