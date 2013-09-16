@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # read into the config file
-import independent_outdoor_config as config
+import outdoor_faraway_config as config
 import UAV_AI
 
 # system parameters
@@ -29,7 +29,7 @@ param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 1000 # skip how many frame between each animation
 param_print_round_number = True
 
-param_UAV_mode = 'least_power_k'
+param_UAV_mode = 'least_power_partion'
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
@@ -197,8 +197,8 @@ round_num = 1
 UAV = create_UAV(param_ground_width, param_ground_height)
 #random.seed()
 #nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
-#save_node_network(nodes, 'outdoor_node_network_small.csv')
-nodes = read_node_network('outdoor_node_network_small.csv')
+#save_node_network(nodes, 'outdoor_faraway_20_1000_1000.csv')
+nodes = read_node_network('outdoor_center_20_1000_1000.csv')
 if param_start_visualization == True:
 	start_visualization()
 else:
