@@ -1,4 +1,5 @@
 import math
+import itertools
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
@@ -36,14 +37,31 @@ def next_node_least_power(nodes, threshold):
 	else:
 		return None
 
+def shortest_distance_node_path(start_x, start_y, node_id_list, nodes):
+	min_distance = None
+	best_path = None
+	last_x = start_x
+	last_y = start_y
+	for path in itertools.permutations(node_id_list):
+		distance = 0.0
+		for node_id in path:
+			distance += euclidean_distance(last_x, last_y, nodes[node_id]['x'], nodes[node_id]['y'])
+			last_x = nodes[node_id]['x']
+			last_y = nodes[node_id]['y']
+		if min_distance == None or distance < min_distance:
+			min_distance = distance
+			best_path = path
+	return list(best_path)
+
+
 # return the list of k nodes of least power; optimize the order of the list
-def next_node_least_power_k(nodes, threshold, k):
+def next_node_least_power_k(UAV, nodes, threshold, k):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
 	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
 		node_least_power_list = []
 		for i in range(k):
 			node_least_power_list.append(sorted_nodes[i]['id'])
-		return node_least_power_list
+		return shortest_distance_node_path(UAV['current_x'], UAV['current_y'], node_least_power_list, nodes)
 	else:
 		return None
 
@@ -68,9 +86,10 @@ def next_node_partion(nodes, threshhold, k):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
 	district = sorted_nodes[0]['district']
 	district_nodes = [for node in sorted_nodes if node['district'] == district]
-	return next_node_least_power_k(district_nodes, threshold, k)	
+	return next_node_least_power_k(district_nodes, threshold, k)
 
-# charge the list of nodes with the least power
+# charge the list of nodes
+# when start to charge a node, charge it until it is full
 # the threshold decides what time to go outside of base
 def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k = 5):
 	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
@@ -98,7 +117,7 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 			if algorithmName == 'least_power':
 				UAV['dest_list'] = next_node_least_power(nodes, threshold)
 			elif algorithmName == 'least_power_k':
-				UAV['dest_list'] = next_node_least_power_k(nodes, threshold, k)
+				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
 			else:
 				UAV['dest_list'] = None
 
