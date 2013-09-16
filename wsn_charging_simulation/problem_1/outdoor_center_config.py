@@ -1,5 +1,5 @@
 # configure file for independent sensors in outdoor environment
-param_number_nodes = 40
+param_number_nodes = 20
 param_ground_width = 1000.0
 param_ground_height = 1000.0
 param_network_type = 'homogeneous2'
