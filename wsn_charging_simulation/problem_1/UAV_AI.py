@@ -47,8 +47,30 @@ def next_node_least_power_k(nodes, threshold, k):
 	else:
 		return None
 
+# partion the nodes into four districts based on the position of the nodes
+def preprocess_partion(nodes):
+	node_num = len(nodes)
+	sorted_nodes = sorted(nodes, key=lambda node: node['x'])
+	mid_x = sorted_nodes[node_num/2]['x']
+	sorted_nodes = sorted(nodes, key=lambda node: node['y'])
+	mid_y = sorted_nodes[node_num/2]['y']
+	for node in nodes:
+		if node['x'] <= mid_x and node['y'] <= mid_y:
+			node['district'] = 0
+		elif node['x'] <= mid_x and node['y'] > mid_y:
+			node['district'] = 1
+		elif node['x'] > mid_x and node['y'] <= mid_y:
+			node['district'] = 2
+		else:
+			node['district'] = 3
+
+def next_node_partion(nodes, threshhold, k):
+	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
+	district = sorted_nodes[0]['district']
+	district_nodes = [for node in sorted_nodes if node['district'] == district]
+	return next_node_least_power_k(district_nodes, threshold, k)	
+
 # charge the list of nodes with the least power
-# optimize the path for the nodes in the list
 # the threshold decides what time to go outside of base
 def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k = 5):
 	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
