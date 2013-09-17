@@ -65,8 +65,8 @@ def next_node_least_power_k(UAV, nodes, threshold, k):
 	else:
 		return None
 
-# partion the nodes into four districts based on the position of the nodes
-def preprocess_partion(nodes):
+# partition the nodes into four districts based on the position of the nodes
+def preprocess_partition(nodes):
 	node_num = len(nodes)
 	sorted_nodes = sorted(nodes, key=lambda node: node['x'])
 	mid_x = sorted_nodes[node_num/2]['x']
@@ -82,7 +82,7 @@ def preprocess_partion(nodes):
 		else:
 			node['district'] = 3
 
-def next_node_least_power_partion(nodes, threshold, k):
+def next_node_least_power_partition(nodes, threshold, k):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
 	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
 		district = sorted_nodes[0]['district']
@@ -123,8 +123,8 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 				UAV['dest_list'] = next_node_least_power(nodes, threshold)
 			elif algorithmName == 'least_power_k':
 				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
-			elif algorithmName == 'least_power_partion':
-				UAV['dest_list'] = next_node_least_power_partion(nodes, threshold, k)
+			elif algorithmName == 'least_power_partition':
+				UAV['dest_list'] = next_node_least_power_partition(nodes, threshold, k)
 			else:
 				UAV['dest_list'] = None
 
@@ -164,8 +164,8 @@ def next_second(UAV, nodes, mode = 'least_power'):
 		k = 5
 		k = min(k, len(nodes))
 		next_second_charge_until_full(mode, UAV, nodes, 0.5, k) 
-	elif mode == 'least_power_partion':
-		preprocess_partion(nodes)
+	elif mode == 'least_power_partition':
+		preprocess_partition(nodes)
 		k = 5
 		k = min(k, len(nodes))
 		next_second_charge_until_full(mode, UAV, nodes, 0.5)
