@@ -15,13 +15,11 @@ class ObjectManager:
 		UAV['flght_power_rate'] = config.param_UAV_flight_power_consumption_rate
 		UAV['charging_power_rate'] = config.param_UAV_charging_power_consumption_rate # charging nodes
 		UAV['charged_power_rate'] = config.param_UAV_charged_power_accumulation_rate # being charged
-		UAV['status'] = 'idle'
-		UAV['dest_node_id'] = None
-		UAV['task_num'] = 0
 		return UAV
 
 	# create nodes
 	def create_nodes(self, config):
+		random.seed()
 		nodes = []
 		for i in range(0, config.param_number_nodes):
 			node = {}
@@ -48,14 +46,14 @@ class ObjectManager:
 			for key in UAV.keys():
 				output_line += str(key) + ',' + str(UAV[key]) + ','
 			output_line = output_line[0:-1] + '\n'
-			output_file.write(outputLine)
+			output_file.write(output_line)
 			# write nodes
 			for node in nodes:
 				output_line = ''
 				for key in node.keys():
 					output_line += str(key) + ',' + str(node[key]) + ','
-				output_line = outputLine[0:-1] + '\n'
-				output_file.write(outputLine)
+				output_line = output_line[0:-1] + '\n'
+				output_file.write(output_line)
 
 			output_file.close()
 			return True
@@ -69,7 +67,7 @@ class ObjectManager:
 		UAV = self.create_UAV(config)
 		nodes = self.create_nodes(config)
 		if save_path != None:
-			save_objects(UAV, nodes, save_path)
+			self.save_objects(UAV, nodes, save_path)
 		UAV['status'] = 'idle'
 		UAV['dest_node_id'] = None
 		UAV['task_num'] = 0
@@ -85,7 +83,7 @@ class ObjectManager:
 			line_split = line.split(',')
 			field_num = len(line_split)/2
 			for i in range(field_num):
-				node[line_split[2*i]] = float(line_split[2*i+1])
+				UAV[line_split[2*i]] = float(line_split[2*i+1])
 			UAV['status'] = 'idle'
 			UAV['dest_node_id'] = None
 			UAV['task_num'] = 0
@@ -93,15 +91,14 @@ class ObjectManager:
 			nodes = []
 			for line in input_file.readlines():
 				line_split = line.split(',')
-				field_num = len(lineSplit)/2
+				field_num = len(line_split)/2
 				node = {}
 				for i in range(field_num):
 					node[line_split[2*i]] = float(line_split[2*i+1])
 				node['id'] = int(node['id'])
 				nodes.append(node)
-
 			input_file.close()
 			return UAV, nodes
-		except:
-			print 'error'
+		except Exception, e:
+			print e
 			return None
