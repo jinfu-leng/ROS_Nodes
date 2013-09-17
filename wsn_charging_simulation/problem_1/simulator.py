@@ -27,9 +27,9 @@ param_UAV_initial_y = config.param_UAV_initial_y
 param_start_visualization = False
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 1000 # skip how many frame between each animation
-param_print_round_number = True
+param_print_round_number = False
 
-param_UAV_mode = 'least_power_partion'
+param_UAV_mode = 'least_power_partition'
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
