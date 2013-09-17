@@ -1,4 +1,4 @@
-import random
+
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
@@ -15,6 +15,7 @@ param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 1000 # skip how many frame between each animation
 param_print_round_number = False
 param_UAV_mode = 'least_power'
+param_objects_path = '20_1000_1000_random_homogeneous2_faraway.csv'
 
 constant_second_of_7days = 604800
 constant_second_of_30days = 2592000
@@ -89,11 +90,8 @@ visualization_nodes_text = None
 ax.add_patch(visualization_ground)
 
 round_num = 1
-UAV, nodes = object_manager_.create_objects(config)
-#random.seed()
-#nodes = create_node_network(param_number_nodes, param_ground_width, param_ground_height, param_network_type)
-#save_node_network(nodes, 'outdoor_faraway_20_1000_1000.csv')
-#nodes = read_node_network('outdoor_center_20_1000_1000.csv')
+UAV, nodes = object_manager_.read_objects(param_objects_path)
+
 if param_start_visualization == True:
 	start_visualization()
 else:
