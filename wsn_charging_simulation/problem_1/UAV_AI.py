@@ -96,7 +96,7 @@ def next_node_least_power_partition(nodes, threshold, k):
 # charge the list of nodes
 # when start to charge a node, charge it until it is full
 # the threshold decides what time to go outside of base
-def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k = 5):
+def next_second_charge_until_full(algorithm_name, UAV, nodes, threshold = 1.0, k = 5):
 	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
 		UAV['task_num'] += 1
@@ -119,11 +119,11 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 	
 	if UAV['status'] == 'idle':
 		if is_UAV_at_home(UAV) == True:
-			if algorithmName == 'least_power':
+			if algorithm_name == 'least_power':
 				UAV['dest_list'] = next_node_least_power(nodes, threshold)
-			elif algorithmName == 'least_power_k':
+			elif algorithm_name == 'least_power_k':
 				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
-			elif algorithmName == 'least_power_partition':
+			elif algorithm_name == 'least_power_partition':
 				UAV['dest_list'] = next_node_least_power_partition(nodes, threshold, k)
 			else:
 				UAV['dest_list'] = None
@@ -159,15 +159,15 @@ def next_second_charge_until_full(algorithmName, UAV, nodes, threshold = 1.0, k 
 
 def next_second(UAV, nodes, mode = 'least_power'):
 	if mode == 'least_power':
-		next_second_charge_until_full(mode, UAV, nodes, 0.5) 
+		next_second_charge_until_full(mode, UAV, nodes, 0.7) 
 	elif mode == 'least_power_k':
 		k = 5
 		k = min(k, len(nodes))
-		next_second_charge_until_full(mode, UAV, nodes, 0.5, k) 
+		next_second_charge_until_full(mode, UAV, nodes, 0.7, k) 
 	elif mode == 'least_power_partition':
 		preprocess_partition(nodes)
 		k = 5
 		k = min(k, len(nodes))
-		next_second_charge_until_full(mode, UAV, nodes, 0.5)
+		next_second_charge_until_full(mode, UAV, nodes, 0.7)
 	else:
 		print 'error'
