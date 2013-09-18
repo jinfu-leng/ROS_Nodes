@@ -1,15 +1,24 @@
+\usepackage{amsfonts}
+
 \documentstyle[11pt]{article}
 \begin{document}
 \title{NP-Complete Proof - UAV Wireless Power Transfer for Wireless Sensor Network}
 \author{Jinfu Leng}
 \maketitle
 \section{Background}
-It is expensive to replace battery of nodes in wireless sensor network.
-It is flexible and affordable to use UAV to charge nodes in wirelss sensor network.
-\section{Description}
-We consider $N$ sensor nodes and a UAV base station are distributed over a graph $G_s$. Each sensor node has the battery capacity of $E_{max}$, the initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. Each node consumes energy of $E_{c}$ per second.
+UAV can be used to charge nodes in wireless sensor network to prolong the life of the network. To charge a node, UAV has to fly to the specific node. UAV itself can be charged at UAV base station. To be charged, UAV has to fly to the UAV base station. UAV starts from UAV base station, and it costs equal amount of resources when the UAV flies out of the UAV base station. Given the information of the UAV, UAV base station and network, what is the optimal strategy for UAV to keep the network alive in the given time limit with minimal cost of resources.
 
-There is an UAV in the system to charge these nodes. The UAV has the battery capacity of $e_{max}$. UAV consumes energy of $e_{cf}$ per second for flight, and consumes energy of $e_{ct}$ per second for transferring power to the wireless sensor nodes. The transfer rate from UAV to nodes is $r$. UAV can receive energy of $e_r$ per second from UAV base station. Initially, UAV is at the base station, and UAV has to come back to the base station before its power falls below $0$. The moving speed of UAV is $v$.
+\section{Description}
+\textbf{Instance} 
+A graph $G = (V, E)$, a vertex $b \in V$, a series of numbers $e_{max} \in \mathbb{R}_{>0}$, $e_{init} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in [0, e_{max}]$, $v \in \mathbb{R}_{>0}$, $E_{max} \in \mathbb{R}_{>0}$, $E_{init} \in [0, E_{max}]$, $E_{min} \in \mathbb{R}_{\geq 0}$ and $E_{c} \in \mathbb{R}_{>0}$.
+
+\textbf{Question} 
+One UAV, has energy capacity of $e_{max}$ and initial energy of $e_{init}$. UAV consumes energy of $e_{cf}$ per second for flight, and energy of $e_{ct}$ per second for transferring energy from UAV to the nodes in the network. The transfer efficiency rate is $r$ (i.e. node can receive energy of $e_{ct}*r$ per second). When UAV is at UAV base station, UAV can receive energy of $e_r$ per second from UAV base station. The moving distance of UAV is $v$ per second.
+
+Set
+We consider $N$ sensor nodes and a UAV base station are distributed over a graph $G_s$. Each sensor node has the battery capacity of $E_{max}$, the initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. 
+
+There is an UAV in the system to charge these nodes. .   . Initially, UAV is at the base station, and UAV has to come back to the base station before its power falls below $0$. The moving speed of UAV is $v$.
 
 For UAV, there are two types of valid commands:
 1, fly from node $A$ to node $B$;
