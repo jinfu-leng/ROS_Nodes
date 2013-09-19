@@ -1,6 +1,6 @@
-\usepackage{amsfonts}
+\documentclass[11pt]{article}
+\usepackage{amssymb,amsmath}
 
-\documentstyle[11pt]{article}
 \begin{document}
 \title{NP-Complete Proof - UAV Wireless Power Transfer for Wireless Sensor Network}
 \author{Jinfu Leng}
@@ -26,9 +26,11 @@ We say the system is dead when any of the conditions is satisfied:
 we count it as a UAV task when UAV flies out from $base$.
 
 The question is: is there a finite sequence of valid UAV instructions can keep the system alive for time period of $T$ with at most $k$ UAV tasks?
-\section{Proof}
 
-First, the problem is in $NP$.
+we call this problem as {UAVWW} problem.
+
+\section{Proof}
+It is easy to see that {UAVWW} $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and simulate the instructions in polynomial time, and check that the system is alive during the simulation, the time period passed $T$ and the number of UAV tasks is less or equal than $k$.
 
 Given a sequence of UAV actions $S$, we can simulate the actions and verify it. The time complexity is $O(|S| * |N|)$.
 
