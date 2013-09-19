@@ -11,25 +11,21 @@ UAV can be used to charge nodes in wireless sensor network to prolong the life o
 \section{Description}
 \noindent
 \textbf{INSTANCE:} 
-A graph $G = (V, E)$, a vertex $base \in V$, a series of numbers $e_{max} \in \mathbb{R}_{\geq0}$, $e_{current} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in \mathbb{R}_{\geq0}$, $v \in \mathbb{R}_{\geq0}$, $E_{max} \in \mathbb{R}_{\geq0}$, $E_{current} \in [0, E_{max}]$, $E_{c} \in \mathbb{R}_{>0}$, $T \in \mathbb{R}_{\geq0}$ and $k \in \mathbb{N}_{\geq0}$.
+A graph $G = (V, E)$, a vertex $base \in V$, a series of numbers $e_{max} \in \mathbb{R}_{\geq0}$, $e_{init} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in \mathbb{R}_{\geq0}$, $v \in \mathbb{R}_{\geq0}$, $E_{max} \in \mathbb{R}_{\geq0}$, $E_{init} \in [0, E_{max}]$, $E_{c} \in \mathbb{R}_{>0}$, $T \in \mathbb{R}_{\geq0}$ and $k \in \mathbb{N}_{\geq0}$.
 
 \noindent
 \textbf{QUESTION:} 
-One UAV, has energy capacity of $e_{max}$ and current energy of $e_{current}$. UAV consumes energy of $e_{cf}$ per second for flight, and energy of $e_{ct}$ per second for transferring energy from UAV to the nodes in the network. The transfer efficiency rate is $r$ (i.e. node can receive energy of $e_{ct}*r$ per second). When UAV is at UAV base station, UAV can receive energy of $e_r$ per second. The moving speed of UAV is $v$. The initial position of UAV is $base$. UAV has three types of instructions: (1)fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$. (2)charge $A$ for $t$ second, $A \in V$ and $A$ is not $base$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$; (3)charge UAV for $t$ second, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $base$.
+One UAV, has energy capacity of $e_{max}$ and initial energy of $e_{init}$. UAV consumes energy of $e_{cf}$ per second for flight, and energy of $e_{ct}$ per second for transferring energy from UAV to the nodes in the network. The transfer efficiency rate is $r$ (i.e. node can receive energy of $e_{ct}*r$ per second). When UAV is at UAV base station, UAV can receive energy of $e_r$ per second. The moving speed of UAV is $v$. The initial position of UAV is $base$. UAV has four types of instructions: (1)hover at current position for time $t$, $t \in \mathbb{R}_{>0}$; (2)fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$. (3)charge $A$ for $t$ second, $A \in V$ and $A$ is not $base$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$; (4)charge UAV for $t$ second, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $base$.
 
-A set of nodes $V' = V - {base}$.
-Set
-We consider $N$ sensor nodes and a UAV base station are distributed over a graph $G_s$. Each sensor node has the battery capacity of $E_{max}$, the initial energy of $E_{init}$, and the minimal energy of $E_{min}$. We say that the network is dead when the energy of any of the nodes falls below $E_{min}$. 
+A set of wireless sensor nodes $V' = V - {base}$. Each node has energy capacity of $E_{max}$ and initial energy of $E_{init}$. Each node consumes energy of $E_{c}$ per second.
 
-There is an UAV in the system to charge these nodes. .   . Initially, UAV is at the base station, and UAV has to come back to the base station before its power falls below $0$. The moving speed of UAV is $v$.
+We say the system is dead when any of the conditions is satisfied:
+(1)the energy of the UAV falls to 0 and UAV is not at $base$;
+(2)the energy of any of the wireless sensor nodes falls to 0.
 
-For UAV, there are two types of valid commands:
-1, fly from node $A$ to node $B$;
-2, charge node $A$ for $t$ seconds;
+we count it as a UAV task when UAV flies out from $base$.
 
-The problem is, suppose we want to keep the network to work as long as time of $T$, what is the minimal number of charging tasks the UAV has to execute. Every time UAV going out of the base station counts as one charging task.
-
-The decision version of the problem is, given time of $T$, is the UAV able to keep the system working as long as $T$ with at most $k$ tasks.
+The question is: is there a finite sequence of valid UAV instructions can keep the system alive for time period of $T$ with at most $k$ UAV tasks?
 \section{Proof}
 
 First, the problem is in $NP$.
