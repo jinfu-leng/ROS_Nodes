@@ -2,11 +2,11 @@
 \usepackage{amssymb,amsmath}
 
 \begin{document}
-\title{NP-Complete Proof - UAV Wireless Power Transfer for Wireless Sensor Network}
+\title{UAV Wireless Power Transfer for Wireless Sensor Nodes - UAVWW}
 \author{Jinfu Leng}
 \maketitle
 \section{Background}
-UAV can be used to charge nodes in wireless sensor network to prolong the life of the network. To charge a node, UAV has to fly to the specific node. UAV itself can be charged at UAV base station. To be charged, UAV has to fly to the UAV base station. UAV starts from UAV base station, and it costs equal amount of resources when the UAV flies out of the UAV base station. Given the information of the UAV, UAV base station and network, what is the optimal strategy for UAV to keep the network alive in the given time limit with minimal cost of resources.
+UAV can be used to charge nodes to prolong the life of the wireless sensor network. To charge a node, UAV has to fly to the specific node. UAV itself can be charged at UAV base station. Given the information of the UAV, UAV base station and wireless sensor nodes, what is the optimal strategy for UAV to keep the network alive in the given time limit with minimal cost of resources? we call this problem as UAVWW problem.
 
 \section{Description}
 \noindent
@@ -27,8 +27,6 @@ We say the system is dead when any of the conditions is satisfied:
 we count it as a UAV task when UAV flies out from $base$.
 
 The question is: is there a finite sequence of valid UAV instructions can keep the system alive for time period of $T$ with at most $k$ UAV tasks?
-
-we call this problem as UAVWW problem.
 
 \section{Proof}
 It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and simulate the instructions until the end of the instructions or the total time passes $T$ in polynomial time, and check that if the system is alive during the simulation and the number of UAV tasks is less than or equal to $k$.
