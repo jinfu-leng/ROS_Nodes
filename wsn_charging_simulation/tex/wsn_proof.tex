@@ -11,10 +11,11 @@ UAV can be used to charge nodes in wireless sensor network to prolong the life o
 \section{Description}
 \noindent
 \textbf{INSTANCE:} 
-A graph $G = (V, E)$, a vertex $base \in V$, a series of numbers $e_{max} \in \mathbb{R}_{\geq0}$, $e_{init} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in \mathbb{R}_{\geq0}$, $v \in \mathbb{R}_{\geq0}$, $E_{max} \in \mathbb{R}_{\geq0}$, $E_{init} \in [0, E_{max}]$, $E_{c} \in \mathbb{R}_{>0}$, $T \in \mathbb{R}_{\geq0}$ and $k \in \mathbb{N}_{\geq0}$.
+A graph $G_s = (V, E)$, a vertex $base \in V$, a series of numbers $e_{max} \in \mathbb{R}_{\geq0}$, $e_{init} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in \mathbb{R}_{\geq0}$, $v \in \mathbb{R}_{\geq0}$, $E_{max} \in \mathbb{R}_{\geq0}$, $E_{init} \in [0, E_{max}]$, $E_{c} \in \mathbb{R}_{>0}$, $T \in \mathbb{R}_{\geq0}$ and $k \in \mathbb{N}_{\geq0}$.
 
 \noindent
-\textbf{QUESTION:} 
+\textbf{QUESTION:}
+
 One UAV, has energy capacity of $e_{max}$ and initial energy of $e_{init}$. UAV consumes energy of $e_{cf}$ per second for flight, and energy of $e_{ct}$ per second for transferring energy from UAV to the nodes in the network. The transfer efficiency rate is $r$ (i.e. node can receive energy of $e_{ct}*r$ per second). When UAV is at UAV base station, UAV can receive energy of $e_r$ per second. The moving speed of UAV is $v$. The initial position of UAV is $base$. UAV has four types of instructions: (1)hover at current position for time $t$, $t \in \mathbb{R}_{>0}$; (2)fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$. (3)charge $A$ for $t$ second, $A \in V$ and $A$ is not $base$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$; (4)charge UAV for $t$ second, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $base$.
 
 A set of wireless sensor nodes $V' = V - {base}$. Each node has energy capacity of $E_{max}$ and initial energy of $E_{init}$. Each node consumes energy of $E_{c}$ per second.
@@ -27,22 +28,14 @@ we count it as a UAV task when UAV flies out from $base$.
 
 The question is: is there a finite sequence of valid UAV instructions can keep the system alive for time period of $T$ with at most $k$ UAV tasks?
 
-we call this problem as {UAVWW} problem.
+we call this problem as UAVWW problem.
 
 \section{Proof}
-It is easy to see that {UAVWW} $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and simulate the instructions in polynomial time, and check that the system is alive during the simulation, the time period passed $T$ and the number of UAV tasks is less or equal than $k$.
+It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and simulate the instructions until the end of the instructions or the total time passes $T$ in polynomial time, and check that if the system is alive during the simulation and the number of UAV tasks is less than or equal to $k$.
 
-Given a sequence of UAV actions $S$, we can simulate the actions and verify it. The time complexity is $O(|S| * |N|)$.
+We transform TRAVELING SALESMAN to UAVWW. Let an arbitrary instance of TRAVELING SALESMAN be the graph $G = (V, E)$ and $L \in \mathbb{N}_{>0}$.
 
-Second, given an instance of the decision version of $Travelling Salesman Problem$, $G = (V, E)$ and $L$, we can transform it into an instance of $UAV Charging Problem$ in polynomial time.
-
-We can construct $G_s = G$, and then randomly choose a vertex as the UAV base station. All the other $|V|-1$ vertices are wireless sensor network nodes.
-
-We set the parameters of nodes as: $E_{max} = |V| + |L| - 1$, $E_{init} = |V| + |L| - 2$, $E_{min} = 0$, and $E_{c} = 1$.
-
-We set the parameters of UAV as: $e_{max} = |V| + |L| - 1$, $e_{init} = |V| + |L| - 1$, $e_{cf} = 1$, $e_{ct} = 1$, $r = 1.0$, $e_r = 0$, and $v = 1$.
-
-Then we ask, is the UAV able to keep the system working as long as $|V| + |L| - 1$ with at most $1$ task? Because every node need to be charged one second, and there are $|V|-1$ nodes, the answer is yes if and only if the UAV is able to find a path of length less than $|L|$ to visit all the nodes and come back to the station.
+We can construct a graph $G_s = G$, and then randomly choose a vertex from $V$ as $base$. We set the parameters as: $e_{max} = |V| + |L| - 1$, $e_{init} = |V| + |L| - 1$, $e_{cf} = 1$, $e_{ct} = 1$, $r = 1.0$, $e_r = 0$, $v = 1$., $E_{max} = |V| + |L| - 1$, $E_{init} = |V| + |L| - 2$, $E_{min} = 0$, $E_{c} = 1$, $T = |V| + |L| - 1$ and $k = 1$.
 
 Also, it is clear that this transformation can be finished in polynomial time.
 \end{document}
