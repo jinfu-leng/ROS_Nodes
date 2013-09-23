@@ -12,7 +12,7 @@ UAV can be used to charge nodes to prolong the life of the wireless sensor netwo
 \section{Problem Definition}
 \textbf{NOTATIONS}
 
-The notations used in the description of the problem are summarized as below:
+The notations of the problem are summarized as below:
 \begin{itemize}[noitemsep]
 \item $G_s = (V, E)$, the distribution of the sensor nodes and UAV base station
 \item $V_{base} \in V$, UAV base station
@@ -21,7 +21,7 @@ The notations used in the description of the problem are summarized as below:
 \item $E_{UAV\_init} \in [0, E_{UAV\_max}]$, the initial energy of the UAV
 \item $e_{cf} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for flight
 \item $e_{ct} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for transferring energy from UAV to sensor nodes
-\item $r \in [0, 1]$, the efficiency rate of transferring energy from UAV to sensor nodes
+\item $r \in [0.0, 1.0]$, the efficiency rate of transferring energy from UAV to sensor nodes
 \item $e_r \in \mathbb{R}_{\geq0}$, the energy accumulation rate of UAV for receiving energy from UAV base station
 \item $v \in \mathbb{R}_{\geq0}$, the moving speed of UAV
 \item $E_{node\_max} \in \mathbb{R}_{\geq0}$, the maximal energy of the sensor nodes
@@ -34,12 +34,12 @@ The notations used in the description of the problem are summarized as below:
 \noindent
 \textbf{Description}
 
-The initial position of UAV is $V_{base}$. UAV has four types of instructions:
+UAV has four types of instructions:
 \begin{enumerate}[noitemsep]
 \item Hover at current position for time of $t$, $t \in \mathbb{R}_{>0}$
-\item Fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$
-\item Charge $A$ for time of $t$, $A \in V_{nodes}$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$
-\item Charge UAV for time of $t$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $V_{base}$
+\item Fly from $A$ to $B$, $A,B \in V$ and UAV is at $A$
+\item Transfer energy to $A$ for time of $t$, $A \in V_{nodes}$, $t \in \mathbb{R}_{>0}$ and UAV is at $A$
+\item Charge UAV for time of $t$, $t \in \mathbb{R}_{>0}$ and UAV is at $V_{base}$
 \end{enumerate}
 
 We say the system is dead when any of the below conditions is satisfied:
@@ -48,16 +48,36 @@ We say the system is dead when any of the below conditions is satisfied:
 \item the energy of any of the sensor nodes falls to 0.
 \end{enumerate}
 
-We count it as one UAV task when UAV flies out from $V_{base}$.
+The initial position of UAV is $V_{base}$. We count it as one UAV task when UAV flies out from $V_{base}$.
 
 Given the information of the system ($G_s$, $V_{base}$, $V_{nodes}$, $E_{UAV\_max} $, $E_{UAV\_init}$, $e_{cf}$, $e_{ct}$, $r$, $e_r$, $v$, $E_{node\_max}$, $E_{node\_init}$, $e_{c}$), is there a finite sequence of valid UAV instructions can keep the system alive for time of $T$ with at most $k$ UAV task?
 
 \section{Proof}
-It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and check in polynomial time that there is no invalid instruction and the system keeps alive more than $T$ second while the number of UAV tasks is less than or equal to $k$.
+It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and check in polynomial time that there is no invalid instruction and the system keeps alive for more than time of $T$ while the number of UAV tasks is less than or equal to $k$.
 
-We can transform TRAVELING SALESMAN to UAVWW. Let an arbitrary instance of TRAVELING SALESMAN be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$.
+We can transform TRAVELING SALESMAN to UAVWW. Let an arbitrary instance of TRAVELING SALESMAN be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$. We  can construct an instance of UAVWW as below. It is easy to see that this transformation can be finished in polynomial time.
 
-We can construct a graph $G_s = G$, and then randomly choose a vertex from $V$ as $V_{base}$. We set the parameters as: $E_{UAV\_max} = |V| + |L| - 1$, $E_{UAV\_init} = |V| + |L| - 1$, $e_{cf} = 1$, $e_{ct} = 1$, $r = 1.0$, $e_r = 0$, $v = 1$., $E_{node\_max} = |V| + |L| - 1$, $E_{node\_init} = |V| + |L| - 2$, $E_{min} = 0$, $e_{c} = 1$, $T = |V| + |L| - 1$ and $k = 1$. It is easy to see that this transformation can be finished in polynomial time.
+\begin{tabular}{| l | l |}
+\hline
+$G_s$ & $G = (V, E)$ \\
+$V_{base}$ & a random vertex from $V$ \\
+$V_{nodes}$ & $V - \{V_{base}\}$ \\
+$E_{UAV\_max}$ & $|V| + L - 1$ \\
+$E_{UAV\_init}$ & $|V| + L - 1$ \\
+$e_{cf}$ & $1.0$ \\
+$e_{ct}$ & $1.0$ \\
+$r$ & $1.0$ \\
+$e_r$ & $0.0$ \\
+$v$ & $1.0$ \\
+$E_{node\_max}$ & $|V| + L - 1.0$ \\
+$E_{node\_init}$ & $|V| + L - 2.0$ \\
+$e_{c}$ & $1.0$ \\
+$T$ & $|V| + L - 1.0$ \\
+$k $ & $1$ \\
+\hline
+\end{tabular}
+
+The idea of the transformation is to make an instance that the UAV has to visit and charge all the sensor nodes. At same time, we set $k = 1$, so that the UAV has to visit all these sensor nodes and come back to UAV base station in a single task. In addition, we limit the initial energy of the UAV so that the UAV can only flies for distance at most $L$. In this construction, the answer of the transformed instance of UAVWW is yes if and only if the instance of TRAVELING SALESMAN has a satisfied path.
 
 Because the required time $T = |V| + |L| - 1$ and the initial energy of each node is $E_{node\_init} = |V| + |L| - 2$, each node need to be charged at least $1$ unit of energy. Because the transfer rate $e_{ct} = 1$ and efficiency rate $r = 1.0$, it requires at least $|V| - 1$ second to charge these $|V| - 1$ nodes.
 
