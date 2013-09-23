@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{amssymb,amsmath}
+\usepackage{enumitem}
 
 \begin{document}
 \title{UAV Wireless Power Transfer for Wireless Sensor Nodes - UAVWW}
@@ -8,38 +9,61 @@
 \section{Background}
 UAV can be used to charge nodes to prolong the life of the wireless sensor network. To charge a node, UAV has to fly to the specific node. UAV itself can be charged at UAV base station. Given the information of the UAV, UAV base station and wireless sensor nodes, what is the optimal strategy for UAV to keep the network alive in a given time limit with minimal cost of resources? We call this problem as UAVWW problem.
 
-\section{Description}
-\noindent
-\textbf{INSTANCE:} 
-A graph $G_s = (V, E)$, a vertex $base \in V$, a series of numbers $e_{max} \in \mathbb{R}_{\geq0}$, $e_{init} \in [0, e_{max}]$, $e_{cf} \in \mathbb{R}_{>0}$, $e_{ct} \in \mathbb{R}_{>0}$, $r \in [0, 1]$, $e_r \in \mathbb{R}_{\geq0}$, $v \in \mathbb{R}_{\geq0}$, $E_{max} \in \mathbb{R}_{\geq0}$, $E_{init} \in [0, E_{max}]$, $E_{c} \in \mathbb{R}_{>0}$, $T \in \mathbb{R}_{\geq0}$ and $k \in \mathbb{N}_{\geq0}$.
+\section{Problem Definition}
+\textbf{NOTATIONS}
+
+The notations used in the description of the problem are summarized as below:
+\begin{itemize}[noitemsep]
+\item $G_s = (V, E)$, the distribution of the sensor nodes and UAV base station
+\item $V_{base} \in V$, UAV base station
+\item $V_{nodes} = V - \{V_{base}\}$, sensor nodes
+\item $E_{UAV\_max} \in \mathbb{R}_{\geq0}$, the maximal energy of the UAV
+\item $E_{UAV\_init} \in [0, E_{UAV\_max}]$, the initial energy of the UAV
+\item $e_{cf} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for flight
+\item $e_{ct} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for transferring energy from UAV to sensor nodes
+\item $r \in [0, 1]$, the efficiency rate of transferring energy from UAV to sensor nodes
+\item $e_r \in \mathbb{R}_{\geq0}$, the energy accumulation rate of UAV for receiving energy from UAV base station
+\item $v \in \mathbb{R}_{\geq0}$, the moving speed of UAV
+\item $E_{node\_max} \in \mathbb{R}_{\geq0}$, the maximal energy of the sensor nodes
+\item $E_{node\_init} \in [0, E_{node\_max}]$, the initial energy of the sensor nodes
+\item $e_{c} \in \mathbb{R}_{>0}$, the energy consumption rate of sensor node
+\item $T \in \mathbb{R}_{\geq0}$, the required working time of the system
+\item $k \in \mathbb{N}_{\geq0}$, the number of UAV tasks
+\end{itemize}
 
 \noindent
-\textbf{QUESTION:}
+\textbf{Description}
 
-One UAV, has energy capacity of $e_{max}$ and initial energy of $e_{init}$. UAV consumes energy of $e_{cf}$ per second for flight, and energy of $e_{ct}$ per second for transferring energy from UAV to the nodes in the network. The transfer efficiency rate is $r$ (i.e. node can receive energy of $e_{ct}*r$ per second). When UAV is at UAV base station, UAV can receive energy of $e_r$ per second. The moving speed of UAV is $v$ per second. The initial position of UAV is $base$. UAV has four types of instructions: (1)hover at current position for time of $t$ second, $t \in \mathbb{R}_{>0}$; (2)fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$. (3)charge $A$ for time of $t$ second, $A \in V$ and $A$ is not $base$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$; (4)charge UAV for time of $t$ second, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $base$.
-
-A set of wireless sensor nodes $V' = V - {base}$. Each node has energy capacity of $E_{max}$ and initial energy of $E_{init}$. Each node consumes energy of $E_{c}$ per second.
+The initial position of UAV is $V_{base}$. UAV has four types of instructions:
+\begin{enumerate}[noitemsep]
+\item Hover at current position for time of $t$, $t \in \mathbb{R}_{>0}$
+\item Fly from $A$ to $B$, $A,B \in V$, and this instruction is invalid if UAV is not at $A$
+\item Charge $A$ for time of $t$, $A \in V_{nodes}$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $A$
+\item Charge UAV for time of $t$, $t \in \mathbb{R}_{>0}$, and this instruction is invalid if UAV is not at $V_{base}$
+\end{enumerate}
 
 We say the system is dead when any of the below conditions is satisfied:
-(1)the energy of the UAV falls to 0 and UAV is not at $base$;
-(2)the energy of any of the wireless sensor nodes falls to 0.
+\begin{enumerate}[noitemsep]
+\item the energy of the UAV falls to 0 and UAV is not at $V_{base}$;
+\item the energy of any of the sensor nodes falls to 0.
+\end{enumerate}
 
-We count it as a UAV task when UAV flies out from $base$.
+We count it as one UAV task when UAV flies out from $V_{base}$.
 
-The question is: is there a finite sequence of valid UAV instructions can keep the system alive for $T$ second with at most $k$ UAV task?
+Given the information of the system ($G_s$, $V_{base}$, $V_{nodes}$, $E_{UAV\_max} $, $E_{UAV\_init}$, $e_{cf}$, $e_{ct}$, $r$, $e_r$, $v$, $E_{node\_max}$, $E_{node\_init}$, $e_{c}$), is there a finite sequence of valid UAV instructions can keep the system alive for time of $T$ with at most $k$ UAV task?
 
 \section{Proof}
 It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and check in polynomial time that there is no invalid instruction and the system keeps alive more than $T$ second while the number of UAV tasks is less than or equal to $k$.
 
 We can transform TRAVELING SALESMAN to UAVWW. Let an arbitrary instance of TRAVELING SALESMAN be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$.
 
-We can construct a graph $G_s = G$, and then randomly choose a vertex from $V$ as $base$. We set the parameters as: $e_{max} = |V| + |L| - 1$, $e_{init} = |V| + |L| - 1$, $e_{cf} = 1$, $e_{ct} = 1$, $r = 1.0$, $e_r = 0$, $v = 1$., $E_{max} = |V| + |L| - 1$, $E_{init} = |V| + |L| - 2$, $E_{min} = 0$, $E_{c} = 1$, $T = |V| + |L| - 1$ and $k = 1$. It is easy to see that this transformation can be finished in polynomial time.
+We can construct a graph $G_s = G$, and then randomly choose a vertex from $V$ as $V_{base}$. We set the parameters as: $E_{UAV\_max} = |V| + |L| - 1$, $E_{UAV\_init} = |V| + |L| - 1$, $e_{cf} = 1$, $e_{ct} = 1$, $r = 1.0$, $e_r = 0$, $v = 1$., $E_{node\_max} = |V| + |L| - 1$, $E_{node\_init} = |V| + |L| - 2$, $E_{min} = 0$, $e_{c} = 1$, $T = |V| + |L| - 1$ and $k = 1$. It is easy to see that this transformation can be finished in polynomial time.
 
-Because the required time $T = |V| + |L| - 1$ and the initial energy of each node is $E_{init} = |V| + |L| - 2$, each node need to be charged at least $1$ unit of energy. Because the transfer rate $e_{ct} = 1$ and efficiency rate $r = 1.0$, it requires at least $|V| - 1$ second to charge these $|V| - 1$ nodes.
+Because the required time $T = |V| + |L| - 1$ and the initial energy of each node is $E_{node\_init} = |V| + |L| - 2$, each node need to be charged at least $1$ unit of energy. Because the transfer rate $e_{ct} = 1$ and efficiency rate $r = 1.0$, it requires at least $|V| - 1$ second to charge these $|V| - 1$ nodes.
 
 Because the number of tasks is $k = 1$, UAV has to charge all the nodes and then come back to UAV base station.
 
-Because the initial energy of UAV is $e_{init} = |V| + |L| - 1$ and it requires to transfer at least energy of $|V| - 1$ to nodes, UAV has at most energy of $|L|$ for flight. 
+Because the initial energy of UAV is $E_{UAV\_init} = |V| + |L| - 1$ and it requires to transfer at least energy of $|V| - 1$ to nodes, UAV has at most energy of $|L|$ for flight. 
 
 Becuse the moving speed is $v = 1$, the energy consumption rate of flying is  $e_{cf} = 1$ and UAV has at most energy of $|L|$ for flying, UAV can fly at most distance of $L$.
 
