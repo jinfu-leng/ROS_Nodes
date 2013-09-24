@@ -14,14 +14,14 @@ UAV can be used to charge nodes to prolong the life of the wireless sensor netwo
 
 The notations of the problem are summarized as below:
 \begin{itemize}[noitemsep]
-\item $G_s = (V, E)$, the distribution of the sensor nodes and UAV base station
+\item $G_s = (V, E)$ and $G_s$ satisfies triangle inequality, the distribution of the sensor nodes and UAV base station
 \item $V_{base} \in V$, UAV base station
 \item $V_{nodes} = V - \{V_{base}\}$, sensor nodes
 \item $E_{UAV\_max} \in \mathbb{R}_{\geq0}$, the maximal energy of the UAV
 \item $E_{UAV\_init} \in [0, E_{UAV\_max}]$, the initial energy of the UAV
 \item $e_{cf} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for flight
 \item $e_{ct} \in \mathbb{R}_{>0}$, the energy consumption rate of UAV for transferring energy from UAV to sensor nodes
-\item $r \in [0.0, 1.0]$, the efficiency rate of transferring energy from UAV to sensor nodes
+\item $r \in \mathbb{R}$ and $r \in [0.0, 1.0]$, the efficiency rate of transferring energy from UAV to sensor nodes
 \item $e_r \in \mathbb{R}_{\geq0}$, the energy accumulation rate of UAV for receiving energy from UAV base station
 \item $v \in \mathbb{R}_{\geq0}$, the moving speed of UAV
 \item $E_{node\_max} \in \mathbb{R}_{\geq0}$, the maximal energy of the sensor nodes
@@ -55,15 +55,15 @@ Given the information of the system ($G_s$, $V_{base}$, $V_{nodes}$, $E_{UAV\_ma
 \section{Proof}
 It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and check in polynomial time that there is no invalid instruction and the system keeps alive for more than time of $T$ while the number of UAV tasks is less than or equal to $k$.
 
-We can transform TRAVELING SALESMAN to UAVWW. Let an arbitrary instance of TRAVELING SALESMAN be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$. We  can construct an instance of UAVWW as below. It is easy to see that this transformation can be finished in polynomial time.
+We can transform METRIC-TSP to UAVWW. Let an arbitrary instance of METRIC-TSP be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$. We can construct an instance of UAVWW as below. It is easy to see that this transformation can be finished in polynomial time.
 
 \begin{tabular}{| l | l |}
 \hline
 $G_s$ & $G = (V, E)$ \\
 $V_{base}$ & a random vertex from $V$ \\
 $V_{nodes}$ & $V - \{V_{base}\}$ \\
-$E_{UAV\_max}$ & $|V| + L - 1$ \\
-$E_{UAV\_init}$ & $|V| + L - 1$ \\
+$E_{UAV\_max}$ & $|V| + L - 1.0$ \\
+$E_{UAV\_init}$ & $|V| + L - 1.0$ \\
 $e_{cf}$ & $1.0$ \\
 $e_{ct}$ & $1.0$ \\
 $r$ & $1.0$ \\
@@ -77,15 +77,15 @@ $k $ & $1$ \\
 \hline
 \end{tabular}
 
-The idea of the transformation is to make an instance that the UAV has to visit and charge all the sensor nodes. At same time, we set $k = 1$, so that the UAV has to visit all these sensor nodes and come back to UAV base station in a single task. In addition, we limit the initial energy of the UAV so that the UAV can only flies for distance at most $L$. In this construction, the answer of the transformed instance of UAVWW is yes if and only if the instance of TRAVELING SALESMAN has a satisfied path.
+The idea of the transformation is to make an instance that the UAV has to visit and charge all the sensor nodes. At the same time, we set $k = 1$, so that the UAV has to visit all these sensor nodes and come back to UAV base station in a single tour. In addition, we limit the initial energy of the UAV so that the UAV can only flies for distance of at most $L$. In this construction, the answer of the transformed instance of UAVWW is yes if and only if the instance of METRIC-TSP has a hamiltonian cycle with length of at most $L$.
 
-Because the required time $T = |V| + |L| - 1$ and the initial energy of each node is $E_{node\_init} = |V| + |L| - 2$, each node need to be charged at least $1$ unit of energy. Because the transfer rate $e_{ct} = 1$ and efficiency rate $r = 1.0$, it requires at least $|V| - 1$ second to charge these $|V| - 1$ nodes.
+The detailed discussion of the transformed instance is showed below:
+\begin{enumerate}[noitemsep]
+\item The required time is $T = |V| + L - 1.0$, the initial energy of each node is $E_{node\_init} = |V| + L - 2.0$ and the consumption rate of each node is $e_{c} = 1.0$, so each node need to be charged at least $1.0$ unit of energy. \item The transfer efficiency rate is $r = 1.0$, so it requires energy of at least $|V| - 1.0$ for UAV to charge all these $|V| - 1$ nodes.
+\item The number of tasks is $k = 1$, so UAV has to charge all the nodes in a single tour and then come back to UAV base station.
+\item The initial energy of UAV is $E_{UAV\_init} = |V| + L - 1.0$ and it requires to transfer energy of at least $|V| - 1.0$ to nodes, so UAV has  energy of at most $L$ for flight. 
+\item The moving speed is $v = 1.0$, the energy consumption rate of flying is  $e_{cf} = 1.0$ and UAV has energy of at most $L$ for flying, so UAV can fly distance of at most $L$.
+\item UAV can move distance of at most $L$ and UAV has to visit all the nodes and then fly back to base station in a single tour, so we can claim that the transformed instance of UAVWW is yes if and only if the instance of METRIC-TSP has a satisfied cycle.
+\end{enumerate}
 
-Because the number of tasks is $k = 1$, UAV has to charge all the nodes and then come back to UAV base station.
-
-Because the initial energy of UAV is $E_{UAV\_init} = |V| + |L| - 1$ and it requires to transfer at least energy of $|V| - 1$ to nodes, UAV has at most energy of $|L|$ for flight. 
-
-Becuse the moving speed is $v = 1$, the energy consumption rate of flying is  $e_{cf} = 1$ and UAV has at most energy of $|L|$ for flying, UAV can fly at most distance of $L$.
-
-Because UAV can move at most distance of $|L|$ and UAV has to visit all the nodes and then fly back to base station, we can claim that the transformed instance of UAVWW is yes if and only if the instance of TRAVELING SALESMAN has a satisfied path.
 \end{document}
