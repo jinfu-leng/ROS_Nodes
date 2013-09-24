@@ -65,6 +65,8 @@ def start_visualization():
 
 def start_simulation():
 	global UAV, nodes, round_num
+	print 'UAV mode: ' + param_UAV_mode
+	print 'System data: ' + param_objects_path
 	while is_valid_node_network(nodes) and is_valid_UAV(UAV):
 		if param_print_round_number:
 			print 'Round: ' + str(round_num)
@@ -77,22 +79,23 @@ def start_simulation():
 		UAV_AI.next_second(UAV, nodes, param_UAV_mode)
 	else:
 		print 'The system is not valid at round ' + str(round_num)
-	
-object_manager_ = ObjectManager()
-# visualization
-# set up figure and animation
-fig = plt.figure()
-ax = fig.add_subplot(111, xlim=(-3, config.param_ground_width+3), ylim=(-3, config.param_ground_height+3))
-ax.grid()
-visualization_UAV, = ax.plot([], [], 'bo', ms=10)
-visualization_ground = plt.Rectangle((0, 0), config.param_ground_width, config.param_ground_height, lw=2, fc='none')
-visualization_nodes_text = None
-ax.add_patch(visualization_ground)
 
+
+# main
+object_manager_ = ObjectManager()
 round_num = 1
 UAV, nodes = object_manager_.read_objects(param_objects_path)
 
 if param_start_visualization == True:
+	# visualization
+	# set up figure and animation
+	fig = plt.figure()
+	ax = fig.add_subplot(111, xlim=(-3, config.param_ground_width+3), ylim=(-3, config.param_ground_height+3))
+	ax.grid()
+	visualization_UAV, = ax.plot([], [], 'bo', ms=10)
+	visualization_ground = plt.Rectangle((0, 0), config.param_ground_width, config.param_ground_height, lw=2, fc='none')
+	visualization_nodes_text = None
+	ax.add_patch(visualization_ground)
 	start_visualization()
 else:
 	start_simulation()
