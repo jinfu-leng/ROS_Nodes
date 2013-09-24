@@ -55,7 +55,7 @@ Given the information of the system ($G_s$, $V_{base}$, $V_{nodes}$, $E_{UAV\_ma
 \section{Proof}
 It is easy to see that UAVWW $\in NP$, because a nondeterministic algorithm need only guess a sequence of UAV instructions and check in polynomial time that there is no invalid instruction and the system keeps alive for more than time of $T$ while the number of UAV tasks is less than or equal to $k$.
 
-We can transform METRIC-TSP to UAVWW. Let an arbitrary instance of METRIC-TSP be the graph $G = (V, E)$ and $L \in \mathbb{R}_{>0}$. We can construct an instance of UAVWW as below. It is easy to see that this transformation can be finished in polynomial time.
+We can transform METRIC-TSP to UAVWW. Let an arbitrary instance of METRIC-TSP be the graph $G = (V, E)$ and $L \in \mathbb{N}_{>=0}$. We can construct an instance of UAVWW as below. It is easy to see that this transformation can be finished in polynomial time.
 
 \begin{tabular}{| l | l |}
 \hline
