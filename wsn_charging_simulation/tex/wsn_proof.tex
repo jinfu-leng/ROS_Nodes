@@ -37,7 +37,7 @@ The notations of the problem are summarized as below:
 UAV has four types of instructions:
 \begin{enumerate}[noitemsep]
 \item Hover at current position for time of $t$, $t \in \mathbb{R}_{>0}$
-\item Fly from $A$ to $B$, $A,B \in V$ and UAV is at $A$
+\item Fly from $A$ to $B$, $(A,B) \in E$ and UAV is at $A$
 \item Transfer energy to $A$ for time of $t$, $A \in V_{nodes}$, $t \in \mathbb{R}_{>0}$ and UAV is at $A$
 \item Charge UAV for time of $t$, $t \in \mathbb{R}_{>0}$ and UAV is at $V_{base}$
 \end{enumerate}
@@ -77,7 +77,7 @@ $k $ & $1$ \\
 \hline
 \end{tabular}
 
-The idea of the transformation is to make an instance that the UAV has to visit and charge all the sensor nodes. At the same time, we set $k = 1$, so that the UAV has to visit all these sensor nodes and come back to UAV base station in a single tour. In addition, we limit the initial energy of the UAV so that the UAV can only flies for distance of at most $L$. In this construction, the answer of the transformed instance of UAVWW is yes if and only if the instance of METRIC-TSP has a hamiltonian cycle with length of at most $L$.
+The idea of the transformation is to make an instance that the UAV has to visit and charge all the sensor nodes. At the same time, we set $k = 1$, so that the UAV has to visit all these sensor nodes and come back to UAV base station in a single tour. In addition, we limit the initial energy of the UAV so that the UAV can only flies for distance of at most $L$. In this construction, the answer of the transformed instance of UAVWW is yes if and only if the instance of METRIC-TSP has a solution with length of at most $L$.
 
 The detailed discussion of the transformed instance is showed below:
 \begin{enumerate}[noitemsep]
