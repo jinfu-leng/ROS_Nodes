@@ -157,17 +157,14 @@ def next_second_charge_until_full(algorithm_name, UAV, nodes, threshold = 1.0, k
 			UAV['status'] = 'idle'
 			UAV['dest_node_id'] = None
 
-def next_second(UAV, nodes, mode = 'least_power'):
+def next_second(UAV, nodes, mode = 'least_power', task_threshold = 0.6):
 	if mode == 'least_power':
-		next_second_charge_until_full(mode, UAV, nodes, 0.7) 
+		next_second_charge_until_full(mode, UAV, nodes, task_threshold) 
 	elif mode == 'least_power_k':
-		k = 5
-		k = min(k, len(nodes))
-		next_second_charge_until_full(mode, UAV, nodes, 0.7, k) 
+		k = min(5, len(nodes))
+		next_second_charge_until_full(mode, UAV, nodes, task_threshold, k) 
 	elif mode == 'least_power_partition':
 		preprocess_partition(nodes)
-		k = 5
-		k = min(k, len(nodes))
-		next_second_charge_until_full(mode, UAV, nodes, 0.7)
+		next_second_charge_until_full(mode, UAV, nodes, task_threshold)
 	else:
 		print 'error'
