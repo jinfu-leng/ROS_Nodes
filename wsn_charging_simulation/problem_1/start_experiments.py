@@ -6,11 +6,11 @@ import UAV_AI
 import outdoor_center_config as config
 param_number_nodes = [10, 20, 50, 100]
 param_ground_size = [10, 100, 500, 1000]
-param_network_type = ['homogeneous']
+param_network_type = ['homogeneous', 'homogeneous2']
 param_UAV_modes = ['least_power', 'least_power_k', 'least_power_partition']
-param_task_threshold = [0.4, 0.5, 0.6, 0.7, 0.8]
+param_task_threshold = [0.3,0.4, 0.5, 0.6, 0.7, 0.8]
 param_time_limits = [604800]
-param_res_file_name = 'res_outdoor_center_09_29.csv'
+param_res_file_name = 'res_outdoor_center_09_30.csv'
 
 
 def get_all_file(dir_path, file_extension):
