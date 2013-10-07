@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 # read into the config file
-import outdoor_faraway_config as config
+import outdoor_center_config as config
 import UAV_AI
 from object_manager import ObjectManager
 
@@ -12,7 +12,7 @@ from object_manager import ObjectManager
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 10 # skip how many frame between each animation
 param_print_round_number = False
-param_UAV_mode = 'least_power'
+param_UAV_mode = 'least_power_partition'
 
 def nodes_next_second(nodes):
 	for node in nodes:
