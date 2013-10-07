@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{amssymb,amsmath}
 \usepackage{enumitem}
+\usepackage{graphicx}
 
 \begin{document}
 \title{UAV Wireless Power Transfer for Wireless Sensor Nodes}
@@ -37,8 +38,45 @@ The time limit of the system is 7 days.
 
 Different size of ground and different number of sensor node are tested.
 \section{Experiment Results}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=15cm]{least_power_homogeneous.jpg}
+\caption{Least Power for Homogeneous Network}
+\label{fig:least_power_homogeneous}
+\end{figure}
 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=15cm]{least_power_homogeneous2.jpg}
+\caption{Least Power for Homogeneous2 Network}
+\label{fig:least_power_homogeneous2}
+\end{figure}
 
+\begin{enumerate}
+\item The number of tasks roughly increases with the increasing of threshold, and this increasing becomes more significant when the size of the network are relatively big.
+\item The system are more likely to fail with smaller threshold when the network are relatively big
+\item The threshold with the value between 0.3 to 0.5 is relatively good overall.
+\end{enumerate}
 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=15cm]{threshold_4_homogeneous.jpg}
+\caption{Threshold 0.4 for Homogeneous Network}
+\label{fig:threshold_4_homogeneous}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=15cm]{threshold_4_homogeneous2.jpg}
+\caption{Threshold 0.4 for Homogeneous2 Network}
+\label{fig:threshold_4_homogeneous2}
+\end{figure}
+
+\begin{enumerate}
+\item Three algorithms have very similar performance.
+\item In network of relatively big size, LEAST POWER PARTITION and LEAST POWER K tend to have less number of tasks
+\item In network of very big size, LEAST POWER is more likely to keep the system alive.
+
+\end{enumerate}
 
 \end{document}
