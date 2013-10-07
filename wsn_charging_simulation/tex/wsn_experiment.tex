@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\usepackage{amssymb,amsmath}
+\usepackage{enumitem}
+
+\begin{document}
+\title{UAV Wireless Power Transfer for Wireless Sensor Nodes}
+\author{Jinfu Leng}
+\maketitle
+\section{Algorithms}
+Three types of algorithms are used. The common rules of these three algorithms are:
+\begin{itemize}
+\item UAV gives up current work and flies back to the base station directly if its energy is insufficient to fly back to the base station after next second. This rule dominates all the other rules.
+\item When UAV starts to charge a node, UAV charges the node until the node is full.
+\item There is a threshold. When UAV is at base station and the min($e_{current}/e_{capacity}$) is less than this threshold, UAV goes out of base station and starts a new task.
+\end{itemize}
+The description of the three algorithms:
+\begin{itemize}
+\item LEAST POWER: This is a greedy algorithm. When UAV is out to charge sensor nodes, it always choose to charge the node with least power.
+\item LEAST POWER K: Before UAV is out to charge sensor nodes, it find the top k, such as 5, nodes with least power as candidates nodes, and optimize the path which visits all these nodes in shortest path. After UAV has charged all these k nodes, UAV works as LEAST POWER.
+\item LEAST POWER PARTITION: Nodes are geographically divided into four groups with equal size. UAV works like LEAST POWER, but only charge nodes which are in the same group of the node charged firstly.
+\end{itemize}
+
+\section{Simulation}
+The distribution of nodes and the UAV:
+\begin{itemize}
+\item The UAV is in the center of the ground
+\item The sensor nodes are randomly distributed
+\end{itemize}
+
+There are two types of node network:
+\begin{itemize}
+\item All the nodes have the same initial energy, energy capacity and consumption speed.
+\item All the nodes have the same energy capacity and consumption speed. Initial energy are different.
+\end{itemize}
+
+The time limit of the system is 7 days.
+
+Different size of ground and different number of sensor node are tested.
+\section{Experiment Results}
+
+
+
+
+\end{document}
