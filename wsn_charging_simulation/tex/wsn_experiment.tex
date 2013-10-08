@@ -18,7 +18,7 @@ The description of the three algorithms:
 \begin{itemize}
 \item LEAST POWER: This is a greedy algorithm. When UAV is out to charge sensor nodes, it always choose to charge the node with least power.
 \item LEAST POWER K: Before UAV is out to charge sensor nodes, it find the top k, such as 5, nodes with least power as candidates nodes, and optimize the path which visits all these nodes in shortest path. After UAV has charged all these k nodes, UAV works as LEAST POWER.
-\item LEAST POWER PARTITION: Nodes are geographically divided into four groups with equal size. UAV works like LEAST POWER, but only charge nodes which are in the same group of the node charged firstly.
+\item LEAST POWER PARTITION: Nodes are geographically divided into four groups with equal size. UAV works like LEAST POWER, but only charge nodes which are in the same group of the node charged firstly during one UAV task.
 \end{itemize}
 
 \section{Simulation}
@@ -36,7 +36,13 @@ There are two types of node network:
 
 The time limit of the system is 7 days.
 
-Different size of ground and different number of sensor node are tested.
+Different size of ground, different number of sensor nodes and different thresholds are tested:
+\begin{itemize}
+\item Size: 10 100 500 1000
+\item Number: 10 20 50 100
+\item Threshold: 0.3 0.4 0.5 0.6 0.7 0.8
+\end{itemize}
+
 \section{Experiment Results}
 \begin{figure}[ht!]
 \centering
