@@ -165,6 +165,6 @@ def next_second(UAV, nodes, mode = 'least_power', task_threshold = 0.6):
 		next_second_charge_until_full(mode, UAV, nodes, task_threshold, k) 
 	elif mode == 'least_power_partition':
 		preprocess_partition(nodes)
-		next_second_charge_until_full(mode, UAV, nodes, task_threshold)
+		next_second_charge_until_full(mode, UAV, nodes, task_threshold, len(nodes))
 	else:
 		print 'error'
