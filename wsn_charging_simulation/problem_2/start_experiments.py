@@ -3,12 +3,12 @@ from object_manager import ObjectManager
 import UAV_AI
 
 
-import outdoor_center_config as config
-param_number_nodes = [5, 10, 20, 40, 50]
-param_ground_size = [5, 10, 100, 500, 1000, 1500]
-param_network_type = ['homogeneous', 'homogeneous2']
-param_UAV_modes = ['least_power', 'least_power_k']
-param_experiment_time = 1000
+import test_config as config
+param_number_nodes = [5]
+param_ground_size = [10]
+param_network_type = ['homogeneous2']
+param_UAV_modes = ['cloeset_to_half']
+param_experiment_time = 1
 param_res_file_name = 'res_prob2_outdoor_center_UAV_capacity_10_23.csv'
 
 def is_valid_node_network(nodes):
@@ -53,12 +53,13 @@ for num in param_number_nodes:
 						+ str(net_type)
 					round_num = 0					
 					print 'System config: ' + output_line
-					while is_valid_node_network(nodes) and is_valid_UAV(UAV):
+					while is_valid_node_network(nodes):
 						nodes_next_second(nodes)
-						UAV_AI.next_second(UAV, nodes, UAV_mode, task_threshold)
+						if is_valid_UAV(UAV):
+							UAV_AI.next_second(UAV, nodes, UAV_mode)
 						round_num += 1
 					output_line += ',' + str(round_num)
-					print 'The system is not valid at round ' + str(round_num)
+					print 'The system is died at round ' + str(round_num)
 					print
 					# write one record
 					res_file.write(output_line + '\n')
