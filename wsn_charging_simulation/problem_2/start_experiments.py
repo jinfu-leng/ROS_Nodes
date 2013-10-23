@@ -7,7 +7,7 @@ import test_config as config
 param_number_nodes = [5]
 param_ground_size = [10]
 param_network_type = ['homogeneous2']
-param_UAV_modes = ['cloeset_to_half']
+param_UAV_modes = ['cloeset_to_half', 'cloeset_to_average']
 param_experiment_time = 1
 param_res_file_name = 'res_prob2_outdoor_center_UAV_capacity_10_23.csv'
 

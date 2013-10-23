@@ -57,7 +57,7 @@ def closest_node(x, y, dest_list, nodes):
 	return closest_node_id
 
 def next_second_closest_to_ratio(UAV, nodes, ratio):
-	print UAV['status']
+	#print UAV['status']
 	#print UAV['current_x'], UAV['current_y']
 
 	UAV['power'] -= UAV['flght_power_rate']
@@ -90,8 +90,53 @@ def next_second_closest_to_ratio(UAV, nodes, ratio):
         	UAV['power'] -= UAV['charging_power_rate']       
         	nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 
+def next_second_closest_to_average(UAV, nodes):
+	#print UAV['status']
+
+	UAV['power'] -= UAV['flght_power_rate']
+
+	if UAV['status'] == 'idle':
+		if 'node_average' in UAV:
+			del UAV['node_average']
+
+		UAV['dest_list'] = [node['id'] for node in nodes]
+		UAV['status'] = 'looking'
+
+	if UAV['status'] == 'looking':
+		UAV['dest_node_id'] = closest_node(UAV['current_x'], UAV['current_y'], UAV['dest_list'], nodes)
+		UAV['dest_list'].remove(UAV['dest_node_id'])
+		UAV['status'] = 'moving'
+
+	if UAV['status'] == 'moving':
+		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
+			UAV['status'] = 'charging'
+		else:
+			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
+			UAV['current_x'] = next_x
+			UAV['current_y'] = next_y
+
+	if UAV['status'] == 'charging':
+		if 'node_average' not in UAV:
+			UAV['node_average'] = nodes[UAV['dest_node_id']]['power']
+			UAV['node_average_cnt'] = 1
+		else:
+			UAV['node_average'] = (UAV['node_average'] * UAV['node_average_cnt'] + nodes[UAV['dest_node_id']]['power']) / (UAV['node_average_cnt'] + 1)
+			UAV['node_average_cnt'] += 1
+
+		if nodes[UAV['dest_node_id']]['power'] >= UAV['node_average']:
+			nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['capacity'], nodes[UAV['dest_node_id']]['power'])
+			if len(UAV['dest_list']) == 0:
+				UAV['status'] = 'idle'
+			else:
+				UAV['status'] = 'looking'
+        else:
+        	UAV['power'] -= UAV['charging_power_rate']       
+        	nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 	if mode == 'cloeset_to_half':
-		next_second_closest_to_ratio(UAV, nodes, 0.5) 
+		next_second_closest_to_ratio(UAV, nodes, 0.5)
+	elif mode == 'cloeset_to_average':
+		next_second_closest_to_average(UAV, nodes)
 	else:
 		print 'error'

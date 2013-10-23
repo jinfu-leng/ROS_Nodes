@@ -31,7 +31,7 @@ class ObjectManager:
 			if config.param_network_type == 'homogeneous':
 				node['power'] = config.param_node_initial_power
 			elif config.param_network_type == 'homogeneous2':
-				node['power'] = min(0.5, max(random.random(), 0.2)) * config.param_node_initial_power
+				node['power'] = min(0.7, max(random.random(), 0.3)) * config.param_node_initial_power
 			else:
 				return None
 			nodes.append(node)
