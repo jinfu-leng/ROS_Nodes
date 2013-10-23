@@ -1,14 +1,14 @@
 # configure file for independent sensors in outdoor environment
 param_number_nodes = 20
-param_ground_width = 1000.0
-param_ground_height = 1000.0
+param_ground_width = 2000.0
+param_ground_height = 2000.0
 param_network_type = 'homogeneous2'
 
 param_node_power_capacity = 2.34 * 3600
 param_node_power_consumption_rate = 0.1855
 param_node_initial_power = param_node_power_capacity
 
-param_UAV_power_capacity = 25.0 * 3600
+param_UAV_power_capacity = 25.0 * 3600 * 2
 param_UAV_flight_power_consumption_rate = 75.0
 param_UAV_initial_power = param_UAV_power_capacity
 param_UAV_charging_power_consumption_rate = 45.0

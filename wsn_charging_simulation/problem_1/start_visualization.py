@@ -11,7 +11,7 @@ from object_manager import ObjectManager
 param_animation_frame_interval = 1 # wait how long between each frame
 param_animation_frame_skip_num = 10 # skip how many frame between each animation
 param_print_round_number = False
-param_UAV_mode = 'least_power_partition'
+param_UAV_mode = 'least_power_check_next'
 
 def nodes_next_second(nodes):
 	for node in nodes:

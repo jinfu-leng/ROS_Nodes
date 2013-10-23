@@ -93,6 +93,17 @@ def next_node_least_power_partition(nodes, threshold, k):
 	else:
 		return None
 
+def next_node_least_power_check_next(nodes, threshold, UAV):
+	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
+	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
+		for node in sorted_nodes:
+			total_distance = euclidean_distance(UAV['current_x'], UAV['current_y'], node['x'], node['y']) + euclidean_distance(UAV['home_x'], UAV['home_y'], node['x'], node['y'])
+			if (total_distance / UAV['speed']) < (UAV['power'] / UAV['flght_power_rate']):
+				return [node['id']]
+		return None
+	else:
+		return None
+
 # charge the list of nodes
 # when start to charge a node, charge it until it is full
 # the threshold decides what time to go outside of base
@@ -125,19 +136,27 @@ def next_second_charge_until_full(algorithm_name, UAV, nodes, threshold = 1.0, k
 				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
 			elif algorithm_name == 'least_power_partition':
 				UAV['dest_list'] = next_node_least_power_partition(nodes, threshold, k)
+			elif algorithm_name == 'least_power_check_next':
+				UAV['dest_list'] = next_node_least_power_check_next(nodes, threshold, UAV)
 			else:
 				UAV['dest_list'] = None
 
 		if UAV['dest_list'] == None:
 			next_node_id = None
 		elif len(UAV['dest_list']) == 0:
-			next_node_id = next_node_least_power(nodes, 1.0)[0]
+			if algorithm_name == 'least_power_check_next':
+				next_node_id = next_node_least_power_check_next(nodes, 1.1, UAV)[0]
+			else:
+				next_node_id = next_node_least_power(nodes, 1.1)[0]
 		else:
 			next_node_id = UAV['dest_list'].pop(0)
 
 		if next_node_id != None:
 			UAV['dest_node_id'] = next_node_id
 			UAV['status'] = 'flying'
+		else:
+			if is_UAV_at_home(UAV) == False:
+				UAV['status'] = 'back'
 
 	if UAV['status'] == 'flying':
 		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:			
@@ -166,5 +185,7 @@ def next_second(UAV, nodes, mode = 'least_power', task_threshold = 0.6):
 	elif mode == 'least_power_partition':
 		preprocess_partition(nodes)
 		next_second_charge_until_full(mode, UAV, nodes, task_threshold, len(nodes))
+	elif mode =='least_power_check_next':
+		next_second_charge_until_full(mode, UAV, nodes, task_threshold) 
 	else:
 		print 'error'
