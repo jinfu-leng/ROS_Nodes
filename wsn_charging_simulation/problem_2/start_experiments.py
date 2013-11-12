@@ -3,13 +3,13 @@ from object_manager import ObjectManager
 import UAV_AI
 
 
-import test_config as config
-param_number_nodes = [5]
-param_ground_size = [10]
+import outdoor_faraway_config as config
+param_number_nodes = [8]
+param_ground_size = [1000]
 param_network_type = ['homogeneous2']
-param_UAV_modes = ['cloeset_to_half', 'cloeset_to_average']
+param_UAV_modes = ['all_to_full', 'below_average_to_average', 'below_average_to_full', 'cloeset_to_half']
 param_experiment_time = 1
-param_res_file_name = 'res_prob2_outdoor_center_UAV_capacity_10_23.csv'
+param_res_file_name = 'res_prob2_outdoor_faraway_11_12.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
