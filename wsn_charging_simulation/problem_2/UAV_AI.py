@@ -44,6 +44,24 @@ def shortest_distance_node_path(start_x, start_y, node_id_list, nodes):
 			best_path = path
 	return list(best_path)
 
+def hamiltonian_node_path(UAV, nodes):
+	nodes_cnt = len(nodes)
+	shortest_path = []
+	shortest_dist = 1000000000.0
+	for path in itertools.permutations(range(nodes_cnt)):
+		current_dist = 0.0
+		for index in range(nodes_cnt-1):
+			current_dist += euclidean_distance(nodes[path[index]]['x'], nodes[path[index]]['y'], nodes[path[index + 1]]['x'], nodes[path[index + 1]]['y'])
+		current_dist += euclidean_distance(UAV['current_x'], UAV['current_y'], nodes[path[0]]['x'], nodes[path[0]]['y'])
+		current_dist += euclidean_distance(UAV['current_x'], UAV['current_y'], nodes[path[nodes_cnt - 1]]['x'], nodes[path[nodes_cnt - 1]]['y'])
+		if current_dist < shortest_dist:
+			shortest_dist = current_dist
+			shortest_path = path
+	return list(shortest_path)
+
+def get_average_power_nodes(nodes):
+	return sum([node['power'] for node in nodes]) / len(nodes)
+
 def closest_node(x, y, dest_list, nodes):
 	if len(dest_list) == 0:
 		print 'error'
@@ -133,10 +151,66 @@ def next_second_closest_to_average(UAV, nodes):
         	UAV['power'] -= UAV['charging_power_rate']       
         	nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 
+def next_second_dest_list(UAV, nodes, mode):
+	UAV['power'] -= UAV['flght_power_rate']
+
+	if UAV['status'] == 'idle':
+		UAV['dest_list'] = hamiltonian_node_path(UAV, nodes)
+		UAV['status'] = 'looking'
+
+	if UAV['status'] == 'looking':
+		if len(UAV['dest_list']) > 0:
+			UAV['dest_node_id'] = UAV['dest_list'][0]
+			UAV['dest_list'].pop(0)
+			UAV['status'] = 'moving'
+		else:
+			UAV['status'] = 'idle'
+
+	if UAV['status'] == 'moving':
+		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
+			UAV['status'] = 'charging'
+			if mode == 'below_average_to_full' and nodes[UAV['dest_node_id']]['power'] >= get_average_power_nodes(nodes):
+				UAV['status'] = 'looking'
+		else:
+			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
+			UAV['current_x'] = next_x
+			UAV['current_y'] = next_y
+
+	if UAV['status'] == 'charging':
+		if mode == 'all_to_full':
+			if nodes[UAV['dest_node_id']]['power'] < nodes[UAV['dest_node_id']]['capacity']:
+				UAV['power'] -= UAV['charging_power_rate']
+				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
+			else:
+				UAV['status'] = 'looking'
+		elif mode == 'below_average_to_average':
+			if nodes[UAV['dest_node_id']]['power'] < get_average_power_nodes(nodes):
+				UAV['power'] -= UAV['charging_power_rate']
+				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
+			else:
+				UAV['status'] = 'looking'
+		elif mode == 'below_average_to_full':
+			if nodes[UAV['dest_node_id']]['power'] < nodes[UAV['dest_node_id']]['capacity']:
+				UAV['power'] -= UAV['charging_power_rate']
+				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
+			else:
+				UAV['status'] = 'looking'
+
+
+
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 	if mode == 'cloeset_to_half':
 		next_second_closest_to_ratio(UAV, nodes, 0.5)
 	elif mode == 'cloeset_to_average':
 		next_second_closest_to_average(UAV, nodes)
+	elif mode == 'below_average_to_average':
+		next_second_dest_list(UAV, nodes, mode)
+	elif mode == 'below_average_to_full':
+		next_second_dest_list(UAV, nodes, mode)
+	elif mode == 'all_to_full':
+		next_second_dest_list(UAV, nodes, mode)
 	else:
 		print 'error'
