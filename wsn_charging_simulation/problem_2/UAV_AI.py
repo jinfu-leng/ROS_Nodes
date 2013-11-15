@@ -1,4 +1,4 @@
-import math
+import math, copy
 import itertools
 
 def euclidean_distance(x, y, x2, y2):
@@ -55,14 +55,36 @@ def compute_total_cycle_distance(UAV, nodes, path):
 
 def hamiltonian_node_path(UAV, nodes):
 	nodes_cnt = len(nodes)
-	shortest_path = []
-	shortest_dist = 1000000000.0
+	hamiltonian_path = []
+	hamiltonian_dist = 1000000000.0
 	for path in itertools.permutations(range(nodes_cnt)):
 		current_dist = compute_total_cycle_distance(UAV, nodes, path)
-		if current_dist < shortest_dist:
-			shortest_dist = current_dist
-			shortest_path = path
-	return list(shortest_path)
+		if current_dist < hamiltonian_dist:
+			hamiltonian_dist = current_dist
+			hamiltonian_path = path
+	return list(hamiltonian_path)
+
+def closest_node_path(UAV, nodes):
+	nodes_cnt = len(nodes)	
+	usage_nodes = [False for i in range(nodes_cnt)]
+	current_x = UAV['current_x']
+	current_y = UAV['current_y']
+	closest_path = []
+	for i in range(nodes_cnt):
+		best_node = -1
+		best_dist = 0.0
+		for j in range(nodes_cnt):
+			if usage_nodes[j] == True:
+				continue
+			dist = euclidean_distance(current_x, current_y, nodes[j]['x'], nodes[j]['y'])
+			if best_node < 0 or dist < best_dist:				
+				best_dist = dist
+				best_node = j
+		current_x = nodes[best_node]['x']
+		current_y = nodes[best_node]['y']
+		closest_path.append(best_node)
+		usage_nodes[best_node] = True
+	return closest_path
 
 def get_average_power_nodes(nodes):
 	return sum([node['power'] for node in nodes]) / len(nodes)
@@ -91,6 +113,7 @@ def next_second_closest_to_ratio(UAV, nodes, ratio):
 
 	if UAV['status'] == 'looking':
 		UAV['dest_node_id'] = closest_node(UAV['current_x'], UAV['current_y'], UAV['dest_list'], nodes)
+		#print UAV['dest_node_id']
 		UAV['dest_list'].remove(UAV['dest_node_id'])
 		UAV['status'] = 'moving'
 
@@ -103,14 +126,15 @@ def next_second_closest_to_ratio(UAV, nodes, ratio):
 			UAV['current_y'] = next_y
 
 	if UAV['status'] == 'charging':
-		if nodes[UAV['dest_node_id']]['power'] >= nodes[UAV['dest_node_id']]['capacity'] * ratio:
+		#print UAV['power'], nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'] * ratio
+		if nodes[UAV['dest_node_id']]['power'] >= (nodes[UAV['dest_node_id']]['capacity'] * ratio):
 			nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['capacity'], nodes[UAV['dest_node_id']]['power'])
 			if len(UAV['dest_list']) == 0:
 				UAV['status'] = 'idle'
 			else:
 				UAV['status'] = 'looking'
-        else:
-        	UAV['power'] -= UAV['charging_power_rate']       
+		else:
+			UAV['power'] -= UAV['charging_power_rate'] 
         	nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 
 def next_second_closest_to_average(UAV, nodes):
@@ -156,7 +180,7 @@ def next_second_closest_to_average(UAV, nodes):
         	UAV['power'] -= UAV['charging_power_rate']       
         	nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 
-def next_second_dest_list(UAV, nodes, mode):
+def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 	UAV['power'] -= UAV['flght_power_rate']
 
 	if UAV['status'] != 'back' and is_UAV_able_back_home_after_next_second(UAV) == False:
@@ -168,7 +192,12 @@ def next_second_dest_list(UAV, nodes, mode):
 		UAV['current_y'] = next_y
 
 	if UAV['status'] == 'idle':
-		UAV['dest_list'] = hamiltonian_node_path(UAV, nodes)
+		if path == 'closest':
+			UAV['dest_list'] = closest_node_path(UAV, nodes)
+		elif path == 'hamiltonian':
+			UAV['dest_list'] = hamiltonian_node_path(UAV, nodes)
+		else:
+			print 'error'
 		UAV['status'] = 'looking'
 
 	if UAV['status'] == 'looking':
@@ -182,8 +211,6 @@ def next_second_dest_list(UAV, nodes, mode):
 	if UAV['status'] == 'moving':
 		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
 			UAV['status'] = 'charging'
-			if mode == 'below_average_to_full' and nodes[UAV['dest_node_id']]['power'] >= get_average_power_nodes(nodes):
-				UAV['status'] = 'looking'
 		else:
 			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
 			UAV['current_x'] = next_x
@@ -211,11 +238,20 @@ def next_second_dest_list(UAV, nodes, mode):
 				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
 			else:
 				UAV['status'] = 'looking'
+		elif mode == 'to_half_capacity':
+			if nodes[UAV['dest_node_id']]['power'] < 0.5 * nodes[UAV['dest_node_id']]['capacity']:
+				UAV['power'] -= UAV['charging_power_rate']
+				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
+			else:
+				UAV['status'] = 'looking'
+		else:
+			print 'error'
 
 
 
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
-	if mode == 'cloeset_to_half':
+	if mode == 'closest_to_half':
 		next_second_closest_to_ratio(UAV, nodes, 0.5)
 	elif mode == 'cloeset_to_average':
 		next_second_closest_to_average(UAV, nodes)
@@ -225,6 +261,8 @@ def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 		next_second_dest_list(UAV, nodes, mode)
 	elif mode == 'all_to_full':
 		next_second_dest_list(UAV, nodes, mode)
+	elif mode == 'closest_to_half2':
+		next_second_dest_list(UAV, nodes, 'to_half_capacity', 'closest')
 	else:
 		print 'error'
 
