@@ -5,11 +5,11 @@ import UAV_AI
 
 import outdoor_faraway_config as config
 param_number_nodes = [8]
-param_ground_size = [1000]
+param_ground_size = [100]
 param_network_type = ['homogeneous2']
 param_UAV_modes = ['all_to_full', 'below_average_to_average', 'below_average_to_full', 'cloeset_to_half']
 param_experiment_time = 1
-param_res_file_name = 'res_prob2_outdoor_faraway_11_12.csv'
+param_res_file_name = 'res_prob2_outdoor_faraway_11_15.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
@@ -43,7 +43,15 @@ for num in param_number_nodes:
 			config.param_ground_height = size
 			config.param_network_type = net_type
 			for experiment_time in range(param_experiment_time):
-				UAV_new, nodes_new = object_manager_.create_objects(config)				
+				UAV_new, nodes_new = object_manager_.create_objects(config)
+				# compute lifetime lower bound
+				UAV = copy.deepcopy(UAV_new)
+				nodes = copy.deepcopy(nodes_new)
+				print "lifttime lower bound:", UAV_AI.compute_lifetime_lower_bound(UAV, nodes)
+				# compute lifetime upper bound
+				UAV = copy.deepcopy(UAV_new)
+				nodes = copy.deepcopy(nodes_new)
+				print "lifttime upper bound:", UAV_AI.compute_lifetime_upper_bound(UAV, nodes)		
 				# start the experiment
 				for UAV_mode in param_UAV_modes:
 					UAV = copy.deepcopy(UAV_new)
@@ -54,6 +62,7 @@ for num in param_number_nodes:
 					round_num = 0					
 					print 'System config: ' + output_line
 					while is_valid_node_network(nodes):
+						
 						nodes_next_second(nodes)
 						if is_valid_UAV(UAV):
 							UAV_AI.next_second(UAV, nodes, UAV_mode)
