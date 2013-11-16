@@ -110,14 +110,14 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 			UAV['current_y'] = next_y
 
 	if UAV['status'] == 'charging':
-		if mode == 'all_to_full':
+		if mode == 'to_full':
 			if nodes[UAV['dest_node_id']]['power'] < nodes[UAV['dest_node_id']]['capacity']:
 				UAV['power'] -= UAV['charging_power_rate']
 				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
 			else:
 				UAV['status'] = 'looking'
-		elif mode == 'below_average_to_average':
+		elif mode == 'to_average':
 			if nodes[UAV['dest_node_id']]['power'] < get_average_power_nodes(nodes):
 				UAV['power'] -= UAV['charging_power_rate']
 				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
@@ -131,7 +131,7 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
 			else:
 				UAV['status'] = 'looking'
-		elif mode == 'to_half_capacity':
+		elif mode == 'to_half':
 			if nodes[UAV['dest_node_id']]['power'] < 0.5 * nodes[UAV['dest_node_id']]['capacity']:
 				UAV['power'] -= UAV['charging_power_rate']
 				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
@@ -145,13 +145,21 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 	if mode == 'closest_to_half':
-		next_second_dest_list(UAV, nodes, 'to_half_capacity', 'closest')
-	elif mode == 'below_average_to_average':
-		next_second_dest_list(UAV, nodes, mode)
-	elif mode == 'below_average_to_full':
-		next_second_dest_list(UAV, nodes, mode)
-	elif mode == 'all_to_full':
-		next_second_dest_list(UAV, nodes, mode)
+		next_second_dest_list(UAV, nodes, 'to_half', 'closest')
+	elif mode == 'hamiltonian_to_half':
+		next_second_dest_list(UAV, nodes, 'to_half', 'hamiltonian')
+	elif mode == 'closest_to_average':
+		next_second_dest_list(UAV, nodes, 'to_average', 'closest')
+	elif mode == 'hamiltonian_to_average':
+		next_second_dest_list(UAV, nodes, 'to_average', 'hamiltonian')
+	elif mode == 'closest_below_average_to_full':
+		next_second_dest_list(UAV, nodes, 'below_average_to_full', 'closest')
+	elif mode == 'hamiltonian_below_average_to_full':
+		next_second_dest_list(UAV, nodes, 'below_average_to_full', 'hamiltonian')
+	elif mode == 'closest_to_full':
+		next_second_dest_list(UAV, nodes, 'to_full', 'closest')
+	elif mode == 'hamiltonian_to_full':
+		next_second_dest_list(UAV, nodes, 'to_full', 'hamiltonian')
 	else:
 		print 'error'
 

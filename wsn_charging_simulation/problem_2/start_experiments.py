@@ -3,11 +3,11 @@ from object_manager import ObjectManager
 import UAV_AI
 
 
-import outdoor_faraway_config as config
+import test_config as config
 param_number_nodes = [8]
 param_ground_size = [100]
 param_network_type = ['homogeneous2']
-param_UAV_modes = ['all_to_full', 'below_average_to_average', 'below_average_to_full', 'closest_to_half']
+param_UAV_modes = ['closest_to_half', 'hamiltonian_to_half', 'closest_to_average', 'hamiltonian_to_average', 'closest_below_average_to_full', 'hamiltonian_below_average_to_full', 'closest_to_full', 'hamiltonian_to_full']
 param_experiment_time = 1
 param_res_file_name = 'res_prob2_outdoor_faraway_11_15.csv'
 
