@@ -1,12 +1,15 @@
-input_file_name = "res_prob2_outdoor_faraway_11_20.csv"
+input_file_name = 'res_prob2_outdoor_faraway_11_20.csv'
 output_file_name = input_file_name[:-4] + '_aggregated.csv'
 
-input_file = open(input_file_name, "r")
-output_file = open(output_file_name, "w")
+input_file = open(input_file_name, 'r')
+output_file = open(output_file_name, 'w')
 
-res = []
+first_line = input_file.readline()
+output_file.write(first_line[:-1] + ',cnt,average' + '\n')
+
+res = {}
 for line in input_file.readlines():
-	line_split = line[:-1].split(",")
+	line_split = line[:-1].split(',')
 	network_type = line_split[0]
 	UAV_mode = line_split[1]
 	life = int(line_split[2])
@@ -18,3 +21,20 @@ for line in input_file.readlines():
 		res[network_type][UAV_mode] = []
 
 	res[network_type][UAV_mode].append(life)
+
+for network_type in res.keys():
+	for UAV_mode in res[network_type].keys():
+		output_line = network_type + ',' + UAV_mode
+
+		cnt = len(res[network_type][UAV_mode])
+		average = 1.0 * sum(res[network_type][UAV_mode])/cnt
+
+		output_line += ',' + str(cnt)
+		output_line += ',' + str(average)
+
+		output_file.write(output_line)
+		output_file.write('\n')
+
+
+input_file.close()
+output_file.close()
