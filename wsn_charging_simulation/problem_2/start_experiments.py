@@ -4,12 +4,12 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [8]
-param_ground_size = [100]
+param_number_nodes = [5, 8]
+param_ground_size = [50, 100, 200, 400]
 param_network_type = ['homogeneous2']
 param_UAV_modes = ['closest_to_half', 'hamiltonian_to_half', 'closest_to_average', 'hamiltonian_to_average', 'closest_below_average_to_full', 'hamiltonian_below_average_to_full', 'closest_to_full', 'hamiltonian_to_full']
-param_experiment_time = 5
-param_res_file_name = 'res_prob2_outdoor_faraway_11_20.csv'
+param_experiment_time = 20
+param_res_file_name = 'res_prob2_outdoor_center__11_25_4.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
