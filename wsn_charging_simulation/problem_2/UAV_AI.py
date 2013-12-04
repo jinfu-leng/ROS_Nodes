@@ -101,11 +101,17 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 
 	if UAV['status'] == 'moving':
 		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
-			UAV['status'] = 'charging'
+			UAV['status'] = 'localization'
+			UAV['localization_time_left'] = UAV['localization_time']
 		else:
 			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
 			UAV['current_x'] = next_x
 			UAV['current_y'] = next_y
+
+	if UAV['status'] == 'localization':
+		UAV['localization_time_left'] -= 1
+		if UAV['localization_time_left'] <= 0:
+			UAV['status'] ='charging'
 
 	if UAV['status'] == 'charging':
 		if mode == 'to_full':
@@ -204,7 +210,7 @@ def compute_lifetime_upper_bound(UAV, nodes): # in practice, the node with lower
 		if total_charging_power <= 0:
 			break
 
-		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate']) - nodes_cnt * UAV['localization_time']
 		total_efficient_transfer_power =  total_charging_time * UAV['charging_power_rate'] * UAV['transfer_rate']
 
 		lowest_node_power = find_best_lowest([node['power'] for node in charging_node_list], total_efficient_transfer_power)
