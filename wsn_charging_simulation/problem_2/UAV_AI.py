@@ -74,8 +74,6 @@ def get_average_power_nodes(nodes):
 	return sum([node['power'] for node in nodes]) / len(nodes)
 
 def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
-	UAV['power'] -= UAV['flght_power_rate']
-
 	if UAV['status'] != 'back' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
 		
@@ -141,6 +139,12 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 		else:
 			print 'error'
 
+		if UAV['status'] == 'charging':
+			UAV['power'] -= UAV['hovering_power_rate']
+		else:
+			UAV['power'] -= UAV['flght_power_rate']
+
+
 
 
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
@@ -200,7 +204,7 @@ def compute_lifetime_upper_bound(UAV, nodes): # in practice, the node with lower
 		if total_charging_power <= 0:
 			break
 
-		total_charging_time = total_charging_power / (UAV['flght_power_rate'] + UAV['charging_power_rate'])
+		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
 		total_efficient_transfer_power =  total_charging_time * UAV['charging_power_rate'] * UAV['transfer_rate']
 
 		lowest_node_power = find_best_lowest([node['power'] for node in charging_node_list], total_efficient_transfer_power)

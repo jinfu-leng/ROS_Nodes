@@ -13,8 +13,8 @@ class ObjectManager:
 		UAV['speed'] = config.param_UAV_moving_speed
 		UAV['transfer_rate'] = config.param_UAV_charging_power_transfer_rate
 		UAV['flght_power_rate'] = config.param_UAV_flight_power_consumption_rate
+		UAV['hovering_power_rate'] = config.param_UAV_hovering_power_consumption_rate
 		UAV['charging_power_rate'] = config.param_UAV_charging_power_consumption_rate # charging nodes
-		UAV['charged_power_rate'] = config.param_UAV_charged_power_accumulation_rate # being charged
 		return UAV
 
 	# create nodes
