@@ -20,7 +20,7 @@ def is_UAV_able_back_home_after_next_second(UAV):
 	consume_rate = UAV['flght_power_rate']	
 	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
 	speed = UAV['speed']
-	return int(next_power/consume_rate) > (int(distance_home/speed) + 3)
+	return int(next_power/consume_rate) > (int(distance_home/speed) + 1)
 
 def is_UAV_at_home(UAV):
 	if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_y']:
