@@ -73,7 +73,7 @@ def closest_node_path(UAV, nodes):
 def get_average_power_nodes(nodes):
 	return sum([node['power'] for node in nodes]) / len(nodes)
 
-def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
+def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
 	if UAV['status'] != 'back' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
 		
@@ -114,14 +114,7 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 			UAV['status'] ='charging'
 
 	if UAV['status'] == 'charging':
-		if mode == 'to_full':
-			if nodes[UAV['dest_node_id']]['power'] < nodes[UAV['dest_node_id']]['capacity']:
-				UAV['power'] -= UAV['charging_power_rate']
-				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-			else:
-				UAV['status'] = 'looking'
-		elif mode == 'to_average':
+		if mode == 'to_average':
 			if nodes[UAV['dest_node_id']]['power'] < get_average_power_nodes(nodes):
 				UAV['power'] -= UAV['charging_power_rate']
 				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
@@ -135,8 +128,8 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
 			else:
 				UAV['status'] = 'looking'
-		elif mode == 'to_half':
-			if nodes[UAV['dest_node_id']]['power'] < 0.5 * nodes[UAV['dest_node_id']]['capacity']:
+		elif mode == 'to_goal':
+			if nodes[UAV['dest_node_id']]['power'] < goal:
 				UAV['power'] -= UAV['charging_power_rate']
 				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
@@ -154,10 +147,13 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 
 
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
+	node_capacity = nodes[0]['capacity']
+	node_initial_average = get_average_power_nodes(nodes)
+
 	if mode == 'closest_to_initial_average':
-		next_second_dest_list(UAV, nodes, 'to_half', 'closest')
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', node_initial_average)
 	elif mode == 'hamiltonian_to_initial_average':
-		next_second_dest_list(UAV, nodes, 'to_half', 'hamiltonian')
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', node_initial_average)
 	elif mode == 'closest_to_average':
 		next_second_dest_list(UAV, nodes, 'to_average', 'closest')
 	elif mode == 'hamiltonian_to_average':
@@ -167,9 +163,9 @@ def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 	elif mode == 'hamiltonian_below_average_to_full':
 		next_second_dest_list(UAV, nodes, 'below_average_to_full', 'hamiltonian')
 	elif mode == 'closest_to_full':
-		next_second_dest_list(UAV, nodes, 'to_full', 'closest')
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', node_capacity)
 	elif mode == 'hamiltonian_to_full':
-		next_second_dest_list(UAV, nodes, 'to_full', 'hamiltonian')
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', node_capacity)
 	else:
 		print 'error'
 
