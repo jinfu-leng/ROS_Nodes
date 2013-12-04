@@ -154,9 +154,9 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian'):
 
 
 def next_second(UAV, nodes, mode = 'cloeset_to_half'):
-	if mode == 'closest_to_half':
+	if mode == 'closest_to_initial_average':
 		next_second_dest_list(UAV, nodes, 'to_half', 'closest')
-	elif mode == 'hamiltonian_to_half':
+	elif mode == 'hamiltonian_to_initial_average':
 		next_second_dest_list(UAV, nodes, 'to_half', 'hamiltonian')
 	elif mode == 'closest_to_average':
 		next_second_dest_list(UAV, nodes, 'to_average', 'closest')
