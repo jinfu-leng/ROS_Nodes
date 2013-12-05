@@ -111,6 +111,8 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 	if UAV['status'] == 'localization':
 		if UAV['localization_time_left'] <= 0:
 			UAV['status'] ='charging'
+			if mode == 'with_fixed_amount':
+				UAV['with_fixed_amount_left'] = params['fixed_amount']
 		else:
 			UAV['localization_time_left'] -= 1
 
@@ -127,6 +129,11 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 		elif mode == 'to_goal':
 			if nodes[UAV['dest_node_id']]['power'] >= params['goal']:
 				UAV['status'] = 'looking'
+		elif mode == 'with_fixed_amount':
+			if UAV['with_fixed_amount_left'] <= 0 or nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
+				UAV['status'] = 'looking'
+			else:
+				UAV['with_fixed_amount_left'] -= UAV['charging_power_rate'] * UAV['transfer_rate']
 		else:
 			print 'error'
 
@@ -144,6 +151,9 @@ def next_second(UAV, nodes, mode, params = {}):
 						
 	if 	'node_capacity'	not in params:
 		params['node_capacity'] = nodes[0]['capacity']
+
+	if 'precomputed_amount' not in params:
+		params['precomputed_amount'] = 500
 
 	if mode == 'closest_to_initial_average':		
 		params['goal'] = params['node_initial_average']
@@ -165,10 +175,15 @@ def next_second(UAV, nodes, mode, params = {}):
 	elif mode == 'hamiltonian_to_full':
 		params['goal'] = params['node_capacity']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', params)
+	elif mode == 'closest_with_precomputed_amount':
+		params['fixed_amount'] = params['precomputed_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'closest', params)
+	elif mode == 'hamiltonian_with_precomputed_amount':
+		params['fixed_amount'] = params['precomputed_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'hamiltonian', params)
 	else:
 		print 'error'
 
-	
 
 def find_best_lowest(values, more_value):
 	values.sort()
