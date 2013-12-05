@@ -52,7 +52,9 @@ for num in param_number_nodes:
 					print 'Network Type: ' + network_type_str
 					for experiment_time in range(param_experiment_time):
 						UAV_new, nodes_new = object_manager_.create_objects(config)
-						node_initial_average = UAV_AI.get_average_power_nodes(nodes_new)
+						params = {}
+						params['node_initial_average'] = UAV_AI.get_average_power_nodes(nodes_new)
+						params['node_capacity'] = nodes_new[0]['capacity']
 						# compute lifetime lower bound
 						UAV = copy.deepcopy(UAV_new)
 						nodes = copy.deepcopy(nodes_new)
@@ -73,7 +75,7 @@ for num in param_number_nodes:
 							while is_valid_node_network(nodes):						
 								nodes_next_second(nodes)
 								if is_valid_UAV(UAV):
-									UAV_AI.next_second(UAV, nodes, UAV_mode, node_initial_average)
+									UAV_AI.next_second(UAV, nodes, UAV_mode, params)
 								round_num += 1
 							print 'UAV Mode: ' + UAV_mode
 							print 'The system is dead at round: ' + str(round_num)

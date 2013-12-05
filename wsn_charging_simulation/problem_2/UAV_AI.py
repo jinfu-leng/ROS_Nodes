@@ -73,7 +73,7 @@ def closest_node_path(UAV, nodes):
 def get_average_power_nodes(nodes):
 	return sum([node['power'] for node in nodes]) / len(nodes)
 
-def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
+def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 	if UAV['status'] != 'back' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
 		
@@ -125,7 +125,7 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
 			if nodes[UAV['dest_node_id']]['power'] >= nodes[UAV['dest_node_id']]['capacity']:
 				UAV['status'] = 'looking'
 		elif mode == 'to_goal':
-			if nodes[UAV['dest_node_id']]['power'] >= goal:
+			if nodes[UAV['dest_node_id']]['power'] >= params['goal']:
 				UAV['status'] = 'looking'
 		else:
 			print 'error'
@@ -138,12 +138,13 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
 
 
 
-def next_second(UAV, nodes, mode, node_initial_average):
-	node_capacity = nodes[0]['capacity']
+def next_second(UAV, nodes, mode, params = {}):
 	if mode == 'closest_to_initial_average':
-		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', node_initial_average)
+		params['goal'] = params['node_initial_average']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', params)
 	elif mode == 'hamiltonian_to_initial_average':
-		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', node_initial_average)
+		params['goal'] = params['node_initial_average']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', params)
 	elif mode == 'closest_to_average':
 		next_second_dest_list(UAV, nodes, 'to_average', 'closest')
 	elif mode == 'hamiltonian_to_average':
@@ -153,9 +154,11 @@ def next_second(UAV, nodes, mode, node_initial_average):
 	elif mode == 'hamiltonian_below_average_to_full':
 		next_second_dest_list(UAV, nodes, 'below_average_to_full', 'hamiltonian')
 	elif mode == 'closest_to_full':
-		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', node_capacity)
+		params['goal'] = params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', params)
 	elif mode == 'hamiltonian_to_full':
-		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', node_capacity)
+		params['goal'] = params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', params)
 	else:
 		print 'error'
 
