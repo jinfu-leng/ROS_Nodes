@@ -109,31 +109,23 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
 			UAV['current_y'] = next_y
 
 	if UAV['status'] == 'localization':
-		UAV['localization_time_left'] -= 1
 		if UAV['localization_time_left'] <= 0:
 			UAV['status'] ='charging'
+		else:
+			UAV['localization_time_left'] -= 1
 
 	if UAV['status'] == 'charging':
+		UAV['power'] -= UAV['charging_power_rate']
+		nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
+		nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
 		if mode == 'to_average':
-			if nodes[UAV['dest_node_id']]['power'] < get_average_power_nodes(nodes):
-				UAV['power'] -= UAV['charging_power_rate']
-				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-			else:
-				UAV['status'] = 'looking'
+			if nodes[UAV['dest_node_id']]['power'] >= get_average_power_nodes(nodes):
+				UAV['status'] = 'looking'				
 		elif mode == 'below_average_to_full':
-			if nodes[UAV['dest_node_id']]['power'] < nodes[UAV['dest_node_id']]['capacity']:
-				UAV['power'] -= UAV['charging_power_rate']
-				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-			else:
+			if nodes[UAV['dest_node_id']]['power'] >= nodes[UAV['dest_node_id']]['capacity']:
 				UAV['status'] = 'looking'
 		elif mode == 'to_goal':
-			if nodes[UAV['dest_node_id']]['power'] < goal:
-				UAV['power'] -= UAV['charging_power_rate']
-				nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
-				nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-			else:
+			if nodes[UAV['dest_node_id']]['power'] >= goal:
 				UAV['status'] = 'looking'
 		else:
 			print 'error'
