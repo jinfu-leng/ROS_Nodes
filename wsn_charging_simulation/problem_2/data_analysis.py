@@ -3,14 +3,14 @@ import numpy as np
 def ComputeStd(nums):
 	return np.std(nums)
 
-input_file_name = 'res_prob2_outdoor_center__11_25_4.csv'
+input_file_name = 'center_real_data_test.csv'
 output_file_name = input_file_name[:-4] + '_aggregated.csv'
 
 input_file = open(input_file_name, 'r')
 output_file = open(output_file_name, 'w')
 
 first_line = input_file.readline()
-output_file.write('network_type,UAV_mode,cnt,average,std' + '\n')
+output_file.write('network_type,UAV_mode,cnt,lifetime,std' + '\n')
 
 res = {}
 for line in input_file.readlines():
