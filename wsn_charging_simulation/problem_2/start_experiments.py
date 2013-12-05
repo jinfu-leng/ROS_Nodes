@@ -5,13 +5,13 @@ import UAV_AI
 
 import test_config as config
 param_number_nodes = [8]
-param_ground_size = [100, 500]
-param_localization_time = [1, 10]
+param_ground_size = [100, 400]
+param_localization_time = [10]
 param_transfer_rate = [0.2, 0.3]
 param_network_type = ['homogeneous2']
 param_UAV_modes = ['closest_to_initial_average', 'hamiltonian_to_initial_average', 'closest_to_average', 'hamiltonian_to_average', 'closest_to_full', 'hamiltonian_to_full']
 param_experiment_time = 20
-param_res_file_name = 'center_real_data_20.csv'
+param_res_file_name = 'center_real_data_test.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
@@ -49,8 +49,10 @@ for num in param_number_nodes:
 					config.param_transfer_rate = transfer_rate
 					config.param_network_type = net_type
 					network_type_str = str(num) + '_' + str(size) + '_' + str(size) + '_' + str(net_type) + '_' + str(localization_time) + '_' + str(transfer_rate)
+					print 'Network Type: ' + network_type_str
 					for experiment_time in range(param_experiment_time):
 						UAV_new, nodes_new = object_manager_.create_objects(config)
+						node_initial_average = UAV_AI.get_average_power_nodes(nodes_new)
 						# compute lifetime lower bound
 						UAV = copy.deepcopy(UAV_new)
 						nodes = copy.deepcopy(nodes_new)
@@ -67,14 +69,15 @@ for num in param_number_nodes:
 						for UAV_mode in param_UAV_modes:
 							UAV = copy.deepcopy(UAV_new)
 							nodes = copy.deepcopy(nodes_new)
-							round_num = 0					
-							print 'Network Type: ' + network_type_str
+							round_num = 0							
 							while is_valid_node_network(nodes):						
 								nodes_next_second(nodes)
 								if is_valid_UAV(UAV):
-									UAV_AI.next_second(UAV, nodes, UAV_mode)
+									UAV_AI.next_second(UAV, nodes, UAV_mode, node_initial_average)
 								round_num += 1
-							print 'The system is dead at round ' + str(round_num)
-							print
+							print 'UAV Mode: ' + UAV_mode
+							print 'The system is dead at round: ' + str(round_num)
 							res_file.write(network_type_str + ',' + UAV_mode + ',' + str(round_num) + '\n')
+						print
+
 res_file.close()
