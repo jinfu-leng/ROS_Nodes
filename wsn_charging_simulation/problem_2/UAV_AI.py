@@ -139,7 +139,13 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 
 
 def next_second(UAV, nodes, mode, params = {}):
-	if mode == 'closest_to_initial_average':
+	if 'node_initial_average' not in params:
+		params['node_initial_average'] = get_average_power_nodes(nodes)
+						
+	if 	'node_capacity'	not in params:
+		params['node_capacity'] = nodes[0]['capacity']
+
+	if mode == 'closest_to_initial_average':		
 		params['goal'] = params['node_initial_average']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', params)
 	elif mode == 'hamiltonian_to_initial_average':
