@@ -146,10 +146,8 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', goal = 0.0):
 
 
 
-def next_second(UAV, nodes, mode = 'cloeset_to_half'):
+def next_second(UAV, nodes, mode, node_initial_average):
 	node_capacity = nodes[0]['capacity']
-	node_initial_average = get_average_power_nodes(nodes)
-
 	if mode == 'closest_to_initial_average':
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', node_initial_average)
 	elif mode == 'hamiltonian_to_initial_average':
@@ -174,14 +172,14 @@ def next_second(UAV, nodes, mode = 'cloeset_to_half'):
 def find_best_lowest(values, more_value):
 	values.sort()
 	left = values[0]
-	right = values[0]+left
+	right = values[0] + more_value
 	while right - left > 0.001:
 		mid = (left + right) / 2
 		current = more_value
 		for value in values:
 			if mid > value:
-				current -= mid-value
-		if current > 0:
+				current -= (mid-value)
+		if current >= 0:
 			left = mid
 		else:
 			right = mid
@@ -202,11 +200,11 @@ def compute_lifetime_upper_bound(UAV, nodes): # in practice, the node with lower
 		
 		flight_power = (total_distance / UAV['speed']) * UAV['flght_power_rate']
 		total_charging_power = total_power - flight_power
+		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate']) - nodes_cnt * UAV['localization_time']
 
-		if total_charging_power <= 0:
+		if total_charging_time <= 0:
 			break
 
-		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate']) - nodes_cnt * UAV['localization_time']
 		total_efficient_transfer_power =  total_charging_time * UAV['charging_power_rate'] * UAV['transfer_rate']
 
 		lowest_node_power = find_best_lowest([node['power'] for node in charging_node_list], total_efficient_transfer_power)
