@@ -14,10 +14,10 @@ def next_position(current_x, current_y, dest_x, dest_y, speed):
 	return current_x + moving_ratio * x_diff, current_y + moving_ratio * y_diff
 
 def is_UAV_able_back_home_after_next_second(UAV):
-	next_power = UAV['power'] - UAV['flght_power_rate']
+	next_power = UAV['power'] - UAV['flight_power_rate']
 	if UAV['status'] == 'charging':
 		next_power -= UAV['charging_power_rate']
-	consume_rate = UAV['flght_power_rate']	
+	consume_rate = UAV['flight_power_rate']	
 	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
 	speed = UAV['speed']
 	return int(next_power/consume_rate) > (int(distance_home/speed) + 1)
@@ -140,8 +140,24 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 		if UAV['status'] == 'charging':
 			UAV['power'] -= UAV['hovering_power_rate']
 		else:
-			UAV['power'] -= UAV['flght_power_rate']
+			UAV['power'] -= UAV['flight_power_rate']
 
+
+def compute_optimized_amount(UAV, nodes):
+	total_power = UAV['power']
+
+	hamiltonian_path = hamiltonian_node_path(UAV, nodes)
+	hamiltonian_dist = compute_total_cycle_distance(UAV, nodes, hamiltonian_path)
+	flight_power = (hamiltonian_dist / UAV['speed']) * UAV['flight_power_rate']	
+	total_power -=  flight_power
+
+	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
+	total_power -= localization_power
+
+	total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+	total_power *= UAV['transfer_rate']
+	
+	return max(0, total_power / len(nodes))
 
 
 
@@ -153,9 +169,10 @@ def next_second(UAV, nodes, mode, params = {}):
 		params['node_capacity'] = nodes[0]['capacity']
 
 	if 'precomputed_amount' not in params:
-		params['precomputed_amount'] = 500
+		params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
+		print params['precomputed_amount']
 
-	if mode == 'closest_to_initial_average':		
+	if mode == 'closest_to_initial_average':
 		params['goal'] = params['node_initial_average']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', params)
 	elif mode == 'hamiltonian_to_initial_average':
@@ -214,7 +231,7 @@ def compute_lifetime_upper_bound(UAV, nodes): # in practice, the node with lower
 
 		total_power = UAV['power']
 		
-		flight_power = (total_distance / UAV['speed']) * UAV['flght_power_rate']
+		flight_power = (total_distance / UAV['speed']) * UAV['flight_power_rate']
 		total_charging_power = total_power - flight_power
 		total_charging_time = total_charging_power / (UAV['hovering_power_rate'] + UAV['charging_power_rate']) - nodes_cnt * UAV['localization_time']
 
