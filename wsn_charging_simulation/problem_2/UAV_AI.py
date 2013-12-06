@@ -170,7 +170,9 @@ def next_second(UAV, nodes, mode, params = {}):
 
 	if 'precomputed_amount' not in params:
 		params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
-		print params['precomputed_amount']
+
+	if 'optimized_goal' not in params:
+		params['optimized_goal'] = params['precomputed_amount'] + params['node_initial_average']
 
 	if mode == 'closest_to_initial_average':
 		params['goal'] = params['node_initial_average']
@@ -198,6 +200,12 @@ def next_second(UAV, nodes, mode, params = {}):
 	elif mode == 'hamiltonian_with_precomputed_amount':
 		params['fixed_amount'] = params['precomputed_amount']
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'hamiltonian', params)
+	elif mode == 'closest_to_optimized_goal':
+		params['goal'] = params['optimized_goal']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', params)
+	elif mode == 'hamiltonian_to_optimized_goal':
+		params['goal'] = params['optimized_goal']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', params)
 	else:
 		print 'error'
 

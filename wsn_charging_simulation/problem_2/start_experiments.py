@@ -9,8 +9,8 @@ param_ground_size = [100, 400]
 param_localization_time = [10]
 param_transfer_rate = [0.2, 0.3]
 param_network_type = ['homogeneous2']
-param_UAV_modes = ['closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount', 'closest_to_initial_average', 'hamiltonian_to_initial_average', 'closest_to_average', 'hamiltonian_to_average', 'closest_to_full', 'hamiltonian_to_full']
-param_experiment_time = 3
+param_UAV_modes = ['closest_to_optimized_goal', 'hamiltonian_to_optimized_goal', 'closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount', 'closest_to_initial_average', 'hamiltonian_to_initial_average', 'closest_to_average', 'hamiltonian_to_average', 'closest_to_full', 'hamiltonian_to_full']
+param_experiment_time = 5
 param_res_file_name = 'center_real_data_test.csv'
 
 def is_valid_node_network(nodes):
