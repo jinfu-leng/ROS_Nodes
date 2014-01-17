@@ -3,7 +3,7 @@ import numpy as np
 def ComputeStd(nums):
 	return np.std(nums)
 
-input_file_name = 'center_real_data_test.csv'
+input_file_name = 'center_02_06_closest_number.csv'
 output_file_name = input_file_name[:-4] + '_aggregated.csv'
 
 input_file = open(input_file_name, 'r')

@@ -4,14 +4,19 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [8]
-param_ground_size = [100, 400]
-param_localization_time = [10]
-param_transfer_rate = [0.2, 0.3]
+param_number_nodes = [5, 7, 9, 11]
+param_ground_size = [400]
+param_localization_time = [40]
+param_transfer_rate = [0.2]
 param_network_type = ['homogeneous2']
-param_UAV_modes = ['closest_to_optimized_goal', 'hamiltonian_to_optimized_goal', 'closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount', 'closest_to_initial_average', 'hamiltonian_to_initial_average', 'closest_to_average', 'hamiltonian_to_average', 'closest_to_full', 'hamiltonian_to_full']
-param_experiment_time = 5
-param_res_file_name = 'center_real_data_test.csv'
+param_UAV_modes = []
+param_UAV_modes += ['closest_to_full', 'closest_with_precomputed_amount', 'closest_to_initial_average',]
+#param_UAV_modes += ['hamiltonian_to_full','closest_to_full']
+##param_UAV_modes += ['hamiltonian_to_average','closest_to_average']
+#param_UAV_modes += ['hamiltonian_with_precomputed_amount','closest_with_precomputed_amount']
+#param_UAV_modes += ['hamiltonian_to_initial_average','closest_to_initial_average']
+param_experiment_time = 50
+param_res_file_name = 'center_02_06_closest_number.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
@@ -58,12 +63,6 @@ for num in param_number_nodes:
 						lower_bound = UAV_AI.compute_lifetime_lower_bound(UAV, nodes)
 						print "Lifttime lower bound:", lower_bound
 						res_file.write(network_type_str + ',' + 'lower_bound' + ',' + str(lower_bound) + '\n')
-						# compute lifetime upper bound
-						UAV = copy.deepcopy(UAV_new)
-						nodes = copy.deepcopy(nodes_new)
-						upper_bound = UAV_AI.compute_lifetime_upper_bound(UAV, nodes)
-						print "Lifttime upper bound:", upper_bound
-						res_file.write(network_type_str + ',' + 'upper_bound' + ',' + str(upper_bound) + '\n')
 						# start the experiment
 						for UAV_mode in param_UAV_modes:
 							UAV = copy.deepcopy(UAV_new)

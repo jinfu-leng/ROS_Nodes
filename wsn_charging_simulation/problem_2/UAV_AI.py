@@ -169,7 +169,8 @@ def next_second(UAV, nodes, mode, params = {}):
 		params['node_capacity'] = nodes[0]['capacity']
 
 	if 'precomputed_amount' not in params:
-		params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
+		#params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
+		params['precomputed_amount'] = 150
 
 	if 'optimized_goal' not in params:
 		params['optimized_goal'] = params['precomputed_amount'] + params['node_initial_average']
