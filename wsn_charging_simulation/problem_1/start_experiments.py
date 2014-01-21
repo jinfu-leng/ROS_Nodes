@@ -9,16 +9,16 @@ param_ground_size = [400]
 param_localization_time = [40]
 param_transfer_rate = [0.2]
 param_time_limit = 604800
-param_network_type = ['homogeneous2']
+param_network_type = ['homogeneous']
 param_UAV_modes = []
 param_UAV_modes += ['closest_to_full', 'hamiltonian_to_full', 'least_power_to_full']
-#param_UAV_modes += ['closest_to_full', 'closest_with_precomputed_amount', 'closest_to_initial_average',]
+param_UAV_modes += ['closest_to_initial_average', 'hamiltonian_to_initial_average', 'least_power_to_initial_average']
 #param_UAV_modes += ['hamiltonian_to_full','closest_to_full']
 ##param_UAV_modes += ['hamiltonian_to_average','closest_to_average']
-#param_UAV_modes += ['hamiltonian_with_precomputed_amount','closest_with_precomputed_amount']
+param_UAV_modes += ['closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount' , 'least_power_with_precomputed_amount']
 #param_UAV_modes += ['hamiltonian_to_initial_average','closest_to_initial_average']
-params_task_threshold = [0.9]
-param_experiment_time = 5
+params_task_threshold = [0.8, 0.9]
+param_experiment_time = 3
 param_res_file_name = 'repeat_center_test.csv'
 
 def is_valid_node_network(nodes):
@@ -62,7 +62,6 @@ for num in param_number_nodes:
 							+ '_' + str(transfer_rate) + '_' + str(task_threshold)
 						print 'Network Type: ' + network_type_str
 						for experiment_time in range(param_experiment_time):
-							print experiment_time
 							UAV_new, nodes_new = object_manager_.create_objects(config)
 							
 							# start the experiment
@@ -70,7 +69,8 @@ for num in param_number_nodes:
 								UAV = copy.deepcopy(UAV_new)
 								nodes = copy.deepcopy(nodes_new)
 								params = {}
-								round_num = 0							
+								round_num = 0
+								UAV['flight_number'] = 0						
 								while is_valid_node_network(nodes) and is_valid_UAV(UAV) and round_num < param_time_limit:						
 									nodes_next_second(nodes)
 									UAV_AI.next_second(UAV, nodes, UAV_mode, task_threshold, params)

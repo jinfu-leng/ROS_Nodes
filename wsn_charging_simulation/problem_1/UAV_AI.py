@@ -93,6 +93,7 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path = 'least_pow
 	if UAV['status'] == 'accumulating':
 		UAV['power'] = min(UAV['accumulating_power_rate'] + UAV['power'], UAV['capacity'])
 		if is_threshold_triggered(nodes, threshold):
+			UAV['flight_number'] += 1
 			UAV['status'] = 'idle'
 
 	if UAV['status'] == 'back':
@@ -189,14 +190,14 @@ def compute_optimized_amount(UAV, nodes):
 
 def next_second(UAV, nodes, mode, threshold, params = {}):
 	if 'node_initial_average' not in params:
-		params['node_initial_average'] = get_average_power_nodes(nodes)
+		params['initial_average_power'] = get_average_power_nodes(nodes)
 						
 	if 	'node_capacity'	not in params:
 		params['node_capacity'] = nodes[0]['capacity']
 
 	if 'precomputed_amount' not in params:
 		#params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
-		params['precomputed_amount'] = 150
+		params['precomputed_amount'] = 250
 	
 	if mode == 'closest_to_full':
 		params['goal'] = params['node_capacity']
@@ -213,11 +214,23 @@ def next_second(UAV, nodes, mode, threshold, params = {}):
 	elif mode == 'hamiltonian_with_precomputed_amount':
 		params['fixed_amount'] = params['precomputed_amount']
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'hamiltonian', threshold, params)
+	elif mode == 'least_power_with_precomputed_amount':
+		params['fixed_amount'] = params['precomputed_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'least_power', threshold, params)
 	elif mode == 'closest_to_optimized_goal':
 		params['goal'] = params['optimized_goal']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
 	elif mode == 'hamiltonian_to_optimized_goal':
 		params['goal'] = params['optimized_goal']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', threshold, params)
+	elif mode == 'closest_to_initial_average':
+		params['goal'] = params['initial_average_power']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
+	elif mode == 'hamiltonian_to_initial_average':
+		params['goal'] = params['initial_average_power']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', threshold, params)
+	elif mode == 'least_power_to_initial_average':
+		params['goal'] = params['initial_average_power']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'least_power', threshold, params)
 	else:
-		print 'error'
+		print 'Error mode: ' + str(mode)
