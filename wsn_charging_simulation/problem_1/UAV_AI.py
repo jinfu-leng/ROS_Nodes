@@ -1,4 +1,4 @@
-import math
+import math, copy
 import itertools
 
 def euclidean_distance(x, y, x2, y2):
@@ -14,10 +14,10 @@ def next_position(current_x, current_y, dest_x, dest_y, speed):
 	return current_x + moving_ratio * x_diff, current_y + moving_ratio * y_diff
 
 def is_UAV_able_back_home_after_next_second(UAV):
-	next_power = UAV['power'] - UAV['flght_power_rate']
+	next_power = UAV['power'] - UAV['flight_power_rate']
 	if UAV['status'] == 'charging':
 		next_power -= UAV['charging_power_rate']
-	consume_rate = UAV['flght_power_rate']	
+	consume_rate = UAV['flight_power_rate']	
 	distance_home = euclidean_distance(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'])
 	speed = UAV['speed']
 	return int(next_power/consume_rate) > (int(distance_home/speed) + 1)
@@ -28,164 +28,196 @@ def is_UAV_at_home(UAV):
 	else:
 		return False
 
-# return the node of least power
-def next_node_least_power(nodes, threshold): 
+def compute_total_cycle_distance(UAV, nodes, path):
+	nodes_cnt = len(path)
+	total_distance = 0.0
+	for index in range(nodes_cnt-1):
+		total_distance += euclidean_distance(nodes[path[index]]['x'], nodes[path[index]]['y'], nodes[path[index + 1]]['x'], nodes[path[index + 1]]['y'])
+	total_distance += euclidean_distance(UAV['current_x'], UAV['current_y'], nodes[path[0]]['x'], nodes[path[0]]['y'])
+	total_distance += euclidean_distance(UAV['current_x'], UAV['current_y'], nodes[path[nodes_cnt - 1]]['x'], nodes[path[nodes_cnt - 1]]['y'])
+	return total_distance
+
+def hamiltonian_node_path(UAV, nodes):
+	nodes_cnt = len(nodes)
+	hamiltonian_path = []
+	hamiltonian_dist = 1000000000.0
+	for path in itertools.permutations(range(nodes_cnt)):
+		current_dist = compute_total_cycle_distance(UAV, nodes, path)
+		if current_dist < hamiltonian_dist:
+			hamiltonian_dist = current_dist
+			hamiltonian_path = path
+	return list(hamiltonian_path)
+
+def closest_node_path(UAV, nodes):
+	nodes_cnt = len(nodes)	
+	usage_nodes = [False for i in range(nodes_cnt)]
+	current_x = UAV['current_x']
+	current_y = UAV['current_y']
+	closest_path = []
+	for i in range(nodes_cnt):
+		best_node = -1
+		best_dist = 0.0
+		for j in range(nodes_cnt):
+			if usage_nodes[j] == True:
+				continue
+			dist = euclidean_distance(current_x, current_y, nodes[j]['x'], nodes[j]['y'])
+			if best_node < 0 or dist < best_dist:				
+				best_dist = dist
+				best_node = j
+		current_x = nodes[best_node]['x']
+		current_y = nodes[best_node]['y']
+		closest_path.append(best_node)
+		usage_nodes[best_node] = True
+	return closest_path
+
+def least_power_node_path(UAV, nodes):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
-	node_least_power = sorted_nodes[0]
-	if node_least_power['power']/node_least_power['capacity'] <= threshold:
-		return [node_least_power['id']]
-	else:
-		return None
-
-def shortest_distance_node_path(start_x, start_y, node_id_list, nodes):
-	min_distance = None
-	best_path = None
-	last_x = start_x
-	last_y = start_y
-	for path in itertools.permutations(node_id_list):
-		distance = 0.0
-		for node_id in path:
-			distance += euclidean_distance(last_x, last_y, nodes[node_id]['x'], nodes[node_id]['y'])
-			last_x = nodes[node_id]['x']
-			last_y = nodes[node_id]['y']
-		if min_distance == None or distance < min_distance:
-			min_distance = distance
-			best_path = path
-	return list(best_path)
+	least_power_path = [node['id'] for node in sorted_nodes]
+	return least_power_path
 
 
-# return the list of k nodes of least power; optimize the order of the list
-def next_node_least_power_k(UAV, nodes, threshold, k):
-	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
-	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
-		node_least_power_list = []
-		for i in range(k):
-			node_least_power_list.append(sorted_nodes[i]['id'])
-		return shortest_distance_node_path(UAV['current_x'], UAV['current_y'], node_least_power_list, nodes)
-	else:
-		return None
+def get_average_power_nodes(nodes):
+	return sum([node['power'] for node in nodes]) / len(nodes)
 
-# partition the nodes into four districts based on the position of the nodes
-def preprocess_partition(nodes):
-	node_num = len(nodes)
-	sorted_nodes = sorted(nodes, key=lambda node: node['x'])
-	mid_x = sorted_nodes[node_num/2]['x']
-	sorted_nodes = sorted(nodes, key=lambda node: node['y'])
-	mid_y = sorted_nodes[node_num/2]['y']
-	for node in nodes:
-		if node['x'] <= mid_x and node['y'] <= mid_y:
-			node['district'] = 0
-		elif node['x'] <= mid_x and node['y'] > mid_y:
-			node['district'] = 1
-		elif node['x'] > mid_x and node['y'] <= mid_y:
-			node['district'] = 2
-		else:
-			node['district'] = 3
-
-def next_node_least_power_partition(nodes, threshold, k):
+def is_threshold_triggered(nodes, threshold):
 	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
 	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
-		district = sorted_nodes[0]['district']
-		district_nodes = [node['id'] for node in sorted_nodes if node['district'] == district]
-		while len(district_nodes) > k:
-			district_nodes.pop()
-		return district_nodes
+		return True
 	else:
-		return None
+		return False
 
-def next_node_least_power_check_next(nodes, threshold, UAV):
-	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
-	if sorted_nodes[0]['power']/sorted_nodes[0]['capacity'] <= threshold:
-		for node in sorted_nodes:
-			total_distance = euclidean_distance(UAV['current_x'], UAV['current_y'], node['x'], node['y']) + euclidean_distance(UAV['home_x'], UAV['home_y'], node['x'], node['y'])
-			if (total_distance / UAV['speed']) < (UAV['power'] / UAV['flght_power_rate']):
-				return [node['id']]
-		return None
-	else:
-		return None
-
-# charge the list of nodes
-# when start to charge a node, charge it until it is full
-# the threshold decides what time to go outside of base
-def next_second_charge_until_full(algorithm_name, UAV, nodes, threshold = 1.0, k = 5):
-	if UAV['status'] != 'back' and UAV['status'] != 'chargingself' and is_UAV_able_back_home_after_next_second(UAV) == False:
+def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path = 'least_power', threshold = 0.5, params = {}):
+	if UAV['status'] != 'back' and UAV['status'] != 'accumulating' and is_UAV_able_back_home_after_next_second(UAV) == False:
 		UAV['status'] = 'back'
-		UAV['task_num'] += 1
-		
-	if UAV['status'] == 'back':
-		if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_y']:
-			UAV['status'] = 'chargingself'
-		else:
-			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'], UAV['speed'])
-			UAV['current_x'] = next_x
-			UAV['current_y'] = next_y
-			UAV['power'] -= UAV['flght_power_rate']
 
-	if UAV['status'] == 'chargingself':
-		if UAV['power'] >= UAV['capacity']:
-			UAV['power'] = UAV['capacity']
+	if UAV['status'] == 'accumulating':
+		UAV['power'] = min(UAV['accumulating_power_rate'] + UAV['power'], UAV['capacity'])
+		if is_threshold_triggered(nodes, threshold):
 			UAV['status'] = 'idle'
-		else:
-			UAV['power'] += UAV['charged_power_rate']
-	
+
+	if UAV['status'] == 'back':
+		next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], UAV['home_x'], UAV['home_y'], UAV['speed'])
+		UAV['current_x'] = next_x
+		UAV['current_y'] = next_y
+		if UAV['current_x'] == UAV['home_x'] and UAV['current_y'] == UAV['home_x']:
+			UAV['status'] = 'accumulating'
+
 	if UAV['status'] == 'idle':
-		if is_UAV_at_home(UAV) == True:
-			if algorithm_name == 'least_power':
-				UAV['dest_list'] = next_node_least_power(nodes, threshold)
-			elif algorithm_name == 'least_power_k':
-				UAV['dest_list'] = next_node_least_power_k(UAV, nodes, threshold, k)
-			elif algorithm_name == 'least_power_partition':
-				UAV['dest_list'] = next_node_least_power_partition(nodes, threshold, k)
-			elif algorithm_name == 'least_power_check_next':
-				UAV['dest_list'] = next_node_least_power_check_next(nodes, threshold, UAV)
-			else:
-				UAV['dest_list'] = None
-
-		if UAV['dest_list'] == None:
-			next_node_id = None
-		elif len(UAV['dest_list']) == 0:
-			if algorithm_name == 'least_power_check_next':
-				next_node_id = next_node_least_power_check_next(nodes, 1.1, UAV)[0]
-			else:
-				next_node_id = next_node_least_power(nodes, 1.1)[0]
+		if path == 'closest':
+			UAV['dest_list'] = closest_node_path(UAV, nodes)
+		elif path == 'hamiltonian':
+			UAV['dest_list'] = hamiltonian_node_path(UAV, nodes)
+		elif path == 'least_power':
+			UAV['dest_list'] = least_power_node_path(UAV, nodes)
 		else:
-			next_node_id = UAV['dest_list'].pop(0)
+			print 'Error path planning algorithm'
+		UAV['status'] = 'looking'
 
-		if next_node_id != None:
-			UAV['dest_node_id'] = next_node_id
-			UAV['status'] = 'flying'
+	if UAV['status'] == 'looking':
+		if len(UAV['dest_list']) > 0:
+			UAV['dest_node_id'] = UAV['dest_list'][0]
+			UAV['dest_list'].pop(0)
+			UAV['status'] = 'moving'
 		else:
-			if is_UAV_at_home(UAV) == False:
-				UAV['status'] = 'back'
+			UAV['status'] = 'idle'
 
-	if UAV['status'] == 'flying':
-		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:			
-			UAV['status'] = 'charging'
+	if UAV['status'] == 'moving':
+		if nodes[UAV['dest_node_id']]['x'] == UAV['current_x'] and nodes[UAV['dest_node_id']]['y'] == UAV['current_y']:
+			UAV['status'] = 'localization'
+			UAV['localization_time_left'] = UAV['localization_time']
 		else:
 			next_x, next_y = next_position(UAV['current_x'], UAV['current_y'], nodes[UAV['dest_node_id']]['x'], nodes[UAV['dest_node_id']]['y'], UAV['speed'])
 			UAV['current_x'] = next_x
 			UAV['current_y'] = next_y
-			UAV['power'] -= UAV['flght_power_rate']
-		
+
+	if UAV['status'] == 'localization':
+		#if mode == 'to_average':
+		#	if nodes[UAV['dest_node_id']]['power'] >= get_average_power_nodes(nodes):
+		#		UAV['status'] = 'looking'				
+		#elif mode == 'below_average_to_full':
+		#	if nodes[UAV['dest_node_id']]['power'] >= nodes[UAV['dest_node_id']]['capacity']:
+		#		UAV['status'] = 'looking'
+		#elif mode == 'to_goal':
+		#	if nodes[UAV['dest_node_id']]['power'] >= params['goal']:
+		#		UAV['status'] = 'looking'
+
+		if UAV['localization_time_left'] <= 0:
+			UAV['status'] ='charging'
+			if charge_mode == 'with_fixed_amount':
+				UAV['with_fixed_amount_left'] = params['fixed_amount']
+		else:
+			UAV['localization_time_left'] -= 1
+
 	if UAV['status'] == 'charging':
 		UAV['power'] -= UAV['charging_power_rate']
-		UAV['power'] -= UAV['flght_power_rate']
 		nodes[UAV['dest_node_id']]['power'] += UAV['charging_power_rate'] * UAV['transfer_rate']
 		nodes[UAV['dest_node_id']]['power'] = min(nodes[UAV['dest_node_id']]['power'], nodes[UAV['dest_node_id']]['capacity'])
-		if nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
-			UAV['status'] = 'idle'
-			UAV['dest_node_id'] = None
+		if charge_mode == 'to_goal':
+			if nodes[UAV['dest_node_id']]['power'] >= params['goal']:
+				UAV['status'] = 'looking'
+		elif charge_mode == 'with_fixed_amount':
+			if UAV['with_fixed_amount_left'] <= 0 or nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
+				UAV['status'] = 'looking'
+			else:
+				UAV['with_fixed_amount_left'] -= UAV['charging_power_rate'] * UAV['transfer_rate']
+		else:
+			print 'Error charging algorithm'
 
-def next_second(UAV, nodes, mode = 'least_power', task_threshold = 0.6):
-	if mode == 'least_power':
-		next_second_charge_until_full(mode, UAV, nodes, task_threshold) 
-	elif mode == 'least_power_k':
-		k = min(5, len(nodes))
-		next_second_charge_until_full(mode, UAV, nodes, task_threshold, k) 
-	elif mode == 'least_power_partition':
-		preprocess_partition(nodes)
-		next_second_charge_until_full(mode, UAV, nodes, task_threshold, len(nodes))
-	elif mode =='least_power_check_next':
-		next_second_charge_until_full(mode, UAV, nodes, task_threshold) 
+		if UAV['status'] == 'charging':
+			UAV['power'] -= UAV['hovering_power_rate']
+		else:
+			UAV['power'] -= UAV['flight_power_rate']
+
+
+def compute_optimized_amount(UAV, nodes):
+	total_power = UAV['power']
+
+	hamiltonian_path = hamiltonian_node_path(UAV, nodes)
+	hamiltonian_dist = compute_total_cycle_distance(UAV, nodes, hamiltonian_path)
+	flight_power = (hamiltonian_dist / UAV['speed']) * UAV['flight_power_rate']	
+	total_power -=  flight_power
+
+	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
+	total_power -= localization_power
+
+	total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+	total_power *= UAV['transfer_rate']
+	
+	return max(0, total_power / len(nodes))
+
+
+
+def next_second(UAV, nodes, mode, threshold, params = {}):
+	if 'node_initial_average' not in params:
+		params['node_initial_average'] = get_average_power_nodes(nodes)
+						
+	if 	'node_capacity'	not in params:
+		params['node_capacity'] = nodes[0]['capacity']
+
+	if 'precomputed_amount' not in params:
+		#params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
+		params['precomputed_amount'] = 150
+	
+	if mode == 'closest_to_full':
+		params['goal'] = params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
+	elif mode == 'hamiltonian_to_full':
+		params['goal'] = params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', threshold, params)
+	elif mode == 'least_power_to_full':
+		params['goal'] = params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'least_power', threshold, params)
+	elif mode == 'closest_with_precomputed_amount':
+		params['fixed_amount'] = params['precomputed_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'closest', threshold, params)
+	elif mode == 'hamiltonian_with_precomputed_amount':
+		params['fixed_amount'] = params['precomputed_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'hamiltonian', threshold, params)
+	elif mode == 'closest_to_optimized_goal':
+		params['goal'] = params['optimized_goal']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
+	elif mode == 'hamiltonian_to_optimized_goal':
+		params['goal'] = params['optimized_goal']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', threshold, params)
 	else:
 		print 'error'
