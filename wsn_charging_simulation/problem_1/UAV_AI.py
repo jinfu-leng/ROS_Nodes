@@ -92,7 +92,7 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path = 'least_pow
 
 	if UAV['status'] == 'accumulating':
 		UAV['power'] = min(UAV['accumulating_power_rate'] + UAV['power'], UAV['capacity'])
-		if is_threshold_triggered(nodes, threshold):
+		if UAV['power'] == UAV['capacity'] and is_threshold_triggered(nodes, threshold):
 			UAV['flight_number'] += 1
 			UAV['status'] = 'idle'
 
@@ -173,9 +173,9 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path = 'least_pow
 def compute_optimized_amount(UAV, nodes):
 	total_power = UAV['power']
 
-	hamiltonian_path = hamiltonian_node_path(UAV, nodes)
-	hamiltonian_dist = compute_total_cycle_distance(UAV, nodes, hamiltonian_path)
-	flight_power = (hamiltonian_dist / UAV['speed']) * UAV['flight_power_rate']	
+	least_power_path = least_power_node_path(UAV, nodes)
+	least_power_dist = compute_total_cycle_distance(UAV, nodes, least_power_path)
+	flight_power = (least_power_dist / UAV['speed']) * UAV['flight_power_rate']	
 	total_power -=  flight_power
 
 	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
@@ -196,9 +196,12 @@ def next_second(UAV, nodes, mode, threshold, params = {}):
 		params['node_capacity'] = nodes[0]['capacity']
 
 	if 'precomputed_amount' not in params:
-		#params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
-		params['precomputed_amount'] = 250
+		params['precomputed_amount'] = compute_optimized_amount(UAV, nodes)
+
+	if 'constant_amount' not in params:
+		params['constant_amount'] = 250
 	
+	# to full
 	if mode == 'closest_to_full':
 		params['goal'] = params['node_capacity']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
@@ -208,6 +211,7 @@ def next_second(UAV, nodes, mode, threshold, params = {}):
 	elif mode == 'least_power_to_full':
 		params['goal'] = params['node_capacity']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'least_power', threshold, params)
+	# with precomputed amount
 	elif mode == 'closest_with_precomputed_amount':
 		params['fixed_amount'] = params['precomputed_amount']
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'closest', threshold, params)
@@ -217,12 +221,27 @@ def next_second(UAV, nodes, mode, threshold, params = {}):
 	elif mode == 'least_power_with_precomputed_amount':
 		params['fixed_amount'] = params['precomputed_amount']
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'least_power', threshold, params)
+	# with constant amount
+	elif mode == 'closest_with_constant_amount':
+		params['fixed_amount'] = params['constant_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'closest', threshold, params)
+	elif mode == 'hamiltonian_with_constant_amount':
+		params['fixed_amount'] = params['constant_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'hamiltonian', threshold, params)
+	elif mode == 'least_power_with_constant_amount':
+		params['fixed_amount'] = params['constant_amount']
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', 'least_power', threshold, params)
+	# to optimized goal
 	elif mode == 'closest_to_optimized_goal':
 		params['goal'] = params['optimized_goal']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
 	elif mode == 'hamiltonian_to_optimized_goal':
 		params['goal'] = params['optimized_goal']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'hamiltonian', threshold, params)
+	elif mode == 'least_power_to_optimized_goal':
+		params['goal'] = params['optimized_goal']
+		next_second_dest_list(UAV, nodes, 'to_goal', 'least_power', threshold, params)
+	# to initial average
 	elif mode == 'closest_to_initial_average':
 		params['goal'] = params['initial_average_power']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'closest', threshold, params)
@@ -232,5 +251,6 @@ def next_second(UAV, nodes, mode, threshold, params = {}):
 	elif mode == 'least_power_to_initial_average':
 		params['goal'] = params['initial_average_power']
 		next_second_dest_list(UAV, nodes, 'to_goal', 'least_power', threshold, params)
+	# error
 	else:
 		print 'Error mode: ' + str(mode)
