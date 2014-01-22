@@ -4,21 +4,21 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [5]
+param_number_nodes = [5, 7, 9, 11]
 param_ground_size = [400]
 param_localization_time = [40]
 param_transfer_rate = [0.2]
 param_time_limit = 604800
-param_network_type = ['homogeneous']
+param_network_type = ['homogeneous2']
 param_UAV_modes = []
-param_UAV_modes += ['closest_to_full', 'hamiltonian_to_full', 'least_power_to_full']
-param_UAV_modes += ['closest_to_initial_average', 'hamiltonian_to_initial_average', 'least_power_to_initial_average']
-#param_UAV_modes += ['hamiltonian_to_full','closest_to_full']
-##param_UAV_modes += ['hamiltonian_to_average','closest_to_average']
-param_UAV_modes += ['closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount' , 'least_power_with_precomputed_amount']
-#param_UAV_modes += ['hamiltonian_to_initial_average','closest_to_initial_average']
-params_task_threshold = [0.8, 0.9]
-param_experiment_time = 3
+#param_UAV_modes += ['closest_to_full', 'hamiltonian_to_full', 'least_power_to_full']
+#param_UAV_modes += ['closest_to_initial_average', 'hamiltonian_to_initial_average', 'least_power_to_initial_average']
+#param_UAV_modes += ['closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount', 'least_power_with_precomputed_amount']
+#param_UAV_modes += ['closest_with_constant_amount', 'hamiltonian_with_constant_amount' , 'least_power_with_constant_amount']
+param_UAV_modes += ['closest_to_full', 'closest_to_initial_average', 'closest_with_precomputed_amount', 'closest_with_constant_amount']
+param_UAV_modes += ['least_power_to_full', 'least_power_to_initial_average', 'least_power_with_precomputed_amount', 'least_power_with_constant_amount']
+param_task_threshold = [0.6, 0.8]
+param_experiment_time = 1
 param_res_file_name = 'repeat_center_test.csv'
 
 def is_valid_node_network(nodes):
@@ -50,7 +50,7 @@ for num in param_number_nodes:
 		for localization_time in param_localization_time:
 			for transfer_rate in param_transfer_rate:
 				for net_type in param_network_type:
-					for task_threshold in params_task_threshold:
+					for task_threshold in param_task_threshold:
 						config.param_number_nodes = num
 						config.param_ground_width = size
 						config.param_ground_height = size
@@ -78,6 +78,8 @@ for num in param_number_nodes:
 								print 'UAV Mode: ' + UAV_mode
 								if round_num == param_time_limit:
 									print 'Number of flight: ' + str(UAV['flight_number'])
+									if is_valid_UAV(UAV) == False:
+										print '!!!!!!!!!!!!!!!!It is beacause of the UAV!!!!!!!!!!!!!!!!!!'
 									res_file.write(network_type_str + ',' + UAV_mode + ',' + str(UAV['flight_number']) + '\n')
 								else:
 									print 'The system is dead at round: ' + str(round_num)
