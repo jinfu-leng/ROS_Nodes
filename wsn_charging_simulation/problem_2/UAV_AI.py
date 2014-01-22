@@ -109,6 +109,16 @@ def next_second_dest_list(UAV, nodes, mode, path = 'hamiltonian', params = {}):
 			UAV['current_y'] = next_y
 
 	if UAV['status'] == 'localization':
+		if mode == 'to_average':
+			if nodes[UAV['dest_node_id']]['power'] >= get_average_power_nodes(nodes):
+				UAV['status'] = 'looking'				
+		elif mode == 'below_average_to_full':
+			if nodes[UAV['dest_node_id']]['power'] >= nodes[UAV['dest_node_id']]['capacity']:
+				UAV['status'] = 'looking'
+		elif mode == 'to_goal':
+			if nodes[UAV['dest_node_id']]['power'] >= params['goal']:
+				UAV['status'] = 'looking'
+
 		if UAV['localization_time_left'] <= 0:
 			UAV['status'] ='charging'
 			if mode == 'with_fixed_amount':
