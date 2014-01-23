@@ -181,20 +181,23 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 			UAV['power'] -= UAV['flight_power_rate']
 
 
-def compute_optimized_amount(UAV, nodes):
+def compute_optimized_amount(UAV, nodes, path_mode):
 	total_power = UAV['power']
-
-	least_power_path = least_power_node_path(UAV, nodes)
-	least_power_dist = compute_total_cycle_distance(UAV, nodes, least_power_path)
+	if path_mode == 'least_power':
+		path = least_power_node_path(UAV, nodes)
+	elif path_mode == 'hamiltonian':
+		path = hamiltonian_node_path(UAV, nodes)
+	elif path_mode == 'closest':
+		path = closest_node_path(UAV, nodes)
+	else:
+		print 'Error: compute_optimized_amount()'
+	dist = compute_total_cycle_distance(UAV, nodes, path)
 	flight_power = (least_power_dist / UAV['speed']) * UAV['flight_power_rate']	
 	total_power -=  flight_power
-
 	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
 	total_power -= localization_power
-
 	total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
 	total_power *= UAV['transfer_rate']
-	
 	return max(0, total_power / len(nodes))
 
 
@@ -221,7 +224,7 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 	# with constant amount
 	elif charge_mode == 'with_constant_amount':
 		if 'fixed_amount' not in params:
-			params['fixed_amount'] = 350
+			params['fixed_amount'] = 300
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)
 	# to initial average
 	elif charge_mode == 'to_initial_average':
@@ -230,8 +233,8 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
 	# with individual amount
 	elif charge_mode == 'with_individual_amount':
-		if 'individual_amount' not in params or UAV['status'] == 'idle':
-			params['individual_amount'] = [350 for i in range(node_num)]
+		if 'individual_amount' not in params or UAV['status'] == 'accumulating':
+			params['individual_amount'] = [300 for i in range(node_num)]
 		next_second_dest_list(UAV, nodes, 'with_individual_amount', path_mode, threshold, params)
 	# error
 	else:
