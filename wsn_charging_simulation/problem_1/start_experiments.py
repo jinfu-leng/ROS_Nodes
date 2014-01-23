@@ -4,22 +4,19 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [5, 7, 9, 11]
+param_number_nodes = [5, 7, 9, 11, 13]
 param_ground_size = [400]
 param_localization_time = [40]
 param_transfer_rate = [0.2]
 param_time_limit = 604800
 param_network_type = ['homogeneous2']
-param_UAV_modes = []
-#param_UAV_modes += ['closest_to_full', 'hamiltonian_to_full', 'least_power_to_full']
-#param_UAV_modes += ['closest_to_initial_average', 'hamiltonian_to_initial_average', 'least_power_to_initial_average']
-#param_UAV_modes += ['closest_with_precomputed_amount', 'hamiltonian_with_precomputed_amount', 'least_power_with_precomputed_amount']
-#param_UAV_modes += ['closest_with_constant_amount', 'hamiltonian_with_constant_amount' , 'least_power_with_constant_amount']
-param_UAV_modes += ['closest_to_full', 'closest_to_initial_average', 'closest_with_precomputed_amount', 'closest_with_constant_amount']
-param_UAV_modes += ['least_power_to_full', 'least_power_to_initial_average', 'least_power_with_precomputed_amount', 'least_power_with_constant_amount']
-param_task_threshold = [0.6, 0.8]
-param_experiment_time = 1
-param_res_file_name = 'repeat_center_test.csv'
+#param_charge_mode = ['to_full', 'with_constant_amount', 'with_individual_amount']
+#param_path_mode = ['least_power', 'closest', 'hamiltonian']
+param_charge_mode = ['with_individual_amount', 'to_full', 'with_constant_amount']
+param_path_mode = ['least_power']
+param_task_threshold = [0.8]
+param_experiment_time = 2
+param_res_file_name = 'repeat_center_nodenum_test.csv'
 
 def is_valid_node_network(nodes):
 	for node in nodes:
@@ -65,24 +62,26 @@ for num in param_number_nodes:
 							UAV_new, nodes_new = object_manager_.create_objects(config)
 							
 							# start the experiment
-							for UAV_mode in param_UAV_modes:
-								UAV = copy.deepcopy(UAV_new)
-								nodes = copy.deepcopy(nodes_new)
-								params = {}
-								round_num = 0
-								UAV['flight_number'] = 0						
-								while is_valid_node_network(nodes) and is_valid_UAV(UAV) and round_num < param_time_limit:						
-									nodes_next_second(nodes)
-									UAV_AI.next_second(UAV, nodes, UAV_mode, task_threshold, params)
-									round_num += 1
-								print 'UAV Mode: ' + UAV_mode
-								if round_num == param_time_limit:
-									print 'Number of flight: ' + str(UAV['flight_number'])
-									if is_valid_UAV(UAV) == False:
-										print '!!!!!!!!!!!!!!!!It is beacause of the UAV!!!!!!!!!!!!!!!!!!'
-									res_file.write(network_type_str + ',' + UAV_mode + ',' + str(UAV['flight_number']) + '\n')
-								else:
-									print 'The system is dead at round: ' + str(round_num)
-									res_file.write(network_type_str + ',' + UAV_mode + ',' + str(-1) + '\n')	
+							for charge_mode in param_charge_mode:
+								for path_mode in param_path_mode:
+									UAV_mode = path_mode + '_' + charge_mode 
+									UAV = copy.deepcopy(UAV_new)
+									nodes = copy.deepcopy(nodes_new)
+									params = {}
+									round_num = 0
+									UAV['flight_number'] = 0						
+									while is_valid_node_network(nodes) and is_valid_UAV(UAV) and round_num < param_time_limit:						
+										nodes_next_second(nodes)
+										UAV_AI.next_second(UAV, nodes, charge_mode, path_mode, task_threshold, params)
+										round_num += 1
+									print 'UAV Mode: ' + UAV_mode
+									if round_num == param_time_limit:
+										print 'Number of flight: ' + str(UAV['flight_number'])
+										if is_valid_UAV(UAV) == False:
+											print '!!!!!!!!!!!!!!!!It is beacause of the UAV!!!!!!!!!!!!!!!!!!'
+										res_file.write(network_type_str + ',' + UAV_mode + ',' + str(UAV['flight_number']) + '\n')
+									else:
+										print 'The system is dead at round: ' + str(round_num)
+										res_file.write(network_type_str + ',' + UAV_mode + ',' + str(-1 * round_num) + '\n')	
 							print
 res_file.close()
