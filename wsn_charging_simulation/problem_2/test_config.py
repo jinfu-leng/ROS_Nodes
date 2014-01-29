@@ -5,7 +5,7 @@ param_ground_height = 2000.0
 param_network_type = 'homogeneous2'
 
 param_node_power_capacity = 2.34 * 3600
-param_node_power_consumption_rate = 0.1855
+param_node_power_consumption_rate = param_node_power_capacity / (60 * 24 * 3600)
 param_node_initial_power = param_node_power_capacity
 
 param_UAV_power_capacity = 25.0 * 3600
