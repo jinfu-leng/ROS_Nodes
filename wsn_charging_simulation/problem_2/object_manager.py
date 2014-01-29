@@ -4,10 +4,10 @@ class ObjectManager:
 	# create UAV
 	def create_UAV(self, config):
 		UAV = {}
-		UAV['home_x'] = config.param_UAV_initial_x
-		UAV['home_y'] = config.param_UAV_initial_y
-		UAV['current_x'] = config.param_UAV_initial_x
-		UAV['current_y'] = config.param_UAV_initial_y
+		UAV['home_x'] = config.param_ground_width / 2
+		UAV['home_y'] = config.param_ground_height / 2
+		UAV['current_x'] = UAV['home_x']
+		UAV['current_y'] = UAV['home_y']
 		UAV['capacity'] = config.param_UAV_power_capacity
 		UAV['power'] = config.param_UAV_initial_power
 		UAV['speed'] = config.param_UAV_moving_speed
