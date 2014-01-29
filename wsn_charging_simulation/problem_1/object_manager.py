@@ -36,7 +36,7 @@ class ObjectManager:
 				#node['power'] = random.uniform(0.3, 0.7) * config.param_node_power_capacity
 				node['power'] = random.uniform(0.2, 0.6) * config.param_node_power_capacity
 			else:
-				print 'Error!!!!!!!!!!!!!!!!!!'
+				print 'Error: create_nodes()'
 				return None
 			nodes.append(node)
 		return nodes
