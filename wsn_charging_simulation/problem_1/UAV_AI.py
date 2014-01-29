@@ -147,11 +147,7 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 			if charge_mode == 'with_fixed_amount':
 				UAV['with_fixed_amount_left'] = params['fixed_amount']
 			elif charge_mode =='with_individual_amount':
-				if len(params['individual_amount']) == 0:
-					UAV['status'] == 'back'
-				else:
-					UAV['with_individual_amount_left'] = params['individual_amount'][0]
-					params['individual_amount'].pop(0)
+				UAV['with_individual_amount_left'] = params['individual_amount'][UAV['dest_node_id']]
 		else:
 			UAV['localization_time_left'] -= 1
 
@@ -180,9 +176,7 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 		else:
 			UAV['power'] -= UAV['flight_power_rate']
 
-
-def compute_optimized_amount(UAV, nodes, path_mode):
-	total_power = UAV['power']
+def compute_path_distance(UAV, nodes, path_mode):
 	if path_mode == 'least_power':
 		path = least_power_node_path(UAV, nodes)
 	elif path_mode == 'hamiltonian':
@@ -191,8 +185,12 @@ def compute_optimized_amount(UAV, nodes, path_mode):
 		path = closest_node_path(UAV, nodes)
 	else:
 		print 'Error: compute_optimized_amount()'
-	dist = compute_total_cycle_distance(UAV, nodes, path)
-	flight_power = (least_power_dist / UAV['speed']) * UAV['flight_power_rate']	
+	return compute_total_cycle_distance(UAV, nodes, path)
+
+def compute_with_optimized(UAV, nodes, path_mode):
+	total_power = UAV['power']
+	dist = compute_path_distance(UAV, nodes, path_mode)
+	flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']	
 	total_power -=  flight_power
 	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
 	total_power -= localization_power
@@ -200,6 +198,29 @@ def compute_optimized_amount(UAV, nodes, path_mode):
 	total_power *= UAV['transfer_rate']
 	return max(0, total_power / len(nodes))
 
+def compute_with_individual(UAV, nodes, path_mode):
+	total_power = UAV['power']
+	dist = compute_path_distance(UAV, nodes, path_mode)
+	flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']	
+	total_power -=  flight_power
+	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
+	total_power -= localization_power
+	total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+	total_power *= UAV['transfer_rate']
+	node_target_power = total_power / len(nodes) + get_average_power_nodes(nodes)
+	return [max(0, node_target_power - node['power']) for node in nodes]
+
+def compute_to_optimized(UAV, nodes, path_mode):
+	total_power = UAV['power']
+	dist = compute_path_distance(UAV, nodes, path_mode)
+	flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']	
+	total_power -=  flight_power
+	localization_power = len(nodes) * UAV['localization_time'] * UAV['hovering_power_rate']
+	total_power -= localization_power
+	total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+	total_power *= UAV['transfer_rate']
+	node_target_power = total_power / len(nodes) + get_average_power_nodes(nodes)
+	return node_target_power
 
 
 def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
@@ -216,25 +237,35 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 		if 'goal' not in params:
 			params['goal'] = params['node_capacity']
 		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
-	# with precomputed amount	
-	elif charge_mode == 'with_precomputed_amount':
-		if 'fixed_amout' not in params:
-			params['fixed_amount'] = compute_optimized_amount(UAV, nodes)
-		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)
-	# with constant amount
-	elif charge_mode == 'with_constant_amount':
-		if 'fixed_amount' not in params:
-			params['fixed_amount'] = 300
-		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)
+	# to constant
+	elif charge_mode == 'to_constant':
+		if 'goal' not in params:
+			params['goal'] = 0.8 * params['node_capacity']
+		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
 	# to initial average
 	elif charge_mode == 'to_initial_average':
 		if 'goal' not in params:
 			params['goal'] = params['initial_average_power']
 		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
-	# with individual amount
-	elif charge_mode == 'with_individual_amount':
+	# to optimized
+	elif charge_mode == 'to_optimized':
+		if 'goal' not in params:
+			params['goal'] = compute_to_optimized(UAV, nodes, path_mode)
+		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
+	# with optimized	
+	elif charge_mode == 'with_optimized':
+		if 'fixed_amout' not in params:
+			params['fixed_amount'] = compute_with_optimized(UAV, nodes, path_mode)
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)
+	# with constant
+	elif charge_mode == 'with_constant':
+		if 'fixed_amount' not in params:
+			params['fixed_amount'] = 300
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)	
+	# with individual
+	elif charge_mode == 'with_individual':
 		if 'individual_amount' not in params or UAV['status'] == 'accumulating':
-			params['individual_amount'] = [300 for i in range(node_num)]
+			params['individual_amount'] = compute_with_individual(UAV, nodes, path_mode)
 		next_second_dest_list(UAV, nodes, 'with_individual_amount', path_mode, threshold, params)
 	# error
 	else:
