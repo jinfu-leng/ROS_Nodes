@@ -4,10 +4,10 @@ class ObjectManager:
 	# create UAV
 	def create_UAV(self, config):
 		UAV = {}
-		UAV['home_x'] = config.param_UAV_initial_x
-		UAV['home_y'] = config.param_UAV_initial_y
-		UAV['current_x'] = config.param_UAV_initial_x
-		UAV['current_y'] = config.param_UAV_initial_y
+		UAV['home_x'] = config.param_ground_width / 2
+		UAV['home_y'] = config.param_ground_height / 2
+		UAV['current_x'] = UAV['home_x']
+		UAV['current_y'] = UAV['home_y']
 		UAV['capacity'] = config.param_UAV_power_capacity
 		UAV['power'] = config.param_UAV_initial_power
 		UAV['speed'] = config.param_UAV_moving_speed
@@ -17,6 +17,7 @@ class ObjectManager:
 		UAV['charging_power_rate'] = config.param_UAV_charging_power_consumption_rate # charging nodes
 		UAV['localization_time'] = config.param_UAV_localization_time
 		UAV['accumulating_power_rate'] = config.param_UAV_accumulating_power_rate
+		#print UAV['current_x'], UAV['current_y']
 		return UAV
 
 	# create nodes
@@ -39,6 +40,8 @@ class ObjectManager:
 				print 'Error: create_nodes()'
 				return None
 			nodes.append(node)
+		#print [node['x'] for node in nodes]
+		#print [node['y'] for node in nodes]
 		return nodes
 
 	# create objects
