@@ -4,6 +4,9 @@ import itertools
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
 
+def compute_lifetime_lower_bound(nodes):
+	return int(math.ceil(min([node['power'] for node in nodes]) / nodes[0]['rate']))
+
 def next_position(current_x, current_y, dest_x, dest_y, speed):
 	x_diff = dest_x - current_x
 	y_diff = dest_y - current_y
@@ -210,6 +213,37 @@ def compute_with_individual(UAV, nodes, path_mode):
 	node_target_power = total_power / len(nodes) + get_average_power_nodes(nodes)
 	return [max(0, node_target_power - node['power']) for node in nodes]
 
+def compute_max_min(total, numbers):
+	left = min(numbers)
+	right = left + total
+	while abs(left - right) > 0.001:
+		mid = (left + right) / 2
+		required = 0
+		for number in numbers:
+			required += max(0, mid - number)
+		if required < total:
+			left = mid
+		else:
+			right = mid
+	return (left + right) / 2
+
+def compute_to_optimized_one_flight(UAV, nodes, path_mode):
+	total_power = UAV['power']
+	node_num = len(nodes)
+	path = least_power_node_path(UAV, nodes)
+	best_node_target_power = 0
+	for charge_node_num in range(1, node_num):
+		dist = compute_total_cycle_distance(UAV, nodes, path[0: charge_node_num])
+		flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']	
+		total_power -=  flight_power
+		localization_power = charge_node_num * UAV['localization_time'] * UAV['hovering_power_rate']
+		total_power -= localization_power
+		total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
+		total_power *= UAV['transfer_rate']
+		node_target_power = compute_max_min(total_power, [node['power'] for node in nodes])
+		best_node_target_power = max(node_target_power, best_node_target_power)
+	return best_node_target_power
+
 def compute_to_optimized(UAV, nodes, path_mode):
 	total_power = UAV['power']
 	dist = compute_path_distance(UAV, nodes, path_mode)
@@ -252,6 +286,11 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 		if 'goal' not in params:
 			params['goal'] = compute_to_optimized(UAV, nodes, path_mode)
 		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
+	# to_optimized_one_flight
+	elif charge_mode == 'to_optimized_one_flight':
+		if 'goal' not in params:
+			params['goal'] = compute_to_optimized_one_flight(UAV, nodes, path_mode)
+		next_second_dest_list(UAV, nodes, 'to_goal', path_mode, threshold, params)
 	# with optimized	
 	elif charge_mode == 'with_optimized':
 		if 'fixed_amout' not in params:
@@ -260,7 +299,8 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 	# with constant
 	elif charge_mode == 'with_constant':
 		if 'fixed_amount' not in params:
-			params['fixed_amount'] = 300
+			#params['fixed_amount'] = 300
+			params['fixed_amount'] = 150
 		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)	
 	# with individual
 	elif charge_mode == 'with_individual':

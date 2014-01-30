@@ -4,19 +4,27 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [5, 7, 9, 11, 13]
-param_ground_size = [400]
+param_number_nodes = [8]
+param_ground_size = [100, 400, 1000]
 param_localization_time = [40]
 param_transfer_rate = [0.2]
-param_time_limit = 604800
+param_time_limit = 604800 * 10000
 param_network_type = ['homogeneous2']
-#param_charge_mode = ['to_full', 'with_constant_amount', 'with_individual_amount']
+#param_charge_mode = ['to_full', 'to_constant', 'to_optimized', 'with_individual', 'with_constant', 'with_optimized']
+#param_charge_mode = ['to_optimized_one_flight']
+param_charge_mode = ['to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
 #param_path_mode = ['least_power', 'closest', 'hamiltonian']
-param_charge_mode = ['to_full', 'to_constant', 'to_optimized', 'with_individual', 'with_constant', 'with_optimized']
-param_path_mode = ['least_power']
+param_path_mode = ['least_power', 'closest', 'hamiltonian']
 param_task_threshold = [0.8]
-param_experiment_time = 2
-param_res_file_name = 'repeat_center_nodenum_test.csv'
+param_experiment_time = 10
+param_res_file_name = 'repeat_center_test.csv'
+
+def is_valid_combination(charge_mode, path_mode):
+	if charge_mode == 'to_optimized_one_flight' and path_mode != 'least_power':
+		return False
+	if path_mode == 'least_power' and charge_mode != 'to_optimized_one_flight':
+		return False
+	return True
 
 def is_valid_node_network(nodes):
 	for node in nodes:
@@ -61,9 +69,19 @@ for num in param_number_nodes:
 						for experiment_time in range(param_experiment_time):
 							UAV_new, nodes_new = object_manager_.create_objects(config)
 							
+							# lower bound
+							nodes = copy.deepcopy(nodes_new)
+							lower_bound = UAV_AI.compute_lifetime_lower_bound(nodes)
+							print 'Lifetime lower Bound', lower_bound
+							res_file.write(network_type_str + ',' + 'lower_bound' + ',' + str(-1 * lower_bound) + '\n')	
+
 							# start the experiment
 							for charge_mode in param_charge_mode:
 								for path_mode in param_path_mode:
+
+									if is_valid_combination(charge_mode, path_mode) == False:
+										continue
+
 									UAV_mode = path_mode + '_' + charge_mode 
 									UAV = copy.deepcopy(UAV_new)
 									nodes = copy.deepcopy(nodes_new)
