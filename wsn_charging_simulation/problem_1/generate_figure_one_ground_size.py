@@ -4,14 +4,16 @@ import matplotlib.pyplot as plt
 
 def UAV_mode_label_matcher(UAV_mode):
 	matcher = {}
-	matcher['lower_bound'] = 'No Charge'
+	matcher['lower_bound'] = 'NO'
 	matcher['closest_to_full'] = 'FULL'
 	matcher['hamiltonian_to_full'] = 'FULL*'
 	matcher['closest_with_constant'] = 'FIX'
 	matcher['hamiltonian_with_constant'] = 'FIX*'
 	matcher['closest_to_initial_average'] = 'AVG'
 	matcher['hamiltonian_to_initial_average'] = 'AVG*'
-	matcher['least_power_to_optimized_one_flight'] = 'LEAST**'
+	matcher['closest_random'] = 'RND'
+	matcher['hamiltonian_random'] = 'RND*'
+	matcher['least_power_to_optimized_one_flight'] = 'LEAST'
 	return matcher[UAV_mode]
 
 
@@ -36,7 +38,7 @@ def draw_bar_err_figure(nodes):
 
 
 
-input_file_name = 'one_center_ground_size.csv'
+input_file_name = 'test_one_center_ground_size_rnd_50.csv'
 input_file = open(input_file_name, 'r')
 first_line = input_file.readline()
 
@@ -47,7 +49,7 @@ for line in input_file.readlines():
 	line_split = line[:-1].split(',')
 	network_type = line_split[0]
 	UAV_mode = line_split[1]
-	lifetime = abs(int(line_split[2]))
+	lifetime = int(line_split[2])
 
 	if network_type not in res:
 		res[network_type] = {}
