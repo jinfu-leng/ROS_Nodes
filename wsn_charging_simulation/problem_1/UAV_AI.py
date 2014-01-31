@@ -1,5 +1,6 @@
 import math, copy
 import itertools
+import random
 
 def euclidean_distance(x, y, x2, y2):
 	return math.sqrt((x - x2)*(x - x2) + (y - y2)*(y - y2))
@@ -149,8 +150,10 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 			UAV['status'] ='charging'
 			if charge_mode == 'with_fixed_amount':
 				UAV['with_fixed_amount_left'] = params['fixed_amount']
-			elif charge_mode =='with_individual_amount':
+			elif charge_mode == 'with_individual_amount':
 				UAV['with_individual_amount_left'] = params['individual_amount'][UAV['dest_node_id']]
+			elif charge_mode == 'random':
+				UAV['random_left'] = random.random() * (nodes[UAV['dest_node_id']]['capacity'] - nodes[UAV['dest_node_id']]['power'])
 		else:
 			UAV['localization_time_left'] -= 1
 
@@ -171,6 +174,11 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 				UAV['status'] = 'looking'
 			else:
 				UAV['with_individual_amount_left'] -= UAV['charging_power_rate'] * UAV['transfer_rate']
+		elif charge_mode == 'random':
+			if UAV['random_left'] <= 0 or nodes[UAV['dest_node_id']]['power'] == nodes[UAV['dest_node_id']]['capacity']:
+				UAV['status'] = 'looking'
+			else:
+				UAV['random_left'] -= UAV['charging_power_rate'] * UAV['transfer_rate']
 		else:
 			print 'Error charging algorithm'
 
@@ -301,7 +309,10 @@ def next_second(UAV, nodes, charge_mode, path_mode, threshold, params = {}):
 		if 'fixed_amount' not in params:
 			#params['fixed_amount'] = 300
 			params['fixed_amount'] = 150
-		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)	
+		next_second_dest_list(UAV, nodes, 'with_fixed_amount', path_mode, threshold, params)
+	# random
+	elif charge_mode == 'random':
+		next_second_dest_list(UAV, nodes, 'random', path_mode, threshold, params)
 	# with individual
 	elif charge_mode == 'with_individual':
 		if 'individual_amount' not in params or UAV['status'] == 'accumulating':
