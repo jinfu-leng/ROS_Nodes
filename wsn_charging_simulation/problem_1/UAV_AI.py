@@ -182,10 +182,10 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 		else:
 			print 'Error charging algorithm'
 
-		if UAV['status'] == 'charging':
-			UAV['power'] -= UAV['hovering_power_rate']
-		else:
-			UAV['power'] -= UAV['flight_power_rate']
+	if UAV['status'] == 'charging' or UAV['status'] == 'localization':
+		UAV['power'] -= UAV['hovering_power_rate']
+	else:
+		UAV['power'] -= UAV['flight_power_rate']
 
 def compute_path_distance(UAV, nodes, path_mode):
 	if path_mode == 'least_power':
