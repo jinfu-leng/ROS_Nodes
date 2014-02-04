@@ -224,7 +224,7 @@ def compute_with_individual(UAV, nodes, path_mode):
 def compute_max_min(total, numbers):
 	left = min(numbers)
 	right = left + total
-	while abs(left - right) > 0.001:
+	while (right - left) > 0.001:
 		mid = (left + right) / 2
 		required = 0
 		for number in numbers:
@@ -233,22 +233,25 @@ def compute_max_min(total, numbers):
 			left = mid
 		else:
 			right = mid
-	return (left + right) / 2
+	return left
 
 def compute_to_optimized_one_flight(UAV, nodes, path_mode):
-	total_power = UAV['power']
-	node_num = len(nodes)
-	path = least_power_node_path(UAV, nodes)
+	sorted_nodes = sorted(nodes, key=lambda node: node['power'])
+	node_num = len(sorted_nodes)
 	best_node_target_power = 0
-	for charge_node_num in range(1, node_num):
-		dist = compute_total_cycle_distance(UAV, nodes, path[0: charge_node_num])
-		flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']	
+	for charge_node_num in range(1, node_num + 1):
+		total_power = UAV['power']
+		dist = compute_total_cycle_distance(UAV, sorted_nodes, range(0, charge_node_num)) #least power path
+		flight_power = (dist / UAV['speed']) * UAV['flight_power_rate']
 		total_power -=  flight_power
 		localization_power = charge_node_num * UAV['localization_time'] * UAV['hovering_power_rate']
 		total_power -= localization_power
 		total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
 		total_power *= UAV['transfer_rate']
-		node_target_power = compute_max_min(total_power, [node['power'] for node in nodes])
+		total_power *= 0.95 #natural cost
+		node_target_power = compute_max_min(total_power, [node['power'] for node in sorted_nodes[0: charge_node_num]])
+		if charge_node_num < node_num:
+			node_target_power = min(node_target_power, sorted_nodes[charge_node_num]['power'])
 		best_node_target_power = max(node_target_power, best_node_target_power)
 	return best_node_target_power
 
