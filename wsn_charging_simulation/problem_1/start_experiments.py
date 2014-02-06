@@ -6,18 +6,18 @@ import UAV_AI
 import test_config as config
 param_number_nodes = [8]
 param_ground_size = [200]
-param_localization_time = [0, 18, 36]
-param_transfer_rate = [0.2]
+param_localization_time = [36]
+param_transfer_rate = [0.1, 0.2, 0.3, 0.4]
 param_time_limit = 604800 * 10000
 param_network_type = ['homogeneous2']
 #param_charge_mode = ['to_full', 'to_constant', 'to_optimized', 'with_individual', 'with_constant', 'with_optimized']
 #param_charge_mode = ['to_optimized_one_flight']
 param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
-param_path_mode = ['least_power', 'closest', 'hamiltonian']
-#param_path_mode = ['least_power', 'closest']
+#param_path_mode = ['least_power', 'closest', 'hamiltonian']
+param_path_mode = ['least_power', 'closest']
 param_task_threshold = [0.8]
 param_experiment_time = 100
-param_res_file_name = 'center_localization_time.csv'
+param_res_file_name = 'center_transfer_rate.csv'
 
 is_single_flight = True
 
@@ -72,7 +72,7 @@ for num in param_number_nodes:
 						config.param_ground_width = size
 						config.param_ground_height = size
 						config.param_UAV_localization_time = localization_time
-						config.param_transfer_rate = transfer_rate
+						config.param_UAV_charging_power_transfer_rate = transfer_rate
 						config.param_network_type = net_type
 						network_type_str = str(num) + '_' + str(size) + '_' + str(size) \
 							+ '_' + str(net_type) + '_' + str(localization_time) \
