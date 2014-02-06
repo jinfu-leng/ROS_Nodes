@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+input_file_name = 'data_one_center_ground_size_200.csv'
 
 def UAV_mode_label_matcher(UAV_mode):
 	matcher = {}
@@ -36,9 +37,6 @@ def draw_bar_err_figure(nodes):
 	plt.xticks(np.arange(nodes_cnt) + 0.75 * bar_width, [UAV_mode_label_matcher(node['label']) for node in nodes])
 	plt.legend()
 
-
-
-input_file_name = 'test_one_center_ground_size_rnd_50.csv'
 input_file = open(input_file_name, 'r')
 first_line = input_file.readline()
 
@@ -67,7 +65,6 @@ input_file.close()
 # generate average lifetime figures
 for network_type in network_types:
 	print network_type
-	res_avg_lifetime = {}
 	nodes = []
 	for UAV_mode in res[network_type].keys():
 		node = {}
