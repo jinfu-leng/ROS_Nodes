@@ -1,6 +1,5 @@
 # Python, C++, C and .bag .csv
 
-
 *.py[co]
 
 # Packages
@@ -76,3 +75,6 @@ msg_gen
 
 # csv
 *.csv
+
+# mac
+.DS_Store
