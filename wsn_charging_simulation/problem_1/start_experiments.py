@@ -5,21 +5,27 @@ import UAV_AI
 
 import test_config as config
 param_number_nodes = [8]
-param_ground_size = [100, 200, 400, 1000]
-param_localization_time = [40]
+param_ground_size = [200]
+param_localization_time = [0, 18, 36]
 param_transfer_rate = [0.2]
 param_time_limit = 604800 * 10000
 param_network_type = ['homogeneous2']
 #param_charge_mode = ['to_full', 'to_constant', 'to_optimized', 'with_individual', 'with_constant', 'with_optimized']
 #param_charge_mode = ['to_optimized_one_flight']
 param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
-#param_path_mode = ['least_power', 'closest', 'hamiltonian']
 param_path_mode = ['least_power', 'closest', 'hamiltonian']
+#param_path_mode = ['least_power', 'closest']
 param_task_threshold = [0.8]
-param_experiment_time = 50
-param_res_file_name = 'test_one_center_ground_size_rnd_50.csv'
+param_experiment_time = 100
+param_res_file_name = 'center_localization_time.csv'
 
 is_single_flight = True
+
+if is_single_flight == True:
+	param_res_file_name = 'data_one_' + param_res_file_name
+else:
+	param_res_file_name = 'data_multi_' + param_res_file_name
+
 
 def is_valid_combination(charge_mode, path_mode):
 	if charge_mode == 'to_optimized_one_flight' and path_mode != 'least_power':
