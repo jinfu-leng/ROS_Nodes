@@ -1,4 +1,4 @@
-# Python, C++, C and  .bag
+# Python, C++, C and .bag .csv
 
 
 *.py[co]
@@ -29,10 +29,6 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-
-
-
-
 # Compiled Object files
 *.slo
 *.lo
@@ -46,7 +42,6 @@ pip-log.txt
 *.lai
 *.la
 *.a
-
 
 # Object files
 *.o
@@ -74,7 +69,10 @@ pip-log.txt
 msg_gen
 
 # Latex
-.aux
-.log
-.pdf
-.gz
+*.aux
+*.log
+*.pdf
+*.gz
+
+# csv
+*.csv
