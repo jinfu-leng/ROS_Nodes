@@ -1,41 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import generate_figure_common as fm
 
-input_file_name = 'data_one_center_ground_size_200.csv'
-
-def UAV_mode_label_matcher(UAV_mode):
-	matcher = {}
-	matcher['lower_bound'] = 'NO'
-	matcher['closest_to_full'] = 'FULL'
-	matcher['hamiltonian_to_full'] = 'FULL*'
-	matcher['closest_with_constant'] = 'FIX'
-	matcher['hamiltonian_with_constant'] = 'FIX*'
-	matcher['closest_to_initial_average'] = 'AVG'
-	matcher['hamiltonian_to_initial_average'] = 'AVG*'
-	matcher['closest_random'] = 'RND'
-	matcher['hamiltonian_random'] = 'RND*'
-	matcher['least_power_to_optimized_one_flight'] = 'LEAST'
-	return matcher[UAV_mode]
-
-
-def draw_bar_err_figure(nodes):
-	bar_width = 0.66
-	colors = 'bgrcmyk'
-
-	nodes = sorted(nodes, key=lambda node:int(node['value']))
-	nodes_cnt = len(nodes)
-
-	for index in range(nodes_cnt):
-		value = nodes[index]['value'] / (24 * 3600)
-		error = nodes[index]['error'] / (24 * 3600)
-		plt.bar(index + 0.25 * bar_width, value, bar_width, color = 'c',
-			yerr = error, ecolor = 'r')
-	
-	plt.xlabel('Algorithms')
-	plt.ylabel('Lifetime (day)')
-	plt.title('Lifetime by Algorithms')
-	plt.xticks(np.arange(nodes_cnt) + 0.75 * bar_width, [UAV_mode_label_matcher(node['label']) for node in nodes])
-	plt.legend()
+input_file_name = 'data_one_center_ground_size.csv'
 
 input_file = open(input_file_name, 'r')
 first_line = input_file.readline()
@@ -72,8 +39,5 @@ for network_type in network_types:
 		node['value'] = np.mean(res[network_type][UAV_mode])
 		node['error'] = np.std(res[network_type][UAV_mode])
 		nodes.append(node)
-	draw_bar_err_figure(nodes)
+	fm.draw_bar_err_figure(nodes, "Algorithms", "Lifetime (day)", "Lifetime by Algorithms")
 	plt.show()
-
-
-

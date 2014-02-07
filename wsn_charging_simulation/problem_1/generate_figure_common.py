@@ -16,6 +16,26 @@ def UAV_mode_label_matcher(UAV_mode):
 	return matcher[UAV_mode]
 
 
+def draw_bar_err_figure(nodes, xlabel, ylabel, title):
+	bar_width = 0.66
+	colors = 'bgrcmyk'
+
+	nodes = sorted(nodes, key=lambda node:int(node['value']))
+	nodes_cnt = len(nodes)
+
+	for index in range(nodes_cnt):
+		value = nodes[index]['value'] / (24 * 3600)
+		error = nodes[index]['error'] / (24 * 3600)
+		plt.bar(index + 0.25 * bar_width, value, bar_width, color = 'c',
+			yerr = error, ecolor = 'r')
+	
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.xticks(np.arange(nodes_cnt) + 0.75 * bar_width, [UAV_mode_label_matcher(node['label']) for node in nodes])
+	plt.legend()
+
+
 def draw_bar_err_group_figure(nodes, xlabel, ylabel, title):
 	label_list = ['lower_bound', 'closest_to_full', 'closest_random',
 		'closest_with_constant', 'closest_to_initial_average', 'least_power_to_optimized_one_flight']
@@ -51,6 +71,7 @@ def draw_bar_err_group_figure(nodes, xlabel, ylabel, title):
 	plt.ylabel(ylabel)
 	plt.title(title)
 	plt.xticks(left_coordinates + 0.5, group_list)
+
 
 def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 	label_list = ['lower_bound', 'closest_to_full', 'closest_random',
