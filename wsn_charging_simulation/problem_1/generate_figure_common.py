@@ -58,7 +58,8 @@ def draw_bar_err_group_figure(nodes, xlabel, ylabel, title):
 		value = [node['value'] / (24 * 3600) for node in candidate_nodes]
 		error = [node['error'] / (24 * 3600) for node in candidate_nodes]
 		ax.bar(left_coordinates + i * bar_width, value, bar_width,
-		label=UAV_mode_label_matcher(label), color=colors[i])
+		label = UAV_mode_label_matcher(label), color = colors[i],
+		yerr = error, ecolor = 'k')
 	
 	# Shink current axis by 20%
 	box = ax.get_position()
@@ -95,9 +96,10 @@ def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 		candidate_nodes = [node for node in nodes if node['label'] == label]
 		candidate_nodes = sorted(candidate_nodes, key=lambda node:node['group'])
 		value = [node['value'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
-		error = [node['error'] / base['error'] for node, base in zip(candidate_nodes, base_nodes)]
+		error = [node['error'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
 		ax.bar(left_coordinates + i * bar_width, value, bar_width,
-		label=UAV_mode_label_matcher(label), color=colors[i])
+		label=UAV_mode_label_matcher(label), color=colors[i],
+		yerr = error, ecolor = 'k')
 	
 	# Shink current axis by 20%
 	box = ax.get_position()
