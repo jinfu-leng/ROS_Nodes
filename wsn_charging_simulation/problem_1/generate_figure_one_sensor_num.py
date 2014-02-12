@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import generate_figure_common as fm
 
-input_file_name = 'data_one_center_sensor_num_2.csv'
+input_file_name = 'data_one_center_sensor_num.csv'
 
 input_file = open(input_file_name, 'r')
 first_line = input_file.readline()
@@ -36,16 +36,18 @@ for network_type in network_types:
 	for UAV_mode in res[network_type].keys():
 		node = {}
 		node['label'] = UAV_mode
-		node['value'] = np.mean(res[network_type][UAV_mode])
-		node['error'] = np.std(res[network_type][UAV_mode])
 		node['group'] = group
+		node['value'] = np.mean(res[network_type][UAV_mode])
+		node['error'] = np.std(res[network_type][UAV_mode])	
 		nodes.append(node)
 
 fm.draw_bar_err_group_figure(nodes, 'Sensor Node Number', 'Lifetime (day)',
 	'Lifetime by Sensor Node Numbers and Algorithms')
 
-#fm.draw_normalized_bar_err_group_figure(nodes, 'Sensor Node Number', 'Normalized Lifetime',
-#	'Normalized Lifetime by Sensor Node Numbers and Algorithms')
+plt.show()
+
+fm.draw_normalized_bar_err_group_figure(nodes, 'Sensor Node Number', 'Normalized Lifetime',
+	'Normalized Lifetime by Sensor Node Numbers and Algorithms')
 plt.show()
 
 
