@@ -112,3 +112,93 @@ def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 	plt.ylabel(ylabel)
 	plt.title(title)
 	plt.xticks(left_coordinates + 0.5, group_list)
+
+def label_index(label):
+	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
+		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
+		'least_power_to_optimized_one_flight']
+	for i in range(len(label_list)):
+		if label == label_list[i]:
+			return i
+	return -1
+
+def draw_bar_err_label_figure(nodes, xlabel, ylabel, title, group_list_reverse = False):
+	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
+		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
+		'least_power_to_optimized_one_flight']
+
+	label_cnt = len(label_list)
+
+	group_set = set([node['group'] for node in nodes])
+	group_list = list(group_set)
+	group_list = sorted(group_list, key=lambda node:float(node), reverse = group_list_reverse)
+	group_cnt = len(group_list)
+
+	bar_width = 1.0 / (group_cnt + 1)
+	left_coordinates = np.arange(label_cnt)
+
+	colors = 'bgrcmyk'
+	ax = plt.subplot(111)
+	for i in range(group_cnt):
+		group = group_list[i]
+		candidate_nodes = [node for node in nodes if node['group'] == group]
+		candidate_nodes = sorted(candidate_nodes, key=lambda node:label_index(node['label']))
+		value = [node['value'] / (24 * 3600) for node in candidate_nodes]
+		error = [node['error'] / (24 * 3600) for node in candidate_nodes]
+		ax.bar(left_coordinates + i * bar_width, value, bar_width,
+		label = str(group), color = colors[i],
+		yerr = error, ecolor = 'k')
+	
+	# Shink current axis by 20%
+	box = ax.get_position()
+	ax.set_position([box.x0, box.y0, box.width * 0.85, box.height])
+
+	# Put a legend to the right of the current axis
+	ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.xticks(left_coordinates + bar_width * group_cnt * 0.5, [UAV_mode_label_matcher(label) for label in label_list])
+
+def draw_bar_err_label_figure_normalized(nodes, xlabel, ylabel, title, group_list_reverse = False):
+	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
+		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
+		'least_power_to_optimized_one_flight']
+
+	label_cnt = len(label_list)
+
+	group_set = set([node['group'] for node in nodes])
+	group_list = list(group_set)
+	group_list = sorted(group_list, key=lambda node:float(node), reverse = group_list_reverse)
+	group_cnt = len(group_list)
+
+	bar_width = 1.0 / (group_cnt + 1)
+	left_coordinates = np.arange(label_cnt)
+
+	colors = 'bgrcmyk'
+	ax = plt.subplot(111)
+	base_nodes = [node for node in nodes if node['group'] == group_list[0]]
+	base_nodes = sorted(base_nodes, key=lambda node:label_index(node['label']))
+	for i in range(group_cnt):
+		group = group_list[i]
+		candidate_nodes = []
+		candidate_nodes = [node for node in nodes if node['group'] == group]
+		candidate_nodes = sorted(candidate_nodes, key=lambda node:label_index(node['label']))
+		value = [node['value'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
+		error = [node['error'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
+		ax.bar(left_coordinates + i * bar_width, value, bar_width,
+		label = str(group), color = colors[i],
+		yerr = error, ecolor = 'k')
+	
+	# Shink current axis by 20%
+	box = ax.get_position()
+	ax.set_position([box.x0, box.y0, box.width * 0.85, box.height])
+
+	# Put a legend to the right of the current axis
+	ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.xticks(left_coordinates + bar_width * group_cnt * 0.5, [UAV_mode_label_matcher(label) for label in label_list])
