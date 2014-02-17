@@ -83,7 +83,7 @@ def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 
 	group_set = set([node['group'] for node in nodes])
 	group_list = list(group_set)
-	group_list = sorted(group_list, key=lambda node:int(node))
+	group_list = sorted(group_list, key=lambda node:float(node))
 	group_cnt = len(group_list)
 	left_coordinates = np.arange(group_cnt)
 
