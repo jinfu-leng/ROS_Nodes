@@ -39,13 +39,12 @@ for network_type in network_types:
 		node['value'] = np.mean(res[network_type][UAV_mode])
 		node['error'] = np.std(res[network_type][UAV_mode])
 		node['group'] = group
-		print node['group']
 		nodes.append(node)
 
-fm.draw_bar_err_group_figure(nodes, 'Transfer Efficiency Rate', 'Lifetime (day)',
-	'Lifetime by Transfer Efficiency Rate and Algorithms')
+fm.draw_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Lifetime (day)',
+	'Lifetime by Charging Efficiency Rate and Algorithms')
 plt.show()
 
-fm.draw_normalized_bar_err_group_figure(nodes, 'Transfer Efficiency Rate', 'Normalized Lifetime',
-	'Normalized Lifetime by Transfer Efficiency Rate and Algorithms')
+fm.draw_normalized_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Normalized Lifetime',
+	'Normalized Lifetime by Charging Efficiency Rate and Algorithms')
 plt.show()
