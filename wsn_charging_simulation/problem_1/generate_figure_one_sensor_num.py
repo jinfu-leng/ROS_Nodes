@@ -41,13 +41,13 @@ for network_type in network_types:
 		node['error'] = np.std(res[network_type][UAV_mode])	
 		nodes.append(node)
 
-fm.draw_bar_err_group_figure(nodes, 'Sensor Node Number', 'Lifetime (day)',
-	'Lifetime by Sensor Node Numbers and Algorithms')
+fm.draw_bar_err_group_figure(nodes, 'Number of Sensor Node', 'Lifetime (day)',
+	'Lifetime by Number of Sensor Node and Algorithms')
 
 plt.show()
 
-fm.draw_normalized_bar_err_group_figure(nodes, 'Sensor Node Number', 'Normalized Lifetime',
-	'Normalized Lifetime by Sensor Node Numbers and Algorithms')
+fm.draw_normalized_bar_err_group_figure(nodes, 'Number of Sensor Node', 'Normalized Lifetime',
+	'Normalized Lifetime by Number of Sensor Node and Algorithms')
 plt.show()
 
 

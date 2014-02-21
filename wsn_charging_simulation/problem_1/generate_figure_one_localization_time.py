@@ -41,9 +41,9 @@ for network_type in network_types:
 		node['group'] = group
 		nodes.append(node)
 
-fm.draw_bar_err_group_figure(nodes, 'Localization Time', 'Lifetime (day)',
+fm.draw_bar_err_group_figure(nodes, 'Localization Time (second)', 'Lifetime (day)',
 	'Lifetime by Localization Time and Algorithms')
 plt.show()
-fm.draw_normalized_bar_err_group_figure(nodes, 'Localization Time', 'Normalized Lifetime',
+fm.draw_normalized_bar_err_group_figure(nodes, 'Localization Time (second)', 'Normalized Lifetime',
 	'Normalized Lifetime by Localization Time and Algorithms')
 plt.show()
