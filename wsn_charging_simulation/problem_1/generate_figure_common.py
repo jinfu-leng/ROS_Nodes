@@ -100,6 +100,8 @@ def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 		ax.bar(left_coordinates + i * bar_width, value, bar_width,
 		label=UAV_mode_label_matcher(label), color=colors[i],
 		yerr = error, ecolor = 'k')
+		print 'label', label
+		print 'value', value
 	
 	# Shink current axis by 20%
 	box = ax.get_position()
@@ -123,9 +125,8 @@ def label_index(label):
 	return -1
 
 def draw_bar_err_label_figure(nodes, xlabel, ylabel, title, group_list_reverse = False):
-	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
-		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
-		'least_power_to_optimized_one_flight']
+	label_list = ['lower_bound', 'closest_to_full', 'closest_random',
+		'closest_with_constant', 'closest_to_initial_average', 'least_power_to_optimized_one_flight']
 
 	label_cnt = len(label_list)
 
@@ -146,7 +147,7 @@ def draw_bar_err_label_figure(nodes, xlabel, ylabel, title, group_list_reverse =
 		value = [node['value'] / (24 * 3600) for node in candidate_nodes]
 		error = [node['error'] / (24 * 3600) for node in candidate_nodes]
 		ax.bar(left_coordinates + i * bar_width, value, bar_width,
-		label = str(group), color = colors[i],
+		label = str(group) + 'W', color = colors[i],
 		yerr = error, ecolor = 'k')
 	
 	# Shink current axis by 20%
@@ -162,9 +163,8 @@ def draw_bar_err_label_figure(nodes, xlabel, ylabel, title, group_list_reverse =
 	plt.xticks(left_coordinates + bar_width * group_cnt * 0.5, [UAV_mode_label_matcher(label) for label in label_list])
 
 def draw_bar_err_label_figure_normalized(nodes, xlabel, ylabel, title, group_list_reverse = False):
-	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
-		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
-		'least_power_to_optimized_one_flight']
+	label_list = ['lower_bound', 'closest_to_full', 'closest_random',
+		'closest_with_constant', 'closest_to_initial_average', 'least_power_to_optimized_one_flight']
 
 	label_cnt = len(label_list)
 
@@ -188,7 +188,7 @@ def draw_bar_err_label_figure_normalized(nodes, xlabel, ylabel, title, group_lis
 		value = [node['value'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
 		error = [node['error'] / base['value'] for node, base in zip(candidate_nodes, base_nodes)]
 		ax.bar(left_coordinates + i * bar_width, value, bar_width,
-		label = str(group), color = colors[i],
+		label = str(group) + 'W', color = colors[i],
 		yerr = error, ecolor = 'k')
 	
 	# Shink current axis by 20%
