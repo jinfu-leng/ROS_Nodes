@@ -8,7 +8,7 @@ param_node_power_capacity = 2.34 * 3600
 param_node_power_consumption_rate = param_node_power_capacity / (60 * 24 * 3600)
 param_node_initial_power = param_node_power_capacity
 
-param_UAV_power_capacity = 25.0 * 3600 * 10
+param_UAV_power_capacity = 25.0 * 3600
 param_UAV_flight_power_consumption_rate = 121.91
 param_UAV_hovering_power_consumption_rate = 92.28
 
