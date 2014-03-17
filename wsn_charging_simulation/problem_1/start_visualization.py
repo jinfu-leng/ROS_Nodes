@@ -31,11 +31,14 @@ def is_valid_UAV(UAV):
 		return True
 
 def visualize_animate(i):
-	global visualization_UAV, visualization_nodes_text
+	global visualization_UAV, visualization_nodes_text, visualization_path, path_x, path_y
 	global UAV, nodes, round_num
 
-
 	visualization_UAV.set_data(UAV['current_x'], UAV['current_y'])
+	if path_x[-1] != UAV['current_x'] or path_y[-1] !=  UAV['current_y']:
+		path_x.append(UAV['current_x'])
+		path_y.append(UAV['current_y'])
+	visualization_path.set_data(path_x, path_y)
 	for node_index in range(len(visualization_nodes_text)):
 		visualization_nodes_text[node_index].set_text('%d:' % node_index + '(%.2lf)' % nodes[node_index]['power'])
 
@@ -65,12 +68,14 @@ def start_visualization():
 object_manager_ = ObjectManager()
 round_num = 1
 UAV, nodes = object_manager_.create_objects(config)
-			
+path_x = [UAV['current_x']]
+path_y = [UAV['current_y']]		
 # visualization
 # set up figure and animation
 fig = plt.figure()
 ax = fig.add_subplot(111, xlim=(-3, config.param_ground_width+3), ylim=(-3, config.param_ground_height+3))
 ax.grid()
+visualization_path, = ax.plot([], [], '-', lw=2)
 visualization_UAV, = ax.plot([], [], 'bo', ms=10)
 visualization_ground = plt.Rectangle((0, 0), config.param_ground_width, config.param_ground_height, lw=2, fc='none')
 visualization_nodes_text = None
