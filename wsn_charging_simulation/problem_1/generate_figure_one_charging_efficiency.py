@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import generate_figure_common as fm
 
-input_file_name = 'data_one_center_charging_efficiency_300.csv'
+input_file_name = 'data_one_center_charging_efficiency.csv'
 
 input_file = open(input_file_name, 'r')
 first_line = input_file.readline()
@@ -39,13 +39,13 @@ for network_type in network_types:
 		node['value'] = np.mean(res[network_type][UAV_mode])
 		node['error'] = np.std(res[network_type][UAV_mode])
 		node['group'] = group
-		#print node['label'], node['value'], node['group']
+		print node['label'], node['value'], node['group']
 		nodes.append(node)
 
-#fm.draw_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Lifetime (day)',
-#	'Lifetime by Charging Efficiency Rate and Algorithms')
-#plt.show()
+fm.draw_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Lifetime (day)',
+	'Lifetime by Charging Efficiency Rate and Algorithms')
+plt.show()
 
-#fm.draw_normalized_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Normalized Lifetime',
-#	'Normalized Lifetime by Charging Efficiency Rate and Algorithms')
-#plt.show()
+fm.draw_normalized_bar_err_group_figure(nodes, 'Charging Efficiency Rate', 'Normalized Lifetime',
+	'Normalized Lifetime by Charging Efficiency Rate and Algorithms')
+plt.show()
