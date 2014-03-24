@@ -1,5 +1,5 @@
 # configure file for test environment
-param_number_nodes = 5
+param_number_nodes = 8
 param_ground_width = 200.0
 param_ground_height = 200.0
 param_network_type = 'homogeneous2'
