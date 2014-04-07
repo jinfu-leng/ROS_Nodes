@@ -23,7 +23,7 @@ valid_network_types.append('8_200_200_homogeneous2_36_0.2_0.8_92.28_80_0_90000.0
 # charging efficiency
 valid_network_types.append('8_200_200_homogeneous2_36_0.8_0.8_92.28_20_0_90000.0')
 # combine
-#valid_network_types.append('8_200_200_homogeneous2_0_0.8_0.8_0_80_0_720000.0')
+valid_network_types.append('8_200_200_homogeneous2_0_0.8_0.8_0_80_0_720000.0')
 
 network_type_name_matcher = {}
 network_type_name_matcher['8_200_200_homogeneous2_36_0.2_0.8_92.28_20_0_90000.0'] = 'Basic'
@@ -71,12 +71,12 @@ bar_width = 0.66
 nodes_cnt = len(nodes)
 for index in range(nodes_cnt):
 	value = nodes[index]['value'] / (24 * 3600)
-	error = nodes[index]['error'] / (24 * 3600)
-	#plt.bar(index + 0.25 * bar_width, value, bar_width, color = 'c', yerr = error, ecolor = 'r')	
+	error = nodes[index]['error'] / (24 * 3600)	
 	plt.bar(index + 0.25 * bar_width, value, bar_width, color = 'c')	
 	plt.xlabel('System Parameter')
-	plt.ylabel('Lifetime')
-	plt.title('Lifetime by Individual System Parameter Changes')
+	plt.ylabel('Lifetime (day)')
+	#plt.title('Lifetime by Individual System Parameter Changes')
+	plt.title('Lifetime by Individual and Combined System Parameter Changes')
 	plt.xticks(np.arange(nodes_cnt) + 0.75 * bar_width, [node['label'] for node in nodes])
 	plt.legend()
 plt.show()
