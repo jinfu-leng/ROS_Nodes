@@ -50,11 +50,14 @@ def generate_figure_demo_least(UAV, nodes, information_node):
 			plt.bar(index + 0.25 * bar_width, node_target_power, bar_width, color = 'b')
 		plt.bar(index + 0.25 * bar_width, node_energy, bar_width, color = 'c')
 
-	plt.bar(nodes_cnt + 0.25 * bar_width, initial_total_power, bar_width, color = 'b')
-	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power + hover_power + transfer_overhead_power, bar_width, color = 'g')
-	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power + hover_power, bar_width, color = 'r')
-	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power, bar_width, color = 'k')
-	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power, bar_width, color = 'm')
+	plt.bar(nodes_cnt + 0.25 * bar_width, initial_total_power, bar_width, color = 'b', label = 'Efficient Energy')
+	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power + hover_power + transfer_overhead_power, bar_width, color = 'g', label = 'Charging Overhead')
+	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power + hover_power, bar_width, color = 'y', label = 'Hovering Consumption')
+	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power, bar_width, color = 'k', label = 'Localization Consumption')
+	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power, bar_width, color = 'm', label = 'Flight Consumption')
+
+	plt.plot([0, nodes_cnt], [lifetime, lifetime], 'r--', lw = 2)
+	plt.ylim([0,90000])
 
 	plt.xlabel('Nodes and UAV')
 	plt.ylabel('Energy')
@@ -63,7 +66,7 @@ def generate_figure_demo_least(UAV, nodes, information_node):
 	labels = range(nodes_cnt)
 	labels.append('UAV')
 	plt.xticks(np.arange(nodes_cnt + 1) + 0.75 * bar_width, labels)
-	plt.legend()
+	plt.legend(loc = 2)
 	plt.show()
 
 
