@@ -56,18 +56,15 @@ def generate_figure_demo_least(UAV, nodes, information_node):
 	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power + localization_power, bar_width, color = 'k')
 	plt.bar(nodes_cnt + 0.25 * bar_width, flight_power, bar_width, color = 'm')
 
-	plt.xlabel('Node ID')
+	plt.xlabel('Nodes and UAV')
 	plt.ylabel('Energy')
 	title = 'Schedule to Charge ' + str(charge_node_num) + ' Node(s)'
 	plt.title(title)
-	plt.xticks(np.arange(nodes_cnt) + 0.75 * bar_width, range(nodes_cnt))
+	labels = range(nodes_cnt)
+	labels.append('UAV')
+	plt.xticks(np.arange(nodes_cnt + 1) + 0.75 * bar_width, labels)
 	plt.legend()
 	plt.show()
-
-
-	#plot UAV energy distribution
-
-
 
 
 
