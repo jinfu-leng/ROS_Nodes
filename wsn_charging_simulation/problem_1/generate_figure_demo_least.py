@@ -72,7 +72,7 @@ def generate_figure_demo_least(UAV, nodes, information_node):
 	plt.legend(loc = 2)
 	if save == True:
 		file_path = output_path + 'least_' + str(charge_node_num)
-		plt.savefig(file_path)
+		plt.savefig(file_path, transparent = True)
 	plt.show()
 
 def generate_figure_demo_least_nodes(UAV, nodes, information_node):
@@ -109,7 +109,7 @@ def generate_figure_demo_least_nodes(UAV, nodes, information_node):
 	plt.legend(loc = 2)
 	if save == True:
 		file_path = output_path + 'least_nodes_' + str(charge_node_num)
-		plt.savefig(file_path)
+		plt.savefig(file_path, transparent = True)
 	plt.show()
 
 def generate_figure_demo_least_UAV(UAV, nodes, information_node):
@@ -148,8 +148,8 @@ def generate_figure_demo_least_UAV(UAV, nodes, information_node):
 	plt.text(0.5, 92000, title, horizontalalignment = 'center')
 	plt.xticks(np.arange(1) + 0.75 * bar_width, '')
 	if save == True:
-		file_path = output_path + 'least_UAV' + str(charge_node_num)
-		plt.savefig(file_path)
+		file_path = output_path + 'least_UAV_' + str(charge_node_num)
+		plt.savefig(file_path, transparent = True)
 	plt.show()
 
 
