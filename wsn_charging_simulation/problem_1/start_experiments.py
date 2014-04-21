@@ -6,21 +6,19 @@ import UAV_AI
 import test_config as config
 param_number_nodes = [8]
 param_ground_size = [200]
-param_UAV_localization_time = [36]
+param_UAV_localization_time = [36, 0]
 param_transfer_rate = [0.2]
-param_UAV_hovering_power_consumption_rate = [92.28]
+param_UAV_hovering_power_consumption_rate = [92.28, 0]
 param_UAV_charging_power_consumption_rate = [20]
 param_UAV_base_distance = [0]
-param_UAV_power_capacity = [25.0 * 3600, 25.0 * 3600 * 2, 25.0 * 3600 * 4, 25.0 * 3600 * 8]
+param_UAV_power_capacity = [25.0 * 3600]
 param_time_limit = 604800 * 10000
 param_network_type = ['homogeneous2']
 param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
-#param_charge_mode = ['with_constant']
-#param_path_mode = ['least_power', 'closest', 'hamiltonian']
-param_path_mode = ['least_power', 'closest']
+param_path_mode = ['least_power', 'closest', 'hamiltonian']
 param_task_threshold = [0.8]
 param_experiment_time = 100
-param_res_file_name = 'center_UAV_power_capacity.csv'
+param_res_file_name = 'center_hovering_rate.csv'
 
 is_single_flight = True
 
@@ -114,6 +112,9 @@ for experiment_time in range(param_experiment_time):
 														print 'UAV Mode: ' + UAV_mode
 														UAV = copy.deepcopy(UAV_new)
 														nodes = copy.deepcopy(nodes_new)
+														# a hack
+														for node in nodes:
+															node['capacity'] = 100000000000 
 														params = {}
 														round_num = 0
 														while is_valid_node_network(nodes) and is_valid_UAV(UAV) and round_num < param_time_limit:

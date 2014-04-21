@@ -9,7 +9,6 @@ from object_manager import ObjectManager
 # system parameters
 param_animation_frame_interval = 100 # wait how long between each frame
 param_animation_frame_skip_num = 0 # skip how many frame between each animation
-param_print_round_number = False
 path_mode = 'closest'
 charge_mode = 'with_constant'
 params = {}
@@ -43,14 +42,12 @@ def visualize_animate(i):
 		visualization_nodes_text[node_index].set_text('%d:' % node_index + '(%.2lf)' % nodes[node_index]['power'])
 
 	if i == 0:
-		time.sleep(5)
+		time.sleep(10)
 
 	left = param_animation_frame_skip_num + 1
 	while left > 0 and is_valid_node_network(nodes) and is_valid_UAV(UAV):
 		nodes_next_second(nodes)
 		UAV_AI.next_second(UAV, nodes, charge_mode, path_mode, 1.0, params)
-		if param_print_round_number:
-			print 'Round: ' + str(round_num)
 		round_num += 1
 		left -= 1
 

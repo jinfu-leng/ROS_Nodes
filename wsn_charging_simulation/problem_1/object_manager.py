@@ -34,7 +34,6 @@ class ObjectManager:
 			if config.param_network_type == 'homogeneous':
 				node['power'] = config.param_node_initial_power
 			elif config.param_network_type == 'homogeneous2':
-				#node['power'] = random.uniform(0.3, 0.7) * config.param_node_power_capacity
 				node['power'] = random.uniform(0.2, 0.6) * config.param_node_power_capacity
 			else:
 				print 'Error: create_nodes()'
