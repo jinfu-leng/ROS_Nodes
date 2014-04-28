@@ -85,7 +85,6 @@ for experiment_time in range(param_experiment_time):
 											config.param_UAV_charging_power_consumption_rate = charging_rate
 											config.param_UAV_base_distance = base_distance
 											config.param_UAV_power_capacity = UAV_power_capacity
-											config.param_UAV_initial_power = UAV_power_capacity
 											network_type_str = str(num) + '_' + str(size) + '_' + str(size) \
 												+ '_' + str(net_type) + '_' + str(localization_time) \
 												+ '_' + str(transfer_rate) + '_' + str(task_threshold) \
@@ -112,9 +111,9 @@ for experiment_time in range(param_experiment_time):
 														print 'UAV Mode: ' + UAV_mode
 														UAV = copy.deepcopy(UAV_new)
 														nodes = copy.deepcopy(nodes_new)
-														# a hack
-														for node in nodes:
-															node['capacity'] = 100000000000 
+														# a hack for combination experiment
+														# for node in nodes:
+														# 	node['capacity'] = 100000000000 
 														params = {}
 														round_num = 0
 														while is_valid_node_network(nodes) and is_valid_UAV(UAV) and round_num < param_time_limit:
