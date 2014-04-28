@@ -9,7 +9,7 @@ class ObjectManager:
 		UAV['current_x'] = UAV['home_x']
 		UAV['current_y'] = UAV['home_y']
 		UAV['capacity'] = config.param_UAV_power_capacity
-		UAV['power'] = config.param_UAV_initial_power
+		UAV['power'] = config.param_UAV_power_capacity
 		UAV['speed'] = config.param_UAV_moving_speed
 		UAV['transfer_rate'] = config.param_UAV_charging_power_transfer_rate
 		UAV['flight_power_rate'] = config.param_UAV_flight_power_consumption_rate
