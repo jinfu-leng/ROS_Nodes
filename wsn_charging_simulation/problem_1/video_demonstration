@@ -1,0 +1,26 @@
+Video Demonstration
+
+
+
+Purpose:
+Run the system with visualization
+
+1. Edit vis_config.py
+
+2. Edit start_visualization.py
+
+3. Run start_visualization.py
+
+
+
+
+Purpose:
+Test the impact of different UAV hovering rate
+
+1. Edit start_experiments.py to change the values of the corresponding system parameters
+
+2. Run start_experiments.py to generate the experiment results
+
+3. Edit generate_figure_one_hovering_rate.py to change the value of the input file
+
+4. Run generate_figure_one_hovering_rate.py to generate figures
