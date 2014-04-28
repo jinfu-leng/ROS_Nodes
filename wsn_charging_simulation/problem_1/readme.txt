@@ -37,3 +37,7 @@ Simulation:
 -- Do not run visualization for experiments. It is too slow. Do use it for debugging.
 -- Specify the values of the parameters in the top of "start_visualization.py" and "vis_config.py".
 -- Run "python start_visualization.py" to start the visualization.
+
+- Others:
+-- Available charging modes: ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
+-- Available path planning modes: ['least_power', 'closest', 'hamiltonian']
