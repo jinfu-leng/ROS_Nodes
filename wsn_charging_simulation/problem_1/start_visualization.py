@@ -4,7 +4,7 @@ import matplotlib.gridspec as gridspec
 import time
 import numpy as np
 
-import test_config as config
+import vis_config as config
 import UAV_AI
 from object_manager import ObjectManager
 

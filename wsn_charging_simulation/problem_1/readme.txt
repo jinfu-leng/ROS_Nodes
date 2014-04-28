@@ -27,7 +27,7 @@ Simulation:
 -- test_config.py
 
 - Usage:
--- Initially all the system parameters are specified in "test_config.py", and you can adjust some of them in the top of  "start_experiments.py" based on the experiment purpose. 
+-- Initially all the system parameters are specified in "test_config.py", and you can initialize some of them in the top of  "start_experiments.py" based on the experiment purpose. 
 -- "param_network_type" has two available options, "homogeneous" and "homogeneous2". "homogeneous" means that all the sensor nodes have the same initial energy and capacity. "homogeneous2" means that all the sensor node have the same capacity but different initial energy (See object_manager.py for details).
 -- The testing algorithms have two parts, "param_charge_mode" and "param_path_mode". The system will automatically combines these two lists and filter out invalid combinations.
 -- Run "python start_experiments.py" to start a simulation.
@@ -35,5 +35,5 @@ Simulation:
 
 - Visualization:
 -- Do not run visualization for experiments. It is too slow. Do use it for debugging.
--- Specify the values of the parameters in the top of "start_visualization.py".
+-- Specify the values of the parameters in the top of "start_visualization.py" and "vis_config.py".
 -- Run "python start_visualization.py" to start the visualization.
