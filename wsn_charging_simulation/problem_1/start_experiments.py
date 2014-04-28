@@ -18,7 +18,7 @@ param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant',
 param_path_mode = ['least_power', 'closest', 'hamiltonian']
 param_task_threshold = [0.8]
 param_experiment_time = 100
-param_res_file_name = 'center_hovering_rate.csv'
+param_res_file_name = 'center_test.csv'
 
 is_single_flight = True
 
