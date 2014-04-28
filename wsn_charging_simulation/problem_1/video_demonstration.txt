@@ -9,7 +9,7 @@ Test the impact of different UAV hovering rate
 
 2. Run start_experiments.py to generate the experiment results
 
-3. Edit generate_figure_one_hovering_rate.py to change the value of the input file
+3. Edit generate_figure_one_hovering_rate.py to change the path of the input file
 
 4. Run generate_figure_one_hovering_rate.py to generate figures
 
