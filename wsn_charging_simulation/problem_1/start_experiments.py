@@ -6,9 +6,9 @@ import UAV_AI
 import test_config as config
 param_number_nodes = [8]
 param_ground_size = [200]
-param_UAV_localization_time = [36, 0]
+param_UAV_localization_time = [36]
 param_transfer_rate = [0.2]
-param_UAV_hovering_power_consumption_rate = [92.28, 0]
+param_UAV_hovering_power_consumption_rate = [92.28]
 param_UAV_charging_power_consumption_rate = [20]
 param_UAV_base_distance = [0]
 param_UAV_power_capacity = [25.0 * 3600]
