@@ -4,7 +4,7 @@ import UAV_AI
 
 
 import test_config as config
-param_number_nodes = [8]
+param_number_nodes = [8] # nodes are randomly distributed, see object_manager.py
 param_ground_size = [200]
 param_UAV_localization_time = [36]
 param_transfer_rate = [0.2]
@@ -12,10 +12,14 @@ param_UAV_hovering_power_consumption_rate = [92.28]
 param_UAV_charging_power_consumption_rate = [20]
 param_UAV_base_distance = [0]
 param_UAV_power_capacity = [25.0 * 3600]
-param_time_limit = 604800 * 10000
+param_time_limit = 604800 * 10000 # the maximal round of simulation
+# homogeneous: nodes have same initial energy
+# homogeneous2: nodes have random initial energy (20%-60% of capacity)
 param_network_type = ['homogeneous2']
 param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
+# Here "hamiltonian" is corresponding to "shortest" in the thesis
 param_path_mode = ['least_power', 'closest', 'hamiltonian']
+# If the energy percents of all the sensor nodes are above this threshold, the UAV would stay in the base (good for multi-flight experiment)
 param_task_threshold = [0.8]
 param_experiment_time = 100
 param_res_file_name = 'center_test.csv'
@@ -149,7 +153,7 @@ for experiment_time in range(param_experiment_time):
 															print 'The system is dead at round: ' + str(round_num)
 															res_file.write(network_type_str + ',' + UAV_mode + ',' + str(-1 * round_num) + '\n')	
 															if is_valid_UAV(UAV) == False:
-																print '!!!!!!!!!!!!!!!!It is beacause of the UAV!!!!!!!!!!!!!!!!!!'
+																print 'Error: The UAV is invalid!'
 															
 											print
 res_file.close()
