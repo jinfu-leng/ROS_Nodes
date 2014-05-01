@@ -1,9 +1,11 @@
 Data:
 - All the data are .csv files.
 
-- The name of a data file starts with "data_one_center", and the following part indicates the purpose of this data file.
+- The name of a data file starts with "data_one_center", and the following part indicates the purpose of this data file. For example, "data_one_center_base_distance.csv" is the data for testing different distance of base station.
 
-- For example, "data_one_center_base_distance.csv" is the data for testing different distance of base station.
+- Each .csv file has three columns: configuration of the experiment, algorithm name, round number
+
+- For the details of the configuration of the experiment column, check out the variable "network_type_str" in start_experiment.py
 
 
 
