@@ -43,3 +43,10 @@ Simulation:
 - Others:
 -- Available charging modes: ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
 -- Available path planning modes: ['least_power', 'closest', 'hamiltonian']
+
+
+
+Future Development:
+- Multi-Flights: The current code should be able to be extended to multi-flights with very few efforts. The problem is that the current simulation is based on the second (it simulates the system state of every second), and thus it is going to need a lot of time if we need to simulate a time period of months. One idea is to accelerate the simulation of sensor nodes when the UAV is not working, considering that each sensor node has a fixed consumption rate.
+
+- Multi-UAVs: The current code can be extended to simulate a centralized multi-UAVs system. I would suggest to rewrite the system if you need to simulate a distributed multi-UAVs system.
