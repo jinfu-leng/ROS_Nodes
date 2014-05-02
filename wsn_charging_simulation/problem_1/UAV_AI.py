@@ -41,16 +41,16 @@ def compute_total_cycle_distance(UAV, nodes, path):
 	total_distance += euclidean_distance(UAV['current_x'], UAV['current_y'], nodes[path[nodes_cnt - 1]]['x'], nodes[path[nodes_cnt - 1]]['y'])
 	return total_distance
 
-def hamiltonian_node_path(UAV, nodes):
+def shortest_node_path(UAV, nodes):
 	nodes_cnt = len(nodes)
-	hamiltonian_path = []
-	hamiltonian_dist = 1000000000.0
+	shortest_path = []
+	shortest_dist = 1000000000.0
 	for path in itertools.permutations(range(nodes_cnt)):
 		current_dist = compute_total_cycle_distance(UAV, nodes, path)
-		if current_dist < hamiltonian_dist:
-			hamiltonian_dist = current_dist
-			hamiltonian_path = path
-	return list(hamiltonian_path)
+		if current_dist < shortest_dist:
+			shortest_dist = current_dist
+			shortest_path = path
+	return list(shortest_path)
 
 def closest_node_path(UAV, nodes):
 	nodes_cnt = len(nodes)	
@@ -110,8 +110,8 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 	if UAV['status'] == 'idle':
 		if path_mode == 'closest':
 			UAV['dest_list'] = closest_node_path(UAV, nodes)
-		elif path_mode == 'hamiltonian':
-			UAV['dest_list'] = hamiltonian_node_path(UAV, nodes)
+		elif path_mode == 'shortest':
+			UAV['dest_list'] = shortest_node_path(UAV, nodes)
 		elif path_mode == 'least_power':
 			UAV['dest_list'] = least_power_node_path(UAV, nodes)
 		else:
@@ -190,8 +190,8 @@ def next_second_dest_list(UAV, nodes, charge_mode = 'to_goal', path_mode = 'leas
 def compute_path_distance(UAV, nodes, path_mode):
 	if path_mode == 'least_power':
 		path = least_power_node_path(UAV, nodes)
-	elif path_mode == 'hamiltonian':
-		path = hamiltonian_node_path(UAV, nodes)
+	elif path_mode == 'shortest':
+		path = shortest_node_path(UAV, nodes)
 	elif path_mode == 'closest':
 		path = closest_node_path(UAV, nodes)
 	else:

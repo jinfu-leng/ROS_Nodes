@@ -5,13 +5,13 @@ def UAV_mode_label_matcher(UAV_mode):
 	matcher = {}
 	matcher['lower_bound'] = 'NO'
 	matcher['closest_to_full'] = 'FULL'
-	matcher['hamiltonian_to_full'] = 'FULL*'
+	matcher['shortest_to_full'] = 'FULL*'
 	matcher['closest_with_constant'] = 'FIX'
-	matcher['hamiltonian_with_constant'] = 'FIX*'
+	matcher['shortest_with_constant'] = 'FIX*'
 	matcher['closest_to_initial_average'] = 'AVG'
-	matcher['hamiltonian_to_initial_average'] = 'AVG*'
+	matcher['shortest_to_initial_average'] = 'AVG*'
 	matcher['closest_random'] = 'RND'
-	matcher['hamiltonian_random'] = 'RND*'
+	matcher['shortest_random'] = 'RND*'
 	matcher['least_power_to_optimized_one_flight'] = 'LEAST'
 	return matcher[UAV_mode]
 
@@ -116,8 +116,8 @@ def draw_normalized_bar_err_group_figure(nodes, xlabel, ylabel, title):
 	plt.xticks(left_coordinates + 0.5, group_list)
 
 def label_index(label):
-	label_list = ['lower_bound', 'closest_to_full', 'hamiltonian_to_full', 'closest_random', 'hamiltonian_random',
-		'closest_with_constant', 'hamiltonian_with_constant', 'closest_to_initial_average', 'hamiltonian_to_initial_average',
+	label_list = ['lower_bound', 'closest_to_full', 'shortest_to_full', 'closest_random', 'shortest_random',
+		'closest_with_constant', 'shortest_with_constant', 'closest_to_initial_average', 'shortest_to_initial_average',
 		'least_power_to_optimized_one_flight']
 	for i in range(len(label_list)):
 		if label == label_list[i]:

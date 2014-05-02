@@ -42,7 +42,7 @@ Simulation:
 
 - Others:
 -- Available charging modes: ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
--- Available path planning modes: ['least_power', 'closest', 'hamiltonian']
+-- Available path planning modes: ['least_power', 'closest', 'shortest']
 
 
 

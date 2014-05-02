@@ -17,8 +17,7 @@ param_time_limit = 604800 * 10000 # the maximal round of simulation
 # homogeneous2: nodes have random initial energy (20%-60% of capacity)
 param_network_type = ['homogeneous2']
 param_charge_mode = ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
-# Here "hamiltonian" is corresponding to "shortest" in the thesis
-param_path_mode = ['least_power', 'closest', 'hamiltonian']
+param_path_mode = ['least_power', 'closest', 'shortest']
 # If the energy percents of all the sensor nodes are above this threshold, the UAV would stay in the base (good for multi-flight experiment)
 param_task_threshold = [0.8]
 param_experiment_time = 100
