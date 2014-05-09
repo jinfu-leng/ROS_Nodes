@@ -1,4 +1,5 @@
 import random
+import sys
 
 class ObjectManager:
 	# create UAV
@@ -44,10 +45,61 @@ class ObjectManager:
 		return nodes
 
 	# create objects
-	# please call this method when initializing objects
+	# call this method when initializing objects
 	def create_objects(self, config):
 		UAV = self.create_UAV(config)
 		UAV['status'] = 'idle'
 		UAV['dest_node_id'] = None
 		nodes = self.create_nodes(config)		
+		return UAV, nodes
+
+	# save objects to file
+	def save_objects_file(self, UAV, nodes, file_path):
+		f = open(file_path, 'w')
+		f.write(str(len(UAV)) + '\n')
+		for key, value in UAV.items():
+			f.write(key + '\n')
+			f.write(str(value) + '\n')
+
+		f.write(str(len(nodes)) + '\n')
+		for node in nodes:
+			f.write(str(len(node)) + '\n')
+			for key, value in node.items():
+				f.write(key + '\n')
+				f.write(str(value) + '\n')
+		f.close()
+
+	def str_to_num(self, s):
+		try:
+			return int(s)
+		except ValueError:
+			try:
+				return float(s)
+			except ValueError:
+				return s
+
+	# read objects from file
+	def read_objects_file(self, file_path):
+		f = open(file_path, 'r')
+		UAV = {}
+		cnt = int(f.readline())
+		for i in range(cnt):
+			key = f.readline()
+			key = key[:-1]
+			value = self.str_to_num(f.readline())
+			UAV[key] = value
+		UAV['dest_node_id'] = None
+		UAV['status'] = UAV['status'][:-1]
+		nodes = []
+		cnt_ = int(f.readline())
+		for i in range(cnt_):
+			node = {}
+			cnt = int(f.readline())
+			for j in range(cnt):
+				key = f.readline()
+				key = key[:-1]
+				value = self.str_to_num(f.readline())
+				node[key] = value
+			nodes.append(node)
+		f.close()
 		return UAV, nodes

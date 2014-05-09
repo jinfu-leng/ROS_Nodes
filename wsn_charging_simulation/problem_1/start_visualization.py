@@ -14,6 +14,7 @@ param_animation_frame_skip_num = 0 # skip how many frame between each animation
 path_mode = 'closest'
 charge_mode = 'with_constant'
 params = {}
+using_last_system_state = True # using last system state or create new system state
 
 def nodes_next_second(nodes):
 	for node in nodes:
@@ -71,10 +72,15 @@ def start_visualization():
 	plt.show()
 
 
-# main
 object_manager_ = ObjectManager()
 round_num = 1
-UAV, nodes = object_manager_.create_objects(config)
+
+if using_last_system_state == True:
+	UAV, nodes = object_manager_.read_objects_file('.tmp_state')
+else:
+	UAV, nodes = object_manager_.create_objects(config)
+	object_manager_.save_objects_file(UAV, nodes, '.tmp_state')
+
 path_x = [UAV['current_x']]
 path_y = [UAV['current_y']]		
 # visualization
