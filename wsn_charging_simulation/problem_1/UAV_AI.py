@@ -248,7 +248,7 @@ def compute_to_optimized_one_flight(UAV, nodes, path_mode):
 		total_power -= localization_power
 		total_power *= UAV['charging_power_rate'] / (UAV['hovering_power_rate'] + UAV['charging_power_rate'])
 		total_power *= UAV['transfer_rate']
-		total_power *= 0.95 #natural cost
+		total_power *= 0.98 #natural cost
 		node_target_power = compute_max_min(total_power, [node['power'] for node in sorted_nodes[0: charge_node_num]])
 		if charge_node_num < node_num:
 			node_target_power = min(node_target_power, sorted_nodes[charge_node_num]['power'])

@@ -11,8 +11,10 @@ from object_manager import ObjectManager
 # system parameters
 param_animation_frame_interval = 100 # wait how long between each frame
 param_animation_frame_skip_num = 0 # skip how many frame between each animation
+# ['least_power', 'closest', 'shortest']
 path_mode = 'closest'
-charge_mode = 'with_constant'
+# ['random', 'to_full', 'to_initial_average', 'with_constant', 'to_optimized_one_flight']
+charge_mode = 'to_full'
 params = {}
 using_last_system_state = True # using last system state or create new system state
 
@@ -45,6 +47,10 @@ def visualize_animate(i):
 	visualization_path.set_data(path_x, path_y)
 	for node_index in range(len(visualization_nodes_text)):
 		visualization_nodes_text[node_index].set_text('%d:' % node_index + '(%.2lf)' % nodes[node_index]['power'])
+
+	# make it easier to make videos
+	# if i == 0:
+	# 	time.sleep(10)
 
 	# visualize the UAV
 	for rect in UAV_energy_bar:
